@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="gbk"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="general" class="nc.pubapp.pade.code.funnode.FunNodePara">
+    	<property name="moduleName" value="hrwa" />
+	    <property name="bpfPath" value="test.bpf"/>
+	    <property name="funcode" value="60135006"/>
+	    <property name="clientPackName" value="nc.ui.hrwa.wa_ba_item"/>
+	    <property name="metaData" value="hrwa\METADATA\wa_ba_item.bpf.bmf"/>
+	    <property name="xmlPath" value="hrwa\src\client\nc\ui\hrwa\wa_ba_item\ace\view\Wa_ba_item_config.xml"/>
+		<property name="metaDataType" value="singleTreeCardType" />
+		<property name="treeType" value="PKTree" />
+	    <property name="funcregispath" value="hrwa/funcmodel/wa_ba_item/funcregis/60135006.func" />
+	    <property name="quetempath" value="${quetempath}" />
+	    <property name="printtempath" value="${printtempath}" />
+	    <property name="systembasepath" value="hrwa/systemplatebase/wa_ba_item/60135006/60135006.stb" />
+	    <property name="codeRule" value="2.2.2"/>
+	    <property name="extendSuffix" value=""/>
+	    <property name="uif2ModelFilePath" value="hrwa\ace\uif2model\60135006.umf"/>
+	    <property name="busiCompName" value="hrwa"/>
+	    <property name="metaDataId" value="be24255b-50a3-43bf-9e0b-79b543ce73f8"/>
+</bean>
+
+	<bean id="templet" class="nc.pubapp.pade.code.funnode.Templet">
+	    <property name="tempStyle" value="0" />
+	    <property name="nodeKey" value="" />
+	    <property name="templetPath" value="hrwa/templet/wa_ba_item/billtemplet/60135006.btf" />
+	</bean>
+
+	<bean id="SerPropara" class="nc.pubapp.pade.code.funnode.ServiceProxyPara">
+					<property name="delete">
+				<bean class="nc.pubapp.pade.code.funnode.ServiceProxyItemPara">
+					<property name="fullClassName" value="nc.itf.hrwa.IWa_ba_itemMaintain" />
+					<property name="itmClassName" value=".IWa_ba_itemMaintain" />
+					<property name="methodName" value="delete" />
+				</bean>
+			</property>
+							<property name="insert">
+				<bean class="nc.pubapp.pade.code.funnode.ServiceProxyItemPara">
+					<property name="fullClassName" value="nc.itf.hrwa.IWa_ba_itemMaintain" />
+					<property name="itmClassName" value=".IWa_ba_itemMaintain" />
+					<property name="methodName" value="insert" />
+				</bean>
+			</property>
+							<property name="update">
+				<bean class="nc.pubapp.pade.code.funnode.ServiceProxyItemPara">
+					<property name="fullClassName" value="nc.itf.hrwa.IWa_ba_itemMaintain" />
+					<property name="itmClassName" value=".IWa_ba_itemMaintain" />
+					<property name="methodName" value="update" />
+				</bean>
+			</property>
+							<property name="queryByQueryScheme">
+				<bean class="nc.pubapp.pade.code.funnode.ServiceProxyItemPara">
+					<property name="fullClassName" value="nc.itf.hrwa.IWa_ba_itemMaintain" />
+					<property name="itmClassName" value=".IWa_ba_itemMaintain" />
+					<property name="methodName" value="query" />
+				</bean>
+			</property>
+							</bean>
+	
+	<bean id="FilePackNameBean" class="nc.pubapp.pade.code.engine.FilePackNamePara">
+		<property name="filePackNameList">
+	    	<list>
+		       <value>nc.ui.hrwa.wa_ba_item.ace.handler.AceAddHandler.java</value>
+		       <value>nc.ui.hrwa.wa_ba_item.ace.maintain.AceWa_ba_itemDataManager.java</value>
+		       <value>nc.ui.hrwa.wa_ba_item.ace.maintain.AceWa_ba_itemService.java</value>
+		    </list>
+	    </property>
+	</bean>
+
+</beans>
