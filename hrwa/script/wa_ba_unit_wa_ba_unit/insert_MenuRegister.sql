@@ -1,1 +1,0 @@
-INSERT INTO sm_menuitemreg (ts, iconpath, menuitemname, pk_menu, resid, ismenutype, pk_menuitem, menudes, funcode, menuitemcode, dr ) VALUES ('2017-06-22 10:12:16', null, '奖金分配单元', '1004ZZ10000000000FFL', 'D60135007', 'N', '0001ZZ10000000001UE5', null, '60135007', '60135007', 0 );

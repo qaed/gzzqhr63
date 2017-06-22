@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="gbk"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 <bean id="funcregister" class="nc.pubapp.pade.funcmodel.vo.FuncRegister"><property name="bmf_path" value="hrwa\METADATA\wa_ba_unit.bmf"/>
-<property name="cfunid" value="0001ZZ10000000001UE3"/>
+<property name="cfunid" value="0001ZZ10000000001XG1"/>
 <property name="class_name" value="nc.ui.pubapp.uif2app.ToftPanelAdaptorEx"/>
 <property name="dr" value="0"/>
 <property name="fun_name" value="奖金分配单元"/>
@@ -13,9 +13,9 @@
 <list><bean class="nc.pubapp.pade.funcmodel.vo.FuncRegisterParam"><property name="dr" value="0"/>
 <property name="paramname" value="BeanConfigFilePath"/>
 <property name="paramvalue" value="nc/ui/hrwa/wa_ba_unit/ace/view/WaBaUnit_config.xml"/>
-<property name="parentid" value="0001ZZ10000000001UE3"/>
-<property name="pk_param" value="0001ZZ10000000001UE4"/>
-<property name="ts" value="2017-06-22 10:12:16"/>
+<property name="parentid" value="0001ZZ10000000001XG1"/>
+<property name="pk_param" value="0001ZZ10000000001XG2"/>
+<property name="ts" value="2017-06-22 14:29:41"/>
 </bean>
 </list>
 </property>
@@ -32,7 +32,7 @@
 <property name="own_module" value="6013"/>
 <property name="parent_id" value="1001ZZ10000000005YIA"/>
 <property name="pk_group" value="~"/>
-<property name="ts" value="2017-06-22 10:12:16"/>
+<property name="ts" value="2017-06-22 14:29:41"/>
 <property name="uif2model_path" value="hrwa\ace\uif2model\60135007.umf"/>
 </bean>
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2017-06-22 14:01:21" creator="" description="" displayName="wa_ba_sch" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="81c3b602-8a0d-41e0-9364-c75d44c91d61" industry="0" industryChanged="false" industryIncrease="false" industryName="" isSource="false" isbizmodel="false" mainEntity="" metaType=".bmf" modifier="YONYOU NC" modifyIndustry="0" modifyTime="2017-06-22 14:01:21" name="wa_ba_sch" namespace="hrss" ownModule="hrss" preLoad="false" programcode="0" resModuleName="wa_ba_sch" resid="" version="0" versionType="0">
+    <celllist/>
+    <connectlist/>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>
