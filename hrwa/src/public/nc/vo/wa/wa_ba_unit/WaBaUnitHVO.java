@@ -1,4 +1,4 @@
-package nc.vo.wa.wa_ba.item;
+package nc.vo.wa.wa_ba_unit;
 
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
@@ -8,9 +8,21 @@ import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
-public class ItemsVO extends SuperVO {
+public class WaBaUnitHVO extends SuperVO {
 /**
-*项目编码
+*分配人pk
+*/
+public String ba_mng_psnpk;
+/**
+*分配人名称
+*/
+public String ba_mng_psnpk_showname;
+/**
+*分配单元类型
+*/
+public String ba_unit_type;
+/**
+*分配单元编码
 */
 public String code;
 /**
@@ -22,10 +34,6 @@ public UFDateTime creationtime;
 */
 public String creator;
 /**
-*取数类型
-*/
-public Integer datatype;
-/**
 *修改时间
 */
 public UFDateTime modifiedtime;
@@ -34,13 +42,9 @@ public UFDateTime modifiedtime;
 */
 public String modifier;
 /**
-*项目名称
+*分配单元名称
 */
 public String name;
-/**
-*项目主键
-*/
-public String pk_ba_item;
 /**
 *集团
 */
@@ -50,17 +54,21 @@ public String pk_group;
 */
 public String pk_org;
 /**
-*组织多版本
+*组织版本
 */
 public String pk_org_v;
+/**
+*主表主键
+*/
+public String pk_wa_ba_unit;
+/**
+*来源单据类型
+*/
+public String src_obj_pk;
 /**
 *时间戳
 */
 public UFDateTime ts;
-/**
-*手动输入
-*/
-public UFDouble value;
 /**
 *自定义项1
 */
@@ -141,27 +149,73 @@ public String vdef8;
 *自定义项9
 */
 public String vdef9;
-/**
-*计算公式
-*/
-public String vformula;
-/**
-*外部数据源
-*/
-public String vformulastr;
 /** 
-* 获取项目编码
+* 获取分配人pk
 *
-* @return 项目编码
+* @return 分配人pk
+*/
+public String getBa_mng_psnpk () {
+return this.ba_mng_psnpk;
+ } 
+
+/** 
+* 设置分配人pk
+*
+* @param ba_mng_psnpk 分配人pk
+*/
+public void setBa_mng_psnpk ( String ba_mng_psnpk) {
+this.ba_mng_psnpk=ba_mng_psnpk;
+ } 
+
+/** 
+* 获取分配人名称
+*
+* @return 分配人名称
+*/
+public String getBa_mng_psnpk_showname () {
+return this.ba_mng_psnpk_showname;
+ } 
+
+/** 
+* 设置分配人名称
+*
+* @param ba_mng_psnpk_showname 分配人名称
+*/
+public void setBa_mng_psnpk_showname ( String ba_mng_psnpk_showname) {
+this.ba_mng_psnpk_showname=ba_mng_psnpk_showname;
+ } 
+
+/** 
+* 获取分配单元类型
+*
+* @return 分配单元类型
+*/
+public String getBa_unit_type () {
+return this.ba_unit_type;
+ } 
+
+/** 
+* 设置分配单元类型
+*
+* @param ba_unit_type 分配单元类型
+*/
+public void setBa_unit_type ( String ba_unit_type) {
+this.ba_unit_type=ba_unit_type;
+ } 
+
+/** 
+* 获取分配单元编码
+*
+* @return 分配单元编码
 */
 public String getCode () {
 return this.code;
  } 
 
 /** 
-* 设置项目编码
+* 设置分配单元编码
 *
-* @param code 项目编码
+* @param code 分配单元编码
 */
 public void setCode ( String code) {
 this.code=code;
@@ -204,26 +258,6 @@ this.creator=creator;
  } 
 
 /** 
-* 获取取数类型
-*
-* @return 取数类型
-* @see String
-*/
-public Integer getDatatype () {
-return this.datatype;
- } 
-
-/** 
-* 设置取数类型
-*
-* @param datatype 取数类型
-* @see String
-*/
-public void setDatatype ( Integer datatype) {
-this.datatype=datatype;
- } 
-
-/** 
 * 获取修改时间
 *
 * @return 修改时间
@@ -260,39 +294,21 @@ this.modifier=modifier;
  } 
 
 /** 
-* 获取项目名称
+* 获取分配单元名称
 *
-* @return 项目名称
+* @return 分配单元名称
 */
 public String getName () {
 return this.name;
  } 
 
 /** 
-* 设置项目名称
+* 设置分配单元名称
 *
-* @param name 项目名称
+* @param name 分配单元名称
 */
 public void setName ( String name) {
 this.name=name;
- } 
-
-/** 
-* 获取项目主键
-*
-* @return 项目主键
-*/
-public String getPk_ba_item () {
-return this.pk_ba_item;
- } 
-
-/** 
-* 设置项目主键
-*
-* @param pk_ba_item 项目主键
-*/
-public void setPk_ba_item ( String pk_ba_item) {
-this.pk_ba_item=pk_ba_item;
  } 
 
 /** 
@@ -332,21 +348,57 @@ this.pk_org=pk_org;
  } 
 
 /** 
-* 获取组织多版本
+* 获取组织版本
 *
-* @return 组织多版本
+* @return 组织版本
 */
 public String getPk_org_v () {
 return this.pk_org_v;
  } 
 
 /** 
-* 设置组织多版本
+* 设置组织版本
 *
-* @param pk_org_v 组织多版本
+* @param pk_org_v 组织版本
 */
 public void setPk_org_v ( String pk_org_v) {
 this.pk_org_v=pk_org_v;
+ } 
+
+/** 
+* 获取主表主键
+*
+* @return 主表主键
+*/
+public String getPk_wa_ba_unit () {
+return this.pk_wa_ba_unit;
+ } 
+
+/** 
+* 设置主表主键
+*
+* @param pk_wa_ba_unit 主表主键
+*/
+public void setPk_wa_ba_unit ( String pk_wa_ba_unit) {
+this.pk_wa_ba_unit=pk_wa_ba_unit;
+ } 
+
+/** 
+* 获取来源单据类型
+*
+* @return 来源单据类型
+*/
+public String getSrc_obj_pk () {
+return this.src_obj_pk;
+ } 
+
+/** 
+* 设置来源单据类型
+*
+* @param src_obj_pk 来源单据类型
+*/
+public void setSrc_obj_pk ( String src_obj_pk) {
+this.src_obj_pk=src_obj_pk;
  } 
 
 /** 
@@ -365,24 +417,6 @@ return this.ts;
 */
 public void setTs ( UFDateTime ts) {
 this.ts=ts;
- } 
-
-/** 
-* 获取手动输入
-*
-* @return 手动输入
-*/
-public UFDouble getValue () {
-return this.value;
- } 
-
-/** 
-* 设置手动输入
-*
-* @param value 手动输入
-*/
-public void setValue ( UFDouble value) {
-this.value=value;
  } 
 
 /** 
@@ -745,45 +779,9 @@ public void setVdef9 ( String vdef9) {
 this.vdef9=vdef9;
  } 
 
-/** 
-* 获取计算公式
-*
-* @return 计算公式
-*/
-public String getVformula () {
-return this.vformula;
- } 
-
-/** 
-* 设置计算公式
-*
-* @param vformula 计算公式
-*/
-public void setVformula ( String vformula) {
-this.vformula=vformula;
- } 
-
-/** 
-* 获取外部数据源
-*
-* @return 外部数据源
-*/
-public String getVformulastr () {
-return this.vformulastr;
- } 
-
-/** 
-* 设置外部数据源
-*
-* @param vformulastr 外部数据源
-*/
-public void setVformulastr ( String vformulastr) {
-this.vformulastr=vformulastr;
- } 
-
 
   @Override
   public IVOMeta getMetaData() {
-    return VOMetaFactory.getInstance().getVOMeta("hrwa.wa_ba_item");
+    return VOMetaFactory.getInstance().getVOMeta("hrwa.WaBaUnitHVO");
   }
 }

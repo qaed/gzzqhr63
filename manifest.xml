@@ -36,6 +36,7 @@
     </resource>
     <funnodes>
       <funnode name="奖金项目设置" code="60135006" funnode="hrwa/ace/client/60135006.fnf" service="hrwa/ace/service/60135006.smf"/>
+      <funnode name="奖金分配单元" code="60135007" funnode="hrwa/ace/client/60135007.fnf" service="hrwa/ace/service/60135007.smf"/>
     </funnodes>
   </BusinessComponet>
 </Manifest>

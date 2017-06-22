@@ -1,4 +1,4 @@
-package nc.vo.wa.wa_ba.item;
+package nc.vo.wa.wa_ba_unit;
 
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
@@ -8,59 +8,43 @@ import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
-public class ItemsVO extends SuperVO {
+public class WaBaUnitBVO extends SuperVO {
 /**
-*项目编码
+*上层单据主键
 */
-public String code;
+public String pk_b;
 /**
-*创建时间
+*所属组织
 */
-public UFDateTime creationtime;
+public String pk_corp;
 /**
-*创建人
+*所属部门
 */
-public String creator;
+public String pk_deptdoc;
 /**
-*取数类型
+*人员pk
 */
-public Integer datatype;
+public String pk_psndoc;
 /**
-*修改时间
+*主键b
 */
-public UFDateTime modifiedtime;
+public String pk_wa_ba_unit_b;
 /**
-*修改人
+*人员编码
 */
-public String modifier;
+public String psncode;
 /**
-*项目名称
+*人员名称
 */
-public String name;
+public String psnname;
 /**
-*项目主键
+*性别
 */
-public String pk_ba_item;
-/**
-*集团
-*/
-public String pk_group;
-/**
-*组织
-*/
-public String pk_org;
-/**
-*组织多版本
-*/
-public String pk_org_v;
+public String sex;
 /**
 *时间戳
 */
 public UFDateTime ts;
-/**
-*手动输入
-*/
-public UFDouble value;
 /**
 *自定义项1
 */
@@ -141,212 +125,148 @@ public String vdef8;
 *自定义项9
 */
 public String vdef9;
-/**
-*计算公式
-*/
-public String vformula;
-/**
-*外部数据源
-*/
-public String vformulastr;
 /** 
-* 获取项目编码
+* 获取上层单据主键
 *
-* @return 项目编码
+* @return 上层单据主键
 */
-public String getCode () {
-return this.code;
+public String getPk_b () {
+return this.pk_b;
  } 
 
 /** 
-* 设置项目编码
+* 设置上层单据主键
 *
-* @param code 项目编码
+* @param pk_b 上层单据主键
 */
-public void setCode ( String code) {
-this.code=code;
+public void setPk_b ( String pk_b) {
+this.pk_b=pk_b;
  } 
 
 /** 
-* 获取创建时间
+* 获取所属组织
 *
-* @return 创建时间
+* @return 所属组织
 */
-public UFDateTime getCreationtime () {
-return this.creationtime;
+public String getPk_corp () {
+return this.pk_corp;
  } 
 
 /** 
-* 设置创建时间
+* 设置所属组织
 *
-* @param creationtime 创建时间
+* @param pk_corp 所属组织
 */
-public void setCreationtime ( UFDateTime creationtime) {
-this.creationtime=creationtime;
+public void setPk_corp ( String pk_corp) {
+this.pk_corp=pk_corp;
  } 
 
 /** 
-* 获取创建人
+* 获取所属部门
 *
-* @return 创建人
+* @return 所属部门
 */
-public String getCreator () {
-return this.creator;
+public String getPk_deptdoc () {
+return this.pk_deptdoc;
  } 
 
 /** 
-* 设置创建人
+* 设置所属部门
 *
-* @param creator 创建人
+* @param pk_deptdoc 所属部门
 */
-public void setCreator ( String creator) {
-this.creator=creator;
+public void setPk_deptdoc ( String pk_deptdoc) {
+this.pk_deptdoc=pk_deptdoc;
  } 
 
 /** 
-* 获取取数类型
+* 获取人员pk
 *
-* @return 取数类型
-* @see String
+* @return 人员pk
 */
-public Integer getDatatype () {
-return this.datatype;
+public String getPk_psndoc () {
+return this.pk_psndoc;
  } 
 
 /** 
-* 设置取数类型
+* 设置人员pk
 *
-* @param datatype 取数类型
-* @see String
+* @param pk_psndoc 人员pk
 */
-public void setDatatype ( Integer datatype) {
-this.datatype=datatype;
+public void setPk_psndoc ( String pk_psndoc) {
+this.pk_psndoc=pk_psndoc;
  } 
 
 /** 
-* 获取修改时间
+* 获取主键b
 *
-* @return 修改时间
+* @return 主键b
 */
-public UFDateTime getModifiedtime () {
-return this.modifiedtime;
+public String getPk_wa_ba_unit_b () {
+return this.pk_wa_ba_unit_b;
  } 
 
 /** 
-* 设置修改时间
+* 设置主键b
 *
-* @param modifiedtime 修改时间
+* @param pk_wa_ba_unit_b 主键b
 */
-public void setModifiedtime ( UFDateTime modifiedtime) {
-this.modifiedtime=modifiedtime;
+public void setPk_wa_ba_unit_b ( String pk_wa_ba_unit_b) {
+this.pk_wa_ba_unit_b=pk_wa_ba_unit_b;
  } 
 
 /** 
-* 获取修改人
+* 获取人员编码
 *
-* @return 修改人
+* @return 人员编码
 */
-public String getModifier () {
-return this.modifier;
+public String getPsncode () {
+return this.psncode;
  } 
 
 /** 
-* 设置修改人
+* 设置人员编码
 *
-* @param modifier 修改人
+* @param psncode 人员编码
 */
-public void setModifier ( String modifier) {
-this.modifier=modifier;
+public void setPsncode ( String psncode) {
+this.psncode=psncode;
  } 
 
 /** 
-* 获取项目名称
+* 获取人员名称
 *
-* @return 项目名称
+* @return 人员名称
 */
-public String getName () {
-return this.name;
+public String getPsnname () {
+return this.psnname;
  } 
 
 /** 
-* 设置项目名称
+* 设置人员名称
 *
-* @param name 项目名称
+* @param psnname 人员名称
 */
-public void setName ( String name) {
-this.name=name;
+public void setPsnname ( String psnname) {
+this.psnname=psnname;
  } 
 
 /** 
-* 获取项目主键
+* 获取性别
 *
-* @return 项目主键
+* @return 性别
 */
-public String getPk_ba_item () {
-return this.pk_ba_item;
+public String getSex () {
+return this.sex;
  } 
 
 /** 
-* 设置项目主键
+* 设置性别
 *
-* @param pk_ba_item 项目主键
+* @param sex 性别
 */
-public void setPk_ba_item ( String pk_ba_item) {
-this.pk_ba_item=pk_ba_item;
- } 
-
-/** 
-* 获取集团
-*
-* @return 集团
-*/
-public String getPk_group () {
-return this.pk_group;
- } 
-
-/** 
-* 设置集团
-*
-* @param pk_group 集团
-*/
-public void setPk_group ( String pk_group) {
-this.pk_group=pk_group;
- } 
-
-/** 
-* 获取组织
-*
-* @return 组织
-*/
-public String getPk_org () {
-return this.pk_org;
- } 
-
-/** 
-* 设置组织
-*
-* @param pk_org 组织
-*/
-public void setPk_org ( String pk_org) {
-this.pk_org=pk_org;
- } 
-
-/** 
-* 获取组织多版本
-*
-* @return 组织多版本
-*/
-public String getPk_org_v () {
-return this.pk_org_v;
- } 
-
-/** 
-* 设置组织多版本
-*
-* @param pk_org_v 组织多版本
-*/
-public void setPk_org_v ( String pk_org_v) {
-this.pk_org_v=pk_org_v;
+public void setSex ( String sex) {
+this.sex=sex;
  } 
 
 /** 
@@ -365,24 +285,6 @@ return this.ts;
 */
 public void setTs ( UFDateTime ts) {
 this.ts=ts;
- } 
-
-/** 
-* 获取手动输入
-*
-* @return 手动输入
-*/
-public UFDouble getValue () {
-return this.value;
- } 
-
-/** 
-* 设置手动输入
-*
-* @param value 手动输入
-*/
-public void setValue ( UFDouble value) {
-this.value=value;
  } 
 
 /** 
@@ -745,45 +647,9 @@ public void setVdef9 ( String vdef9) {
 this.vdef9=vdef9;
  } 
 
-/** 
-* 获取计算公式
-*
-* @return 计算公式
-*/
-public String getVformula () {
-return this.vformula;
- } 
-
-/** 
-* 设置计算公式
-*
-* @param vformula 计算公式
-*/
-public void setVformula ( String vformula) {
-this.vformula=vformula;
- } 
-
-/** 
-* 获取外部数据源
-*
-* @return 外部数据源
-*/
-public String getVformulastr () {
-return this.vformulastr;
- } 
-
-/** 
-* 设置外部数据源
-*
-* @param vformulastr 外部数据源
-*/
-public void setVformulastr ( String vformulastr) {
-this.vformulastr=vformulastr;
- } 
-
 
   @Override
   public IVOMeta getMetaData() {
-    return VOMetaFactory.getInstance().getVOMeta("hrwa.wa_ba_item");
+    return VOMetaFactory.getInstance().getVOMeta("hrwa.WaBaUnitBVO");
   }
 }
