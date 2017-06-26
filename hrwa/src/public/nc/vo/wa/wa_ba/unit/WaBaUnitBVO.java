@@ -10,10 +10,6 @@ import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 public class WaBaUnitBVO extends SuperVO {
 /**
-*上层单据主键
-*/
-public String pk_b;
-/**
 *所属组织
 */
 public String pk_corp;
@@ -25,6 +21,10 @@ public String pk_deptdoc;
 *人员pk
 */
 public String pk_psndoc;
+/**
+*上层单据主键
+*/
+public String pk_wa_ba_unit;
 /**
 *子表主键
 */
@@ -126,24 +126,6 @@ public String vdef8;
 */
 public String vdef9;
 /** 
-* 获取上层单据主键
-*
-* @return 上层单据主键
-*/
-public String getPk_b () {
-return this.pk_b;
- } 
-
-/** 
-* 设置上层单据主键
-*
-* @param pk_b 上层单据主键
-*/
-public void setPk_b ( String pk_b) {
-this.pk_b=pk_b;
- } 
-
-/** 
 * 获取所属组织
 *
 * @return 所属组织
@@ -195,6 +177,24 @@ return this.pk_psndoc;
 */
 public void setPk_psndoc ( String pk_psndoc) {
 this.pk_psndoc=pk_psndoc;
+ } 
+
+/** 
+* 获取上层单据主键
+*
+* @return 上层单据主键
+*/
+public String getPk_wa_ba_unit () {
+return this.pk_wa_ba_unit;
+ } 
+
+/** 
+* 设置上层单据主键
+*
+* @param pk_wa_ba_unit 上层单据主键
+*/
+public void setPk_wa_ba_unit ( String pk_wa_ba_unit) {
+this.pk_wa_ba_unit=pk_wa_ba_unit;
  } 
 
 /** 

@@ -39,7 +39,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="treeCreateStrategy" class="nc.vo.bd.meta.BDObjectTreeCreateStrategy">
 		<property name="factory" ref="boadatorfactory" />
 		<property name="hierarchicalData" ref="defaultHierachicalData"/>
-		<property name="rootName" value="产品分类" />
+		<property name="rootName" value="奖金分配单元" />
 	</bean>
 
 	<!-- 层次应用模型 -->
