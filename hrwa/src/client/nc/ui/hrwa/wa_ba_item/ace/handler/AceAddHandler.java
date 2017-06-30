@@ -16,7 +16,7 @@ public class AceAddHandler implements IAppEventHandler<AddEvent> {
 	public void handleAppEvent(AddEvent e) {
 		BillCardPanel cardPanel = e.getBillForm().getBillCardPanel();
 		AppContext appcontext = AppContext.getInstance();
-		//WorkbenchEnvironment  workbenchEnvironment = WorkbenchEnvironment.getInstance();
+		WorkbenchEnvironment  workbenchEnvironment = WorkbenchEnvironment.getInstance();
 		String pk_org = e.getContext().getPk_org();
 		String pk_group = appcontext.getPkGroup();
 		String pk_user = appcontext.getPkUser();
