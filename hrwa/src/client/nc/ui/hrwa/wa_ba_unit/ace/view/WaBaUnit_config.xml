@@ -73,6 +73,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="appModel" />
 		<property name="templateContainer" ref="templateContainer" />
 		<property name="componentValueManager" ref="componentValueManager" />
+		<!-- 空行过滤器，卡片界面根据此过滤器删除表体空行 -->
+		<property name="blankChildrenFilter">
+			<bean class="nc.ui.pubapp.uif2app.view.value.SingleFieldBlankChildrenFilter ">
+				<property name="fieldName" value="pk_psndoc" />
+			</bean>
+		</property>
 		<!--tsy 添加表体按钮-->
 		<property name="bodyLineActions">
 			<list>
@@ -87,6 +93,14 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	</bean>
 
 	<!-- 事件监听-->
+	<bean id="childrenPicky" class="nc.ui.pubapp.uif2app.event.ChildrenPicky">
+		<property name="billform" ref="billFormEditor" />
+		<property name="bodyVoClasses">
+			<list>
+				<value>nc.vo.wa.wa_ba.unit.WaBaUnitBVO</value>
+			</list>
+		</property>
+	</bean>
 	<bean id="appEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
 		<property name="model" ref="appModel" />
 		<property name="handlerGroup">
@@ -96,6 +110,22 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 					<property name="event" value="nc.ui.pubapp.uif2app.event.billform.AddEvent"/>
 					<property name="handler">
 						<bean class="nc.ui.hrwa.wa_ba_unit.ace.handler.AceAddHandler"/>
+					</property>
+				</bean>
+				<!-- 表体字段编辑前事件 -->
+				<bean class="nc.ui.pubapp.uif2app.event.EventHandlerGroup">
+					<property name="event" value="nc.ui.pubapp.uif2app.event.card.CardBodyBeforeEditEvent" />
+					<property name="picky" ref="childrenPicky" />
+					<property name="handler">
+						<bean class="nc.ui.hrwa.wa_ba_unit.ace.handler.AceBodyBeforeEditHandler" />
+					</property>
+				</bean>
+				<!-- 表体字段编辑后事件 -->
+				<bean class="nc.ui.pubapp.uif2app.event.EventHandlerGroup">
+					<property name="event" value="nc.ui.pubapp.uif2app.event.card.CardBodyAfterEditEvent" />
+					<property name="picky" ref="childrenPicky" />
+					<property name="handler">
+						<bean class="nc.ui.hrwa.wa_ba_unit.ace.handler.AceBodyAfterEditHandler" />
 					</property>
 				</bean>
 			</list>
