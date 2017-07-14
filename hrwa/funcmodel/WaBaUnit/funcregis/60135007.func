@@ -1,38 +1,54 @@
-<?xml version="1.0" encoding="gbk"?>
+<?xml version="1.0" encoding="GBK"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<bean id="funcregister" class="nc.pubapp.pade.funcmodel.vo.FuncRegister"><property name="bmf_path" value="hrwa\METADATA\wa_ba_unit.bmf"/>
+<bean id="funcregister" class="nc.pubapp.pade.funcmodel.vo.FuncRegister">
+<property name="bmf_path" value="hrwa\METADATA\wa_ba_unit.bmf"/>
+<property name="busiActiveList">
+<list>
+</list>
+</property>
 <property name="cfunid" value="0001ZZ10000000001XG1"/>
 <property name="class_name" value="nc.ui.pubapp.uif2app.ToftPanelAdaptorEx"/>
 <property name="dr" value="0"/>
+<property name="fun_desc" value=""/>
 <property name="fun_name" value="奖金分配单元"/>
 <property name="fun_property" value="0"/>
 <property name="funcRegisterButtonList">
-<list></list>
+<list>
+</list>
 </property>
 <property name="funcRegisterParamList">
-<list><bean class="nc.pubapp.pade.funcmodel.vo.FuncRegisterParam"><property name="dr" value="0"/>
+<list>
+<bean class="nc.pubapp.pade.funcmodel.vo.FuncRegisterParam">
+<property name="dr" value="0"/>
 <property name="paramname" value="BeanConfigFilePath"/>
 <property name="paramvalue" value="nc/ui/hrwa/wa_ba_unit/ace/view/WaBaUnit_config.xml"/>
 <property name="parentid" value="0001ZZ10000000001XG1"/>
-<property name="pk_param" value="0001ZZ10000000001XG2"/>
-<property name="ts" value="2017-06-22 14:29:41"/>
+<property name="pk_param" value="0001ZZ10000000002P80"/>
+<property name="ts" value="2017-06-29 11:29:41"/>
 </bean>
 </list>
 </property>
 <property name="funcode" value="60135007"/>
 <property name="funnode_path" value="hrwa\ace\client\60135007.fnf"/>
 <property name="funtype" value="0"/>
+<property name="help_name" value=""/>
 <property name="isbuttonpower" value="false"/>
+<property name="iscauserusable" value="false"/>
 <property name="isenable" value="true"/>
 <property name="isfunctype" value="false"/>
+<property name="mdid" value="f69f0eb4-bd23-426a-bc49-20e60f8c4d70"/>
 <property name="menuModelFilePath" value="hrwa/funcmodel/WaBaUnit/menuitemregis/60135007.menu"/>
 <property name="metaDataID" value="f69f0eb4-bd23-426a-bc49-20e60f8c4d70"/>
 <property name="moduleName" value="hrwa"/>
-<property name="orgtypecode" value="GROUPORGTYPE00000000"/>
+<property name="orgtypecode" value="HRORGTYPE00000000000"/>
 <property name="own_module" value="6013"/>
+<property name="pageList">
+<list>
+</list>
+</property>
 <property name="parent_id" value="1001ZZ10000000005YIA"/>
 <property name="pk_group" value="~"/>
-<property name="ts" value="2017-06-22 14:29:41"/>
+<property name="ts" value="2017-06-29 11:29:41"/>
 <property name="uif2model_path" value="hrwa\ace\uif2model\60135007.umf"/>
 </bean>
 

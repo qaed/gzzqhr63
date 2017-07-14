@@ -94,7 +94,7 @@ public class WaBaSchBVO extends SuperVO {
 	 */
 	public String memo5;
 	/**
-	 * 主表主键
+	 * 上层单据主键
 	 */
 	public String pk_ba_sch_h;
 	/**
@@ -237,12 +237,11 @@ public class WaBaSchBVO extends SuperVO {
 	 * 奖金项目5
 	 */
 	public String waitem5;
-	
 	/**
-	 * VO改造：孙实体数组
+	 * 孙实体
 	 */
-	public WaBaSchTVO[] pk_wabasch_t=null;
-	
+	public WaBaSchTVO[] pk_s = null;
+
 	/**
 	 * 获取奖金分配负责人
 	 * 
@@ -643,19 +642,19 @@ public class WaBaSchBVO extends SuperVO {
 	}
 
 	/**
-	 * 获取主表主键
+	 * 获取上层单据主键
 	 * 
-	 * @return 主表主键
+	 * @return 上层单据主键
 	 */
 	public String getPk_ba_sch_h() {
 		return this.pk_ba_sch_h;
 	}
 
 	/**
-	 * 设置主表主键
+	 * 设置上层单据主键
 	 * 
 	 * @param pk_ba_sch_h
-	 *            主表主键
+	 *            上层单据主键
 	 */
 	public void setPk_ba_sch_h(String pk_ba_sch_h) {
 		this.pk_ba_sch_h = pk_ba_sch_h;
@@ -1331,11 +1330,13 @@ public class WaBaSchBVO extends SuperVO {
 		return VOMetaFactory.getInstance().getVOMeta("hrwa.WaBaSchBVO");
 	}
 
-	public WaBaSchTVO[] getPk_wabasch_t() {
-		return pk_wabasch_t;
+	public WaBaSchTVO[] getPk_s() {
+		return pk_s;
 	}
 
-	public void setPk_wabasch_t(WaBaSchTVO[] pk_wabasch_t) {
-		this.pk_wabasch_t = pk_wabasch_t;
+	public void setPk_s(WaBaSchTVO[] pk_s) {
+		this.pk_s = pk_s;
 	}
+
+
 }

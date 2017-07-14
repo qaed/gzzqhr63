@@ -26,7 +26,6 @@ import nc.vo.bd.psn.PsndocVO;
 public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEditEvent> {
 	@Override
 	public void handleAppEvent(CardBodyAfterEditEvent e) {
-		HYPubBO_Client bo = new HYPubBO_Client();
 		// 带出人员名字
 		UIRefPane refmodel = (UIRefPane) e.getBillCardPanel().getBodyItem("pk_psndoc").getComponent();
 		PsndocRefTreeModel pt = (PsndocRefTreeModel) refmodel.getRefModel();// 添加过滤

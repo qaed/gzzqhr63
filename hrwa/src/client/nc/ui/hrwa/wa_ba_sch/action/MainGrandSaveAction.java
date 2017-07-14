@@ -9,6 +9,7 @@ import nc.bs.uif2.validation.ValidationException;
 import nc.ui.pubapp.uif2app.actions.IDataOperationService;
 import nc.ui.pubapp.uif2app.components.grand.CardGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
+import nc.ui.pubapp.uif2app.view.ShowUpableBillForm;
 import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
@@ -25,6 +26,7 @@ public class MainGrandSaveAction extends NCAction {
 	private MainGrandModel model;
 	private CardGrandPanelComposite editor;
 	private IDataOperationService service;
+	private ShowUpableBillForm sunbillfrom;
 
 	public IDataOperationService getService() {
 		return this.service;
@@ -44,7 +46,10 @@ public class MainGrandSaveAction extends NCAction {
 	// 注意将孙面板XXX属性设置
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
+		
+//		editor.getModel().getBufferCardAddMap()
 		Object value = editor.getValue();
+//		model.getBufferCardAddMap();
 		if (model.getMainModel().getUiState() == UIState.ADD) {
 			doAddSave(value);
 		} else if (model.getMainModel().getUiState() == UIState.EDIT) {
@@ -112,4 +117,13 @@ public class MainGrandSaveAction extends NCAction {
 	public void setValidationService(IValidationService validationService) {
 		this.validationService = validationService;
 	}
+
+	public ShowUpableBillForm getSunbillfrom() {
+		return sunbillfrom;
+	}
+
+	public void setSunbillfrom(ShowUpableBillForm sunbillfrom) {
+		this.sunbillfrom = sunbillfrom;
+	}
+
 }

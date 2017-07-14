@@ -1,6 +1,8 @@
 package nc.ui.hrwa.wa_ba_sch.ace.serviceproxy;
 
 import nc.bs.bank_cvp.compile.registry.BussinessMethods;
+import nc.bs.framework.common.NCLocator;
+import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.ui.pubapp.pub.task.ISingleBillService;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 
@@ -12,12 +14,10 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
  * @author duy
  */
 public class AceWaBaSchDeleteProxy implements ISingleBillService<AggWaBaSchHVO> {
-
 	@Override
 	public AggWaBaSchHVO operateBill(AggWaBaSchHVO aggvo) throws Exception {
-		// TODO É¾³ý²Ù×÷
-		throw new Exception("AceWaBaSchDeleteProxyÌí¼ÓÉ¾³ý²Ù×÷");
-//		return null;
+		IWaBaSchMaintain operator = NCLocator.getInstance().lookup(IWaBaSchMaintain.class);
+		operator.delete(new AggWaBaSchHVO[] { aggvo });
+		return aggvo;
 	}
-	
 }

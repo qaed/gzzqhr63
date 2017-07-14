@@ -16,14 +16,20 @@ import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUpdateBP;
+import nc.bs.hrwa.wa_ba_sch.ace.rule.GenWaBonusRule;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedRule;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
+import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
 import nc.impl.pubapp.pattern.data.vo.VOUpdate;
+import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
+import nc.md.model.MetaDataException;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
+import nc.ui.pubapp.uif2app.query2.action.QueryExecutor;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
@@ -36,6 +42,7 @@ import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
+import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 
 public abstract class AceWaBaSchPubServiceImpl {
 	IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
@@ -67,7 +74,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 			for (CircularlyAccessibleValueObject childVO : afterChildVOS) {
 				// 分析一条子数据
 				if (bodyTabCode.equals("pk_b")) {
-					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_wabasch_t();
+					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
 						persist.saveBill(grandvos[i]);
@@ -80,13 +87,6 @@ public abstract class AceWaBaSchPubServiceImpl {
 
 	// 删除
 	public void pubdeleteBills(IBill[] vos) throws BusinessException {
-		// TODO 检查逻辑对不对
-		// try {
-		// // 调用BP
-		// new AceWaBaSchDeleteBP().delete(clientFullVOs);
-		// } catch (Exception e) {
-		// ExceptionUtils.marsh(e);
-		// }
 		try {
 			BillTransferTool<AggWaBaSchHVO> transferTool = new BillTransferTool<AggWaBaSchHVO>((AggWaBaSchHVO[]) vos);
 			AggWaBaSchHVO[] fullBills = transferTool.getClientFullInfoBill();
@@ -102,11 +102,11 @@ public abstract class AceWaBaSchPubServiceImpl {
 						Collection originGVOs =
 								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
 						WaBaSchTVO[] originGrandvos = (WaBaSchTVO[]) originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
-						((WaBaSchBVO) childVO).setPk_wabasch_t(originGrandvos);
+						((WaBaSchBVO) childVO).setPk_s(originGrandvos);
 						for (int i = 0; originGrandvos != null && i < originGrandvos.length; i++) {
 							persist.deleteBill(originGrandvos[i]);
+							// persist.deleteBillFromDB(originGrandvos[i]);
 						}
-						// this.deleteVO((List<ISuperVO>) originGVOs);
 					}
 				}
 			}
@@ -152,7 +152,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
 						if (originGVOs != null && originGVOs.size() != 0) {
 							WaBaSchTVO[] originGrandvos = (WaBaSchTVO[]) originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
-							((WaBaSchBVO) childVO).setPk_wabasch_t(originGrandvos);
+							((WaBaSchBVO) childVO).setPk_s(originGrandvos);
 							IVOMeta meta = ((SuperVO) (originGVOs.iterator().next())).getMetaData();
 							if (originGrandVOs.get(meta) == null) {
 								originGrandVOs.put(meta, (List<ISuperVO>) originGVOs);
@@ -165,7 +165,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 				SuperVO[] currentChildrens = (SuperVO[]) aggvos[0].getTableVO(tableCode);
 				for (SuperVO childVO : currentChildrens) {
 					if (tableCode.equals("pk_b")) {
-						ISuperVO[] currentGrandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_wabasch_t();
+						ISuperVO[] currentGrandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 						for (int i = 0; currentGrandvos != null && i < currentGrandvos.length; i++) {
 							((WaBaSchTVO) currentGrandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
 						}
@@ -359,6 +359,29 @@ public abstract class AceWaBaSchPubServiceImpl {
 	}
 
 	/**
+	 * 加载孙表数据
+	 * 
+	 * @param bills
+	 * @throws BusinessException
+	 */
+	private void loadGrandData(AggWaBaSchHVO[] bills) throws BusinessException {
+		// TODO 自动生成的方法存根
+		if (bills != null && bills.length > 0) {
+			for (AggWaBaSchHVO aggvo : bills) {
+				WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
+				if (bvos != null && bvos.length > 0) {
+					for (WaBaSchBVO bvo : bvos) {
+						Collection gvos =
+								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'", false);
+						WaBaSchTVO[] tvos = (WaBaSchTVO[]) gvos.toArray(new WaBaSchTVO[gvos.size()]);
+						bvo.setPk_s(tvos);
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * 由子类实现，查询之前对queryScheme进行加工，加入自己的逻辑
 	 * 
 	 * @param queryScheme
@@ -383,11 +406,14 @@ public abstract class AceWaBaSchPubServiceImpl {
 
 	// 审批
 	public AggWaBaSchHVO[] pubapprovebills(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
+		AroundProcesser<AggWaBaSchHVO> processer = new AroundProcesser<AggWaBaSchHVO>(null);
 		for (int i = 0; clientFullVOs != null && i < clientFullVOs.length; i++) {
 			clientFullVOs[i].getParentVO().setStatus(VOStatus.UPDATED);
 		}
 		AceWaBaSchApproveBP bp = new AceWaBaSchApproveBP();
 		AggWaBaSchHVO[] retvos = bp.approve(clientFullVOs, originBills);
+		processer.addAfterRule(new GenWaBonusRule());
+		processer.after(retvos);
 		return retvos;
 	}
 

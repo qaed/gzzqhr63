@@ -1,21 +1,29 @@
 package nc.impl.pub.ace;
 
 import nc.vo.wa.wa_ba.item.ItemsVO;
+import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
+import nc.bs.framework.common.NCLocator;
+import nc.bs.hrwa.wa_ba_item.ace.rule.WaItemDataUniqueCheckRule;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
 import nc.impl.pubapp.pattern.data.vo.VOQuery;
 import nc.impl.pubapp.pattern.data.vo.VOUpdate;
 import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
+import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDateTime;
+import nc.vo.pubapp.AppContext;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
 public abstract class AceWa_ba_itemPubServiceImpl {
-
+	IMDPersistenceQueryService query = NCLocator.getInstance().lookup(IMDPersistenceQueryService.class);
 	// 增加方法
 	public ItemsVO inserttreeinfo(ItemsVO vo) throws BusinessException {
 		try {
 			// 添加BP规则
 			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
+			processer.addBeforeRule(new WaItemDataUniqueCheckRule());
 			processer.before(new ItemsVO[] { vo });
 			VOInsert<ItemsVO> ins = new VOInsert<ItemsVO>();
 			ItemsVO[] superVOs = ins.insert(new ItemsVO[] { vo });
@@ -30,8 +38,10 @@ public abstract class AceWa_ba_itemPubServiceImpl {
 	public void deletetreeinfo(ItemsVO vo) throws BusinessException {
 		try {
 			// 添加BP规则
-			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
-			processer.before(new ItemsVO[] { vo });
+//			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
+//			processer.before(new ItemsVO[] { vo });
+			//TODO 已经使用过的不能删除
+//			query.queryBillOfNCObjectByCond(WaBaUnitHVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
 			VODelete<ItemsVO> voDel = new VODelete<ItemsVO>();
 			voDel.delete(new ItemsVO[] { vo });
 		} catch (Exception e) {
@@ -47,6 +57,9 @@ public abstract class AceWa_ba_itemPubServiceImpl {
 			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
 			ItemsVO[] originVOs = this.getTreeCardVOs(new ItemsVO[] { vo });
 			processer.before(new ItemsVO[] { vo });
+			// 设置修改人和时间
+			vo.setModifier(AppContext.getInstance().getPkUser());
+			vo.setModifiedtime(new UFDateTime());
 			VOUpdate<ItemsVO> upd = new VOUpdate<ItemsVO>();
 			ItemsVO[] superVOs = upd.update(new ItemsVO[] { vo }, originVOs);
 			return superVOs[0];

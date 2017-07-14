@@ -57,6 +57,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	</bean>
 
 	<!--卡控件 -->
+	<!--
+	<bean id="billFormEditor" class="nc.ui.hrwa.wa_ba_item.ace.view.WaBaItemBillFormEditor"
+	-->
 	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.BillForm"
 	init-method="initUI">
 		<property name="model" ref="appModel" />
@@ -74,6 +77,13 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 					<property name="event" value="nc.ui.pubapp.uif2app.event.billform.AddEvent"/>
 					<property name="handler">
 						<bean class="nc.ui.hrwa.wa_ba_item.ace.handler.AceAddHandler"/>
+					</property>
+				</bean>
+				<!-- 表头表尾字段编辑后事件 -->
+				<bean class="nc.ui.pubapp.uif2app.event.EventHandlerGroup">
+					<property name="event" value="nc.ui.pubapp.uif2app.event.card.CardHeadTailAfterEditEvent" />
+					<property name="handler">
+						<bean class="nc.ui.hrwa.wa_ba_item.ace.handler.AceHeadTailAfterEditHandler" />
 					</property>
 				</bean>
 			</list>

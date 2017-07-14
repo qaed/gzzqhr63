@@ -3,13 +3,19 @@ package nc.impl.hrwa;
 import java.util.ArrayList;
 
 import nc.bs.framework.common.NCLocator;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.impl.pub.ace.AceWaBaUnitPubServiceImpl;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
+import nc.vo.bd.meta.AggVOBDObject;
+import nc.vo.bd.meta.BatchOperateVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDateTime;
+import nc.vo.pubapp.AppContext;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
+import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
 public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements nc.itf.hrwa.IWaBaUnitMaintain {
 	/*
@@ -20,22 +26,27 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 
 	@Override
 	public void delete(Object vos) throws BusinessException {
-		// super.deletetreeinfo(vos);
-		persist.deleteBill(vos);
+		 super.deletetreeinfo(vos);
+//		persist.deleteBill(vos);
 	}
 
 	@Override
 	public Object insert(Object vos) throws BusinessException {
-		// return super.inserttreeinfo(vos);
-		BillInsert<AggWaBaUnitHVO> billinsert = new BillInsert<AggWaBaUnitHVO>();
-		AggWaBaUnitHVO[] aggvo = new AggWaBaUnitHVO[1];
-		aggvo[0] = (AggWaBaUnitHVO) vos;
-		return billinsert.insert(aggvo)[0];
+		 return super.inserttreeinfo(vos);
+//		BillInsert<AggWaBaUnitHVO> billinsert = new BillInsert<AggWaBaUnitHVO>();
+//		AggWaBaUnitHVO[] aggvo = new AggWaBaUnitHVO[1];
+//		aggvo[0] = (AggWaBaUnitHVO) vos;
+//		new WaUnitDataUniqueCheckRule().process(aggvo);
+//		return billinsert.insert(aggvo)[0];
 	}
 
 	@Override
 	public Object update(Object vos) throws BusinessException {
 		// return super.updatetreeinfo(vos);
+		// 设置修改人和时间
+		WaBaUnitHVO hvo = ((AggWaBaUnitHVO) vos).getParentVO();
+		hvo.setModifier(AppContext.getInstance().getPkUser());
+		hvo.setModifiedtime(new UFDateTime());
 		String pk = persist.saveBill(vos);
 		ArrayList<String> pks = new ArrayList<String>();
 		pks.add(pk);
@@ -46,7 +57,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	@Override
 	public Object[] query(String whereSql) throws BusinessException {
 		// return super.querytreeinfo(whereSql);
-		String sql = " isnull(dr,0)=0 " + whereSql;
+		String sql = " isnull(dr,0)=0 and " + whereSql;
 		return query.queryBillOfVOByCond(AggWaBaUnitHVO.class, sql, false).toArray();
 	}
 }

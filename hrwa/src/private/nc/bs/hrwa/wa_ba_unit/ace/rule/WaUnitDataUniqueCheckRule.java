@@ -1,15 +1,20 @@
 package nc.bs.hrwa.wa_ba_unit.ace.rule;
 
+import freemarker.debug.Debugger;
+import nc.bs.hrss.pub.Logger;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
 import nc.impl.pubapp.pattern.rule.IRule;
+import nc.vo.logging.Debug;
 import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
+import nc.vo.pubapp.pattern.log.Log;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
 public class WaUnitDataUniqueCheckRule implements IRule<AggWaBaUnitHVO> {
 	@Override
 	public void process(AggWaBaUnitHVO[] aggvo) {
+		Debug.debug("校验奖金单元编码、名字是否唯一:" + this.getClass().getName());
 		if (aggvo == null || aggvo.length == 0) {
 			return;
 		}

@@ -1,38 +1,54 @@
-<?xml version="1.0" encoding="gbk"?>
+<?xml version="1.0" encoding="GBK"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<bean id="funcregister" class="nc.pubapp.pade.funcmodel.vo.FuncRegister"><property name="bmf_path" value="hrwa\METADATA\wa_ba_item.bpf.bmf"/>
+<bean id="funcregister" class="nc.pubapp.pade.funcmodel.vo.FuncRegister">
+<property name="bmf_path" value="hrwa\METADATA\wa_ba_item.bpf.bmf"/>
+<property name="busiActiveList">
+<list>
+</list>
+</property>
 <property name="cfunid" value="0001ZZ10000000001NEX"/>
 <property name="class_name" value="nc.ui.pubapp.uif2app.ToftPanelAdaptorEx"/>
 <property name="dr" value="0"/>
+<property name="fun_desc" value=""/>
 <property name="fun_name" value="奖金项目设置"/>
 <property name="fun_property" value="0"/>
 <property name="funcRegisterButtonList">
-<list></list>
+<list>
+</list>
 </property>
 <property name="funcRegisterParamList">
-<list><bean class="nc.pubapp.pade.funcmodel.vo.FuncRegisterParam"><property name="dr" value="0"/>
+<list>
+<bean class="nc.pubapp.pade.funcmodel.vo.FuncRegisterParam">
+<property name="dr" value="0"/>
 <property name="paramname" value="BeanConfigFilePath"/>
 <property name="paramvalue" value="nc/ui/hrwa/wa_ba_item/ace/view/Wa_ba_item_config.xml"/>
 <property name="parentid" value="0001ZZ10000000001NEX"/>
-<property name="pk_param" value="0001ZZ10000000001NEY"/>
-<property name="ts" value="2017-06-20 18:10:23"/>
+<property name="pk_param" value="0001ZZ100000000039AA"/>
+<property name="ts" value="2017-07-04 13:59:41"/>
 </bean>
 </list>
 </property>
 <property name="funcode" value="60135006"/>
 <property name="funnode_path" value="hrwa\ace\client\60135006.fnf"/>
 <property name="funtype" value="0"/>
+<property name="help_name" value=""/>
 <property name="isbuttonpower" value="false"/>
+<property name="iscauserusable" value="false"/>
 <property name="isenable" value="true"/>
 <property name="isfunctype" value="false"/>
+<property name="mdid" value="be24255b-50a3-43bf-9e0b-79b543ce73f8"/>
 <property name="menuModelFilePath" value="hrwa/funcmodel/wa_ba_item/menuitemregis/60135006.menu"/>
 <property name="metaDataID" value="be24255b-50a3-43bf-9e0b-79b543ce73f8"/>
 <property name="moduleName" value="hrwa"/>
-<property name="orgtypecode" value="GROUPORGTYPE00000000"/>
+<property name="orgtypecode" value="HRORGTYPE00000000000"/>
 <property name="own_module" value="6013"/>
+<property name="pageList">
+<list>
+</list>
+</property>
 <property name="parent_id" value="1001ZZ10000000005YIA"/>
 <property name="pk_group" value="~"/>
-<property name="ts" value="2017-06-20 18:10:23"/>
+<property name="ts" value="2017-07-04 13:59:41"/>
 <property name="uif2model_path" value="hrwa\ace\uif2model\60135006.umf"/>
 </bean>
 

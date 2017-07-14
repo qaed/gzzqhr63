@@ -61,7 +61,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="grandTabAndVOMap">
 			<map>
 				<!--key为孙页签的tabcode-->
-				<entry key="WaBaSchTVO">
+				<entry key="pk_s">
 					<!--value为孙页签对应的VO -->
 					<ref bean="WaBaSchTVO" />
 				</entry>
@@ -89,7 +89,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!--列表的伸缩按钮-->
 		<property name="expendShrinkGrandListAction" ref="expendShrinkGrandListAction"></property>
 		<!--孙表的提示信息，默认为"孙表信息"，可以不配-->
-		<property name="grandString" value="孙表信息" />
+		<!--<property name="grandString" value="孙表信息" />-->
 	</bean>
 	<!-- 主子孙卡片界面-->
 	<bean id="MainGrandbillFormEditor" class="nc.ui.pubapp.uif2app.components.grand.CardGrandPanelComposite"
@@ -109,11 +109,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!--孙表的伸缩按钮-->
 		<property name="expendShrinkGrandCardAction" ref="expendShrinkGrandCardAction"></property>
 		<!--孙表的提示信息，默认为"孙表信息"，可以不配-->
-		<property name="grandString" value="孙表信息"></property>
+		<!--<property name="grandString" value="孙表信息"></property>-->
 	</bean>
 	<bean id="mainGrandBlankFilter"
 	class="nc.ui.pubapp.uif2app.components.grand.MainGrandBlankFilter">
 		<!--过滤的MAP -->
+
 		<property name="childFilterMap">
 			<map>
 				<entry>
@@ -122,13 +123,17 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 						<value>pk_b</value>
 					</key>
 					<list>
-						<!--检验是否空行字段code
-						<value>cmaterialvid</value>-->
+						<!--检验是否空行字段code-->
+						<value>ba_unit_code</value>
 					</list>
 				</entry>
 
 			</map>
 		</property>
+		<property name="grandFilterMap">
+			<map></map>
+		</property>
+
 	</bean>
 	<!-- 维持主子孙中间关系调停者的处理 -->
 	<bean id="mainGrandMediator" class="nc.ui.pubapp.uif2app.components.grand.mediator.MainGrandMediator">
@@ -159,34 +164,35 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="nodekey" value="btg"></property>
 		<property name="showOrgPanel" value="false" />
 		<!-- 是否自动增行 -->
-		<property name="autoAddLine" value="false" />
+		<!--<property name="autoAddLine" value="false" />-->
 		<!-- 表体行操作按钮注册，与表体右键菜单保持一致 -->
+		<!--
 		<property name="bodyLineActions">
-			<list>
-				<!-- 提供了一组默认实现 -->
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction" />
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteLineAction" >
-					<property name="clearItems">
-						<list>
-							<value>pk_ba_sch_psn</value>
-							<value>ts</value>
-						</list>
-					</property>
-				</bean>
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteToTailAction">
-					<property name="clearItems">
-						<list>
-							<value>pk_ba_sch_psn</value>
-							<value>ts</value>
-						</list>
-					</property>
-				</bean>
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
-			</list>
+		<list>
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction" />
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteLineAction" >
+		<property name="clearItems">
+		<list>
+		<value>pk_ba_sch_psn</value>
+		<value>ts</value>
+		</list>
 		</property>
+		</bean>
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteToTailAction">
+		<property name="clearItems">
+		<list>
+		<value>pk_ba_sch_psn</value>
+		<value>ts</value>
+		</list>
+		</property>
+		</bean>
+		<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
+		</list>
+		</property>
+		-->
 	</bean>
 
 	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
@@ -466,7 +472,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 					<property name="event" value="nc.ui.pubapp.uif2app.event.card.CardBodyAfterEditEvent" />
 					<property name="picky" ref="childrenPicky" />
 					<property name="handler">
-						<bean class="nc.ui.hrwa.wa_ba_sch.ace.handler.AceBodyAfterEditHandler" />
+						<bean class="nc.ui.hrwa.wa_ba_sch.ace.handler.AceBodyAfterEditHandler" >
+							<property name="billForm" ref="sunbillFormEditor" />
+						</bean>
 					</property>
 				</bean>
 
@@ -524,7 +532,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 		<property name="actions">
 			<list>
-				<!--
+			<!--
 				<ref bean="addAction" />
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
@@ -552,7 +560,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 此处配置的Action浏览态始终可见 -->
 		<property name="actions">
 			<list>
-				<!--
+			<!--
 				<ref bean="addAction" />
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
@@ -622,11 +630,13 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!--
 		<property name="model" ref="manageAppModel" />
 		<property name="editor" ref="billFormEditor" />
+
 		<property name="actionName" value="SAVEBASE" />
 		<property name="billType" value="BAAL" />
 		-->
 		<property name="model" ref="mainGrandModel" />
 		<property name="editor" ref="MainGrandbillFormEditor" />
+		<property name="sunbillfrom" ref="sunbillFormEditor" />
 		<property name="validationService" ref="validateService" />
 		<property name="service" ref="maintainProxy" />
 	</bean>

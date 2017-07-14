@@ -8,7 +8,7 @@ public class AceWaBaUnitDataManager extends BaseBillModelDataManager {
 	public void initModel() {
 		String pk_group = AppContext.getInstance().getPkGroup();
 		String pk_org = getModel().getContext().getPk_org();
-		String sqlwhere = " and pk_group = '" + pk_group + "' and pk_org = '" + pk_org + "'";
+		String sqlwhere = " pk_group = '" + pk_group + "' and pk_org = '" + pk_org + "'";
 		super.initModelBySqlWhere(sqlwhere);
 	}
 }

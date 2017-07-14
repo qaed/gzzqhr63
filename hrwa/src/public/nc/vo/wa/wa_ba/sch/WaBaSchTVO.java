@@ -289,6 +289,10 @@ public class WaBaSchTVO extends SuperVO {
 	 * 奖金项目5
 	 */
 	public String waitem5;
+	/**
+	 * dr值
+	 */
+	public Integer dr;
 
 	/**
 	 * 获取class1
@@ -1620,6 +1624,14 @@ public class WaBaSchTVO extends SuperVO {
 		this.waitem5 = waitem5;
 	}
 
+	public Integer getDr() {
+		return dr;
+	}
+
+	public void setDr(Integer dr) {
+		this.dr = dr;
+	}
+
 	@Override
 	public IVOMeta getMetaData() {
 		return VOMetaFactory.getInstance().getVOMeta("hrwa.WaBaSchTVO");
@@ -1629,6 +1641,5 @@ public class WaBaSchTVO extends SuperVO {
 	public String getParentPKFieldName() {
 		return "pk_ba_sch_unit";
 	}
-	
-	
+
 }
