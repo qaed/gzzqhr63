@@ -53,13 +53,17 @@ public abstract class AceWaBaSchPubServiceImpl {
 		// TODO 检查逻辑对不对
 		// try {
 		// // 数据库中数据和前台传递过来的差异VO合并后的结果
-		// BillTransferTool<AggWaBaSchHVO> transferTool = new
+		// BillTransferTool<AggWaBaSchHVO>
+		// transferTool = new
 		// BillTransferTool<AggWaBaSchHVO>(clientFullVOs);
 		// // 调用BP
-		// AceWaBaSchInsertBP action = new AceWaBaSchInsertBP();
-		// AggWaBaSchHVO[] retvos = action.insert(clientFullVOs);
+		// AceWaBaSchInsertBP action =
+		// new AceWaBaSchInsertBP();
+		// AggWaBaSchHVO[] retvos =
+		// action.insert(clientFullVOs);
 		// // 构造返回数据
-		// return transferTool.getBillForToClient(retvos);
+		// return
+		// transferTool.getBillForToClient(retvos);
 		// } catch (Exception e) {
 		// ExceptionUtils.marsh(e);
 		// }
@@ -77,7 +81,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
-						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(((WaBaSchBVO)childVO).getPk_ba_sch_h());
+						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(((WaBaSchBVO) childVO).getPk_ba_sch_h());
 						persist.saveBill(grandvos[i]);
 					}
 				}
@@ -124,12 +128,17 @@ public abstract class AceWaBaSchPubServiceImpl {
 	public AggWaBaSchHVO[] pubupdateBills(IBill[] vos) throws BusinessException {
 		// try {
 		// // 加锁 + 检查ts
-		// BillTransferTool<AggWaBaSchHVO> transferTool = new
+		// BillTransferTool<AggWaBaSchHVO>
+		// transferTool = new
 		// BillTransferTool<AggWaBaSchHVO>(clientFullVOs);
-		// AceWaBaSchUpdateBP bp = new AceWaBaSchUpdateBP();
-		// AggWaBaSchHVO[] retvos = bp.update(clientFullVOs, originBills);
+		// AceWaBaSchUpdateBP bp = new
+		// AceWaBaSchUpdateBP();
+		// AggWaBaSchHVO[] retvos =
+		// bp.update(clientFullVOs,
+		// originBills);
 		// // 构造返回数据
-		// return transferTool.getBillForToClient(retvos);
+		// return
+		// transferTool.getBillForToClient(retvos);
 		// } catch (Exception e) {
 		// ExceptionUtils.marsh(e);
 		// }
@@ -280,10 +289,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 	/**
 	 * 根据孙实体元数据、孙实体主键获取实体
 	 * 
-	 * @param voMeta
-	 *            孙实体元数据
-	 * @param key
-	 *            孙实体主键
+	 * @param voMeta 孙实体元数据
+	 * @param key 孙实体主键
 	 * @return 孙实体
 	 */
 	public ISuperVO get(Map<IVOMeta, List<ISuperVO>> originGrandVOs, IVOMeta voMeta, String key) {
@@ -383,7 +390,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 	}
 
 	/**
-	 * 由子类实现，查询之前对queryScheme进行加工，加入自己的逻辑
+	 * 由子类实现，查询之前对queryScheme进行加工，
+	 * 加入自己的逻辑
 	 * 
 	 * @param queryScheme
 	 */
@@ -426,13 +434,14 @@ public abstract class AceWaBaSchPubServiceImpl {
 		return retvos;
 	}
 
-	public AggWaBaSchHVO[] caculate(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
-		if (clientFullVOs != null && clientFullVOs.length > 0) {
-			AceWaBaItemDataPubServiceImpl dataserver =
-					new AceWaBaItemDataPubServiceImpl((WaBaSchBVO[]) clientFullVOs[0].getChildren(WaBaSchBVO.class));
-			dataserver.doCaculate();
+	public AggWaBaSchHVO[] caculate(IBill[] vos) throws BusinessException {
+		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
+		if (aggvo != null && aggvo.length > 0) {
+			AceWaBaItemDataPubServiceImpl dataServer =
+					new AceWaBaItemDataPubServiceImpl((WaBaSchBVO[]) aggvo[0].getChildren(WaBaSchBVO.class));
+			dataServer.doCaculate();
 
 		}
-		return clientFullVOs;
+		return aggvo;
 	}
 }

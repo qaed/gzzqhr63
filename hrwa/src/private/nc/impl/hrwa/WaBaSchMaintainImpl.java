@@ -55,4 +55,9 @@ public class WaBaSchMaintainImpl extends AceWaBaSchPubServiceImpl implements nc.
 	public AggWaBaSchHVO[] unapprove(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
 		return super.pubunapprovebills(clientFullVOs, originBills);
 	}
+
+	@Override
+	public AggWaBaSchHVO[] doCaculate(IBill[] vos) throws BusinessException {
+		return super.caculate(vos);
+	}
 }

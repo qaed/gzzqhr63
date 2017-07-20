@@ -43,4 +43,10 @@ public class AceWaBaSchMaintainProxy implements IDataOperationService, IQuerySer
 		operator.delete((AggWaBaSchHVO[]) value);
 		return value;
 	}
+
+	public IBill[] doCaculate(IBill[] value) throws BusinessException {
+		IWaBaSchMaintain operator = NCLocator.getInstance().lookup(IWaBaSchMaintain.class);
+		operator.doCaculate((AggWaBaSchHVO[]) value);
+		return value;
+	}
 }
