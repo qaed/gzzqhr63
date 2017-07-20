@@ -77,6 +77,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
+						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(((WaBaSchBVO)childVO).getPk_ba_sch_h());
 						persist.saveBill(grandvos[i]);
 					}
 				}
@@ -406,24 +407,32 @@ public abstract class AceWaBaSchPubServiceImpl {
 
 	// ÉóÅú
 	public AggWaBaSchHVO[] pubapprovebills(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
-		AroundProcesser<AggWaBaSchHVO> processer = new AroundProcesser<AggWaBaSchHVO>(null);
 		for (int i = 0; clientFullVOs != null && i < clientFullVOs.length; i++) {
 			clientFullVOs[i].getParentVO().setStatus(VOStatus.UPDATED);
 		}
 		AceWaBaSchApproveBP bp = new AceWaBaSchApproveBP();
 		AggWaBaSchHVO[] retvos = bp.approve(clientFullVOs, originBills);
-		processer.addAfterRule(new GenWaBonusRule());
-		processer.after(retvos);
 		return retvos;
 	}
 
 	// ÆúÉó
 	public AggWaBaSchHVO[] pubunapprovebills(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
+
 		for (int i = 0; clientFullVOs != null && i < clientFullVOs.length; i++) {
 			clientFullVOs[i].getParentVO().setStatus(VOStatus.UPDATED);
 		}
 		AceWaBaSchUnApproveBP bp = new AceWaBaSchUnApproveBP();
 		AggWaBaSchHVO[] retvos = bp.unApprove(clientFullVOs, originBills);
 		return retvos;
+	}
+
+	public AggWaBaSchHVO[] caculate(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
+		if (clientFullVOs != null && clientFullVOs.length > 0) {
+			AceWaBaItemDataPubServiceImpl dataserver =
+					new AceWaBaItemDataPubServiceImpl((WaBaSchBVO[]) clientFullVOs[0].getChildren(WaBaSchBVO.class));
+			dataserver.doCaculate();
+
+		}
+		return clientFullVOs;
 	}
 }
