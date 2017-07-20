@@ -105,24 +105,12 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 							billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_job(), index, "pk_om_duty", "pk_s");// 职务
 						}
 					}
-					// MainGrandUtil.getBodyVOsByTabCode(billForm,"WaBaSchTVO");
-					// int index =
-					// e.getBillCardPanel().getBillModel().getRowCount() - 1;
 					e.getBillCardPanel().addLine();
 				}
 			} catch (BusinessException e1) {
 				Logger.error("查询奖金分配单元信息失败，pk_psndoc='" + refValues[i] + "'", e1);
 				e1.printStackTrace();
 			}
-			// if (jobvo != null) {
-			// e.getBillCardPanel().addLine();
-			// e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i,
-			// "pk_psndoc");
-			// e.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_dept(),
-			// e.getRow() + i, "pk_deptdoc");
-			// e.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_org(),
-			// e.getRow() + i, "pk_corp");
-			// }
 		}
 	}
 
