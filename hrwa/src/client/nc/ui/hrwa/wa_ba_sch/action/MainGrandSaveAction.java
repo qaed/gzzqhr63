@@ -17,6 +17,7 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
+import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 
 public class MainGrandSaveAction extends NCAction {
 	/**
@@ -55,6 +56,10 @@ public class MainGrandSaveAction extends NCAction {
 		} else if (model.getMainModel().getUiState() == UIState.EDIT) {
 			doEditSave(value);
 		}
+		// TODO ÷¥––º∆À„
+		WaBaSchCaculateAction action = new WaBaSchCaculateAction(((AggWaBaSchHVO)value));
+		action.doAction(e);
+		//end
 		showSuccessInfo();
 	}
 
