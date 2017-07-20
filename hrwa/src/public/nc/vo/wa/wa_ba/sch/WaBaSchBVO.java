@@ -94,13 +94,17 @@ public class WaBaSchBVO extends SuperVO {
 	 */
 	public String memo5;
 	/**
-	 * 上层单据主键
+	 * 奖金方案主表关联主键
 	 */
 	public String pk_ba_sch_h;
 	/**
 	 * 主键
 	 */
 	public String pk_ba_sch_unit;
+	/**
+	 * 上层单据主键
+	 */
+	public String pk_bonus;
 	/**
 	 * 公司
 	 */
@@ -237,8 +241,14 @@ public class WaBaSchBVO extends SuperVO {
 	 * 奖金项目5
 	 */
 	public String waitem5;
+
 	/**
-	 * 孙实体
+	 * dr值
+	 */
+	public Integer dr;
+
+	/**
+	 * VO改造：孙实体数组
 	 */
 	public WaBaSchTVO[] pk_s = null;
 
@@ -254,8 +264,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金分配负责人
 	 * 
-	 * @param ba_mng_psnpk
-	 *            奖金分配负责人
+	 * @param ba_mng_psnpk 奖金分配负责人
 	 */
 	public void setBa_mng_psnpk(String ba_mng_psnpk) {
 		this.ba_mng_psnpk = ba_mng_psnpk;
@@ -274,7 +283,7 @@ public class WaBaSchBVO extends SuperVO {
 	 * 设置分配人名称
 	 * 
 	 * @param ba_mng_psnpk_showname
-	 *            分配人名称
+	 *        分配人名称
 	 */
 	public void setBa_mng_psnpk_showname(String ba_mng_psnpk_showname) {
 		this.ba_mng_psnpk_showname = ba_mng_psnpk_showname;
@@ -292,8 +301,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金单元编码
 	 * 
-	 * @param ba_unit_code
-	 *            奖金单元编码
+	 * @param ba_unit_code 奖金单元编码
 	 */
 	public void setBa_unit_code(String ba_unit_code) {
 		this.ba_unit_code = ba_unit_code;
@@ -311,8 +319,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金单元名称
 	 * 
-	 * @param ba_unit_name
-	 *            奖金单元名称
+	 * @param ba_unit_name 奖金单元名称
 	 */
 	public void setBa_unit_name(String ba_unit_name) {
 		this.ba_unit_name = ba_unit_name;
@@ -330,8 +337,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金单元类型
 	 * 
-	 * @param ba_unit_type
-	 *            奖金单元类型
+	 * @param ba_unit_type 奖金单元类型
 	 */
 	public void setBa_unit_type(String ba_unit_type) {
 		this.ba_unit_type = ba_unit_type;
@@ -349,8 +355,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置class1
 	 * 
-	 * @param class1
-	 *            class1
+	 * @param class1 class1
 	 */
 	public void setClass1(String class1) {
 		this.class1 = class1;
@@ -368,8 +373,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置class2
 	 * 
-	 * @param class2
-	 *            class2
+	 * @param class2 class2
 	 */
 	public void setClass2(String class2) {
 		this.class2 = class2;
@@ -387,8 +391,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置class3
 	 * 
-	 * @param class3
-	 *            class3
+	 * @param class3 class3
 	 */
 	public void setClass3(String class3) {
 		this.class3 = class3;
@@ -406,8 +409,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置class4
 	 * 
-	 * @param class4
-	 *            class4
+	 * @param class4 class4
 	 */
 	public void setClass4(String class4) {
 		this.class4 = class4;
@@ -425,8 +427,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置class5
 	 * 
-	 * @param class5
-	 *            class5
+	 * @param class5 class5
 	 */
 	public void setClass5(String class5) {
 		this.class5 = class5;
@@ -444,8 +445,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置选择
 	 * 
-	 * @param isapprove
-	 *            选择
+	 * @param isapprove 选择
 	 */
 	public void setIsapprove(UFBoolean isapprove) {
 		this.isapprove = isapprove;
@@ -463,8 +463,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置item1
 	 * 
-	 * @param item1
-	 *            item1
+	 * @param item1 item1
 	 */
 	public void setItem1(String item1) {
 		this.item1 = item1;
@@ -482,8 +481,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置item2
 	 * 
-	 * @param item2
-	 *            item2
+	 * @param item2 item2
 	 */
 	public void setItem2(String item2) {
 		this.item2 = item2;
@@ -501,8 +499,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置item3
 	 * 
-	 * @param item3
-	 *            item3
+	 * @param item3 item3
 	 */
 	public void setItem3(String item3) {
 		this.item3 = item3;
@@ -520,8 +517,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置item4
 	 * 
-	 * @param item4
-	 *            item4
+	 * @param item4 item4
 	 */
 	public void setItem4(String item4) {
 		this.item4 = item4;
@@ -539,8 +535,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置item5
 	 * 
-	 * @param item5
-	 *            item5
+	 * @param item5 item5
 	 */
 	public void setItem5(String item5) {
 		this.item5 = item5;
@@ -558,8 +553,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置备注1
 	 * 
-	 * @param memo1
-	 *            备注1
+	 * @param memo1 备注1
 	 */
 	public void setMemo1(String memo1) {
 		this.memo1 = memo1;
@@ -577,8 +571,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置备注2
 	 * 
-	 * @param memo2
-	 *            备注2
+	 * @param memo2 备注2
 	 */
 	public void setMemo2(String memo2) {
 		this.memo2 = memo2;
@@ -596,8 +589,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置备注3
 	 * 
-	 * @param memo3
-	 *            备注3
+	 * @param memo3 备注3
 	 */
 	public void setMemo3(String memo3) {
 		this.memo3 = memo3;
@@ -615,8 +607,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置备注4
 	 * 
-	 * @param memo4
-	 *            备注4
+	 * @param memo4 备注4
 	 */
 	public void setMemo4(String memo4) {
 		this.memo4 = memo4;
@@ -634,27 +625,25 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置备注5
 	 * 
-	 * @param memo5
-	 *            备注5
+	 * @param memo5 备注5
 	 */
 	public void setMemo5(String memo5) {
 		this.memo5 = memo5;
 	}
 
 	/**
-	 * 获取上层单据主键
+	 * 获取奖金方案主表关联主键
 	 * 
-	 * @return 上层单据主键
+	 * @return 奖金方案主表关联主键
 	 */
 	public String getPk_ba_sch_h() {
 		return this.pk_ba_sch_h;
 	}
 
 	/**
-	 * 设置上层单据主键
+	 * 设置奖金方案主表关联主键
 	 * 
-	 * @param pk_ba_sch_h
-	 *            上层单据主键
+	 * @param pk_ba_sch_h 奖金方案主表关联主键
 	 */
 	public void setPk_ba_sch_h(String pk_ba_sch_h) {
 		this.pk_ba_sch_h = pk_ba_sch_h;
@@ -672,11 +661,28 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置主键
 	 * 
-	 * @param pk_ba_sch_unit
-	 *            主键
+	 * @param pk_ba_sch_unit 主键
 	 */
 	public void setPk_ba_sch_unit(String pk_ba_sch_unit) {
 		this.pk_ba_sch_unit = pk_ba_sch_unit;
+	}
+
+	/**
+	 * 获取上层单据主键
+	 * 
+	 * @return 上层单据主键
+	 */
+	public String getPk_bonus() {
+		return this.pk_bonus;
+	}
+
+	/**
+	 * 设置上层单据主键
+	 * 
+	 * @param pk_bonus 上层单据主键
+	 */
+	public void setPk_bonus(String pk_bonus) {
+		this.pk_bonus = pk_bonus;
 	}
 
 	/**
@@ -691,8 +697,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置公司
 	 * 
-	 * @param pk_corp
-	 *            公司
+	 * @param pk_corp 公司
 	 */
 	public void setPk_corp(String pk_corp) {
 		this.pk_corp = pk_corp;
@@ -710,8 +715,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金单元主键
 	 * 
-	 * @param pk_wa_ba_unit
-	 *            奖金单元主键
+	 * @param pk_wa_ba_unit 奖金单元主键
 	 */
 	public void setPk_wa_ba_unit(String pk_wa_ba_unit) {
 		this.pk_wa_ba_unit = pk_wa_ba_unit;
@@ -729,8 +733,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置累计可分配总额
 	 * 
-	 * @param plan_totalmoney
-	 *            累计可分配总额
+	 * @param plan_totalmoney 累计可分配总额
 	 */
 	public void setPlan_totalmoney(String plan_totalmoney) {
 		this.plan_totalmoney = plan_totalmoney;
@@ -748,8 +751,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置项目计划分配额1
 	 * 
-	 * @param ptmny1
-	 *            项目计划分配额1
+	 * @param ptmny1 项目计划分配额1
 	 */
 	public void setPtmny1(String ptmny1) {
 		this.ptmny1 = ptmny1;
@@ -767,8 +769,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置项目计划分配额2
 	 * 
-	 * @param ptmny2
-	 *            项目计划分配额2
+	 * @param ptmny2 项目计划分配额2
 	 */
 	public void setPtmny2(String ptmny2) {
 		this.ptmny2 = ptmny2;
@@ -786,8 +787,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置项目计划分配额3
 	 * 
-	 * @param ptmny3
-	 *            项目计划分配额3
+	 * @param ptmny3 项目计划分配额3
 	 */
 	public void setPtmny3(String ptmny3) {
 		this.ptmny3 = ptmny3;
@@ -805,8 +805,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置项目计划分配额4
 	 * 
-	 * @param ptmny4
-	 *            项目计划分配额4
+	 * @param ptmny4 项目计划分配额4
 	 */
 	public void setPtmny4(String ptmny4) {
 		this.ptmny4 = ptmny4;
@@ -824,8 +823,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置项目计划分配额5
 	 * 
-	 * @param ptmny5
-	 *            项目计划分配额5
+	 * @param ptmny5 项目计划分配额5
 	 */
 	public void setPtmny5(String ptmny5) {
 		this.ptmny5 = ptmny5;
@@ -843,8 +841,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置时间戳
 	 * 
-	 * @param ts
-	 *            时间戳
+	 * @param ts 时间戳
 	 */
 	public void setTs(UFDateTime ts) {
 		this.ts = ts;
@@ -862,8 +859,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项1
 	 * 
-	 * @param vdef1
-	 *            自定义项1
+	 * @param vdef1 自定义项1
 	 */
 	public void setVdef1(String vdef1) {
 		this.vdef1 = vdef1;
@@ -881,8 +877,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项10
 	 * 
-	 * @param vdef10
-	 *            自定义项10
+	 * @param vdef10 自定义项10
 	 */
 	public void setVdef10(String vdef10) {
 		this.vdef10 = vdef10;
@@ -900,8 +895,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项11
 	 * 
-	 * @param vdef11
-	 *            自定义项11
+	 * @param vdef11 自定义项11
 	 */
 	public void setVdef11(String vdef11) {
 		this.vdef11 = vdef11;
@@ -919,8 +913,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项12
 	 * 
-	 * @param vdef12
-	 *            自定义项12
+	 * @param vdef12 自定义项12
 	 */
 	public void setVdef12(String vdef12) {
 		this.vdef12 = vdef12;
@@ -938,8 +931,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项13
 	 * 
-	 * @param vdef13
-	 *            自定义项13
+	 * @param vdef13 自定义项13
 	 */
 	public void setVdef13(String vdef13) {
 		this.vdef13 = vdef13;
@@ -957,8 +949,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项14
 	 * 
-	 * @param vdef14
-	 *            自定义项14
+	 * @param vdef14 自定义项14
 	 */
 	public void setVdef14(String vdef14) {
 		this.vdef14 = vdef14;
@@ -976,8 +967,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项15
 	 * 
-	 * @param vdef15
-	 *            自定义项15
+	 * @param vdef15 自定义项15
 	 */
 	public void setVdef15(String vdef15) {
 		this.vdef15 = vdef15;
@@ -995,8 +985,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项16
 	 * 
-	 * @param vdef16
-	 *            自定义项16
+	 * @param vdef16 自定义项16
 	 */
 	public void setVdef16(String vdef16) {
 		this.vdef16 = vdef16;
@@ -1014,8 +1003,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项17
 	 * 
-	 * @param vdef17
-	 *            自定义项17
+	 * @param vdef17 自定义项17
 	 */
 	public void setVdef17(String vdef17) {
 		this.vdef17 = vdef17;
@@ -1033,8 +1021,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项18
 	 * 
-	 * @param vdef18
-	 *            自定义项18
+	 * @param vdef18 自定义项18
 	 */
 	public void setVdef18(String vdef18) {
 		this.vdef18 = vdef18;
@@ -1052,8 +1039,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项19
 	 * 
-	 * @param vdef19
-	 *            自定义项19
+	 * @param vdef19 自定义项19
 	 */
 	public void setVdef19(String vdef19) {
 		this.vdef19 = vdef19;
@@ -1071,8 +1057,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项2
 	 * 
-	 * @param vdef2
-	 *            自定义项2
+	 * @param vdef2 自定义项2
 	 */
 	public void setVdef2(String vdef2) {
 		this.vdef2 = vdef2;
@@ -1090,8 +1075,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项20
 	 * 
-	 * @param vdef20
-	 *            自定义项20
+	 * @param vdef20 自定义项20
 	 */
 	public void setVdef20(String vdef20) {
 		this.vdef20 = vdef20;
@@ -1109,8 +1093,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项3
 	 * 
-	 * @param vdef3
-	 *            自定义项3
+	 * @param vdef3 自定义项3
 	 */
 	public void setVdef3(String vdef3) {
 		this.vdef3 = vdef3;
@@ -1128,8 +1111,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项4
 	 * 
-	 * @param vdef4
-	 *            自定义项4
+	 * @param vdef4 自定义项4
 	 */
 	public void setVdef4(String vdef4) {
 		this.vdef4 = vdef4;
@@ -1147,8 +1129,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项5
 	 * 
-	 * @param vdef5
-	 *            自定义项5
+	 * @param vdef5 自定义项5
 	 */
 	public void setVdef5(String vdef5) {
 		this.vdef5 = vdef5;
@@ -1166,8 +1147,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项6
 	 * 
-	 * @param vdef6
-	 *            自定义项6
+	 * @param vdef6 自定义项6
 	 */
 	public void setVdef6(String vdef6) {
 		this.vdef6 = vdef6;
@@ -1185,8 +1165,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项7
 	 * 
-	 * @param vdef7
-	 *            自定义项7
+	 * @param vdef7 自定义项7
 	 */
 	public void setVdef7(String vdef7) {
 		this.vdef7 = vdef7;
@@ -1204,8 +1183,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项8
 	 * 
-	 * @param vdef8
-	 *            自定义项8
+	 * @param vdef8 自定义项8
 	 */
 	public void setVdef8(String vdef8) {
 		this.vdef8 = vdef8;
@@ -1223,8 +1201,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置自定义项9
 	 * 
-	 * @param vdef9
-	 *            自定义项9
+	 * @param vdef9 自定义项9
 	 */
 	public void setVdef9(String vdef9) {
 		this.vdef9 = vdef9;
@@ -1242,8 +1219,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金项目1
 	 * 
-	 * @param waitem1
-	 *            奖金项目1
+	 * @param waitem1 奖金项目1
 	 */
 	public void setWaitem1(String waitem1) {
 		this.waitem1 = waitem1;
@@ -1261,8 +1237,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金项目2
 	 * 
-	 * @param waitem2
-	 *            奖金项目2
+	 * @param waitem2 奖金项目2
 	 */
 	public void setWaitem2(String waitem2) {
 		this.waitem2 = waitem2;
@@ -1280,8 +1255,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金项目3
 	 * 
-	 * @param waitem3
-	 *            奖金项目3
+	 * @param waitem3 奖金项目3
 	 */
 	public void setWaitem3(String waitem3) {
 		this.waitem3 = waitem3;
@@ -1299,8 +1273,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金项目4
 	 * 
-	 * @param waitem4
-	 *            奖金项目4
+	 * @param waitem4 奖金项目4
 	 */
 	public void setWaitem4(String waitem4) {
 		this.waitem4 = waitem4;
@@ -1318,8 +1291,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 设置奖金项目5
 	 * 
-	 * @param waitem5
-	 *            奖金项目5
+	 * @param waitem5 奖金项目5
 	 */
 	public void setWaitem5(String waitem5) {
 		this.waitem5 = waitem5;
@@ -1330,6 +1302,14 @@ public class WaBaSchBVO extends SuperVO {
 		return VOMetaFactory.getInstance().getVOMeta("hrwa.WaBaSchBVO");
 	}
 
+	public Integer getDr() {
+		return dr;
+	}
+
+	public void setDr(Integer dr) {
+		this.dr = dr;
+	}
+
 	public WaBaSchTVO[] getPk_s() {
 		return pk_s;
 	}
@@ -1337,6 +1317,4 @@ public class WaBaSchBVO extends SuperVO {
 	public void setPk_s(WaBaSchTVO[] pk_s) {
 		this.pk_s = pk_s;
 	}
-
-
 }
