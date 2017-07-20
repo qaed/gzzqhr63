@@ -9,9 +9,9 @@ public class WaUnitRefModel extends AbstractRefModel {
 
 	public void reset() {
 		setRefNodeName("奖金分配单元");
-		setFieldCode(new String[] { "code", "name" });
+		setFieldCode(new String[] { "code", "name"});
 		setFieldName(new String[] { "奖金分配单元编码", "奖金分配单元名称" });
-		setHiddenFieldCode(new String[] { "pk_wa_ba_unit" });
+		setHiddenFieldCode(new String[] { "pk_wa_ba_unit","ba_mng_psnpk","ba_unit_type" });
 		setTableName("wa_ba_unit");
 		setPkFieldCode("pk_wa_ba_unit");
 		setDefaultFieldCount(2);
