@@ -10,6 +10,9 @@ public class WaBaPreTranslate implements IFormulaParser {
 	 */
 	private static final long serialVersionUID = 2297942556734015047L;
 
+	/**
+	 * 通用的公式处理
+	 */
 	public String parse(String pk_org, String formula, Object... params) throws BusinessException {
 		// year,month,day,hour和second
 		String resultFormualr = "";
