@@ -52,7 +52,7 @@ public class MainGrandSaveAction extends NCAction {
 		Object value = editor.getValue();
 //		model.getBufferCardAddMap();
 		if (model.getMainModel().getUiState() == UIState.ADD) {
-			doAddSave(value);
+			value = doAddSave(value);
 		} else if (model.getMainModel().getUiState() == UIState.EDIT) {
 			doEditSave(value);
 		}
@@ -69,10 +69,11 @@ public class MainGrandSaveAction extends NCAction {
 		this.getModel().setUIstate(UIState.NOT_EDIT);
 	}
 
-	protected void doAddSave(Object value) throws Exception {
+	protected AggWaBaSchHVO doAddSave(Object value) throws Exception {
 		IBill[] vos = this.getService().insert(new AggWaBaSchHVO[] { (AggWaBaSchHVO) value });
 		this.getModel().directlyAdd(vos[0]);
 		this.getModel().setUIstate(UIState.NOT_EDIT);
+		return (AggWaBaSchHVO)vos[0];
 	}
 
 	protected void showSuccessInfo() {
