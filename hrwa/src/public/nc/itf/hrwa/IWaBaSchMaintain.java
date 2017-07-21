@@ -7,25 +7,21 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 
 public interface IWaBaSchMaintain {
 
-    public void delete(IBill[] vos) throws BusinessException;
+	public void delete(IBill[] vos) throws BusinessException;
 
-    public IBill[] insert(IBill[] vos) throws BusinessException;
-  
-    public IBill[] update(IBill[] vos) throws BusinessException;
+	public IBill[] insert(IBill[] vos) throws BusinessException;
 
+	public IBill[] update(IBill[] vos) throws BusinessException;
 
-    public AggWaBaSchHVO[] query(IQueryScheme queryScheme)
-      throws BusinessException;
+	public AggWaBaSchHVO[] query(IQueryScheme queryScheme) throws BusinessException;
 
-  public AggWaBaSchHVO[] save(AggWaBaSchHVO[] clientFullVOs,AggWaBaSchHVO[] originBills)
-      throws BusinessException ;
+	public AggWaBaSchHVO[] save(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException;
 
-  public AggWaBaSchHVO[] unsave(AggWaBaSchHVO[] clientFullVOs,AggWaBaSchHVO[] originBills)
-      throws BusinessException ;
+	public AggWaBaSchHVO[] unsave(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException;
 
-  public AggWaBaSchHVO[] approve(AggWaBaSchHVO[] clientFullVOs,AggWaBaSchHVO[] originBills)
-      throws BusinessException ;
+	public AggWaBaSchHVO[] approve(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException;
 
-  public AggWaBaSchHVO[] unapprove(AggWaBaSchHVO[] clientFullVOs,AggWaBaSchHVO[] originBills)
-      throws BusinessException ;
+	public AggWaBaSchHVO[] unapprove(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException;
+	
+	public AggWaBaSchHVO[] doCaculate(IBill[] vos) throws BusinessException;
 }
