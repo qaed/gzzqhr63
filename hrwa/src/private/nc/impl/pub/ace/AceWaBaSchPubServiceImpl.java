@@ -81,7 +81,9 @@ public abstract class AceWaBaSchPubServiceImpl {
 					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
-						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(((WaBaSchBVO) childVO).getPk_ba_sch_h());
+						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_h(((WaBaSchBVO) childVO).getPk_ba_sch_h());
+						((WaBaSchTVO) grandvos[i]).setPk_wa_ba_unit(((WaBaSchBVO) childVO).getPk_ba_sch_unit());
+
 						persist.saveBill(grandvos[i]);
 					}
 				}
@@ -438,7 +440,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
 		if (aggvo != null && aggvo.length > 0) {
 			AceWaBaItemDataPubServiceImpl dataServer =
-					new AceWaBaItemDataPubServiceImpl((WaBaSchBVO[]) aggvo[0].getChildren(WaBaSchBVO.class));
+					new AceWaBaItemDataPubServiceImpl(aggvo[0].getChildren(WaBaSchBVO.class));
 			dataServer.doCaculate();
 
 		}
