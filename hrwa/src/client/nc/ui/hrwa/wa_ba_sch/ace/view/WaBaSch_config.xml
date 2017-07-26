@@ -166,33 +166,33 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 是否自动增行 -->
 		<!--<property name="autoAddLine" value="false" />-->
 		<!-- 表体行操作按钮注册，与表体右键菜单保持一致 -->
-		<!--
 		<property name="bodyLineActions">
-		<list>
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction" />
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteLineAction" >
-		<property name="clearItems">
-		<list>
-		<value>pk_ba_sch_psn</value>
-		<value>ts</value>
-		</list>
+			<list>
+				<!--
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction" />
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteLineAction" >
+					<property name="clearItems">
+						<list>
+							<value>pk_ba_sch_psn</value>
+							<value>ts</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteToTailAction">
+					<property name="clearItems">
+						<list>
+							<value>pk_ba_sch_psn</value>
+							<value>ts</value>
+						</list>
+					</property>
+				</bean>-->
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
+			</list>
 		</property>
-		</bean>
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteToTailAction">
-		<property name="clearItems">
-		<list>
-		<value>pk_ba_sch_psn</value>
-		<value>ts</value>
-		</list>
-		</property>
-		</bean>
-		<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
-		</list>
-		</property>
-		-->
+
 	</bean>
 
 	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
