@@ -2,6 +2,7 @@ package nc.bs.pub.action;
 
 import nc.bs.pubapp.pf.action.AbstractPfAction;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchApproveBP;
+import nc.bs.hrwa.wa_ba_sch.ace.rule.GenWaBonusRule;
 import nc.bs.hrwa.wa_ba_sch.plugin.bpplugin.WaBaSchPluginPoint;
 import nc.impl.pubapp.pattern.rule.processer.CompareAroundProcesser;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
@@ -22,6 +23,8 @@ public class N_BAAL_APPROVE extends AbstractPfAction<AggWaBaSchHVO> {
 		IRule<AggWaBaSchHVO> rule = null;
 		rule = new nc.bs.pubapp.pub.rule.ApproveStatusCheckRule();
 		processor.addBeforeRule(rule);
+		//审批后生成奖金汇总表
+		processor.addAfterRule(new GenWaBonusRule());
 		return processor;
 	}
 
