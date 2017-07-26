@@ -38,8 +38,8 @@ public abstract class AceWa_ba_itemPubServiceImpl {
 	public void deletetreeinfo(ItemsVO vo) throws BusinessException {
 		try {
 			// 添加BP规则
-//			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
-//			processer.before(new ItemsVO[] { vo });
+			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
+			processer.before(new ItemsVO[] { vo });
 			//TODO 已经使用过的不能删除
 //			query.queryBillOfNCObjectByCond(WaBaUnitHVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
 			VODelete<ItemsVO> voDel = new VODelete<ItemsVO>();
