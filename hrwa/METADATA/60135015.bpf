@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="gbk"?>
+<component conRouterType="手动" createIndustry="0" createTime="2011-11-11 15:44:21" creator="" description="" displayName="WaBaBonusHVO" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="960240ae-8047-4dc8-ac4b-2fb57ceafa11" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2012-06-26 20:43:55" name="WaBaBonusHVO" namespace="hrwa" ownModule="hrwa" preLoad="false" resModuleName="WaBaBonusHVO" resid="" version="54" versionType="0">
+    <celllist>
+        <opinterface componentID="960240ae-8047-4dc8-ac4b-2fb57ceafa11" createIndustry="0" createTime="2011-11-11 15:44:24" creator="" description="" displayName="操作接口" fullClassName="nc.itf.hrwa.IWaBonusMaintain" height="155" help="" id="72de8b22-db12-4cc0-8c0c-515350ac1b7d" implClsName="nc.impl.hrwa.WaBonusMaintainImpl" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-06-26 20:43:55" name="OpInterface" remote="true" resid="" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="136" x="68" y="52">
+            <operationlist>
+                  <operation dataTypeStyle="SINGLE" defclassname="" displayName="删除" forBusinessEntity="N" help="" id="9b0c0a4c-e5df-4be1-80b8-fd2e9cfc9504" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="delete" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="REQUIRED" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="9b0c0a4c-e5df-4be1-80b8-fd2e9cfc9504" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="9b0c0a4c-e5df-4be1-80b8-fd2e9cfc9504" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="增加" forBusinessEntity="N" help="" id="d0653d72-41a2-4b49-b00f-87dbf80b8f84" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insert" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="REQUIRED" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="d0653d72-41a2-4b49-b00f-87dbf80b8f84" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="d0653d72-41a2-4b49-b00f-87dbf80b8f84" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="修改" forBusinessEntity="N" help="" id="e820d1b6-0ded-422f-846c-10b545988515" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="update" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="REQUIRED" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="e820d1b6-0ded-422f-846c-10b545988515" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="e820d1b6-0ded-422f-846c-10b545988515" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+                   <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="查询" forBusinessEntity="N" help="" id="e0eb5c10-8595-4e27-9838-39b529ab2b59" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="queryByQueryScheme" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="REQUIRED" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="BS000010000100001056" dataTypeStyle="SINGLE" dbtype="varchar" description="" displayName="queryScheme" isAggVO="false" name="queryScheme" operationID="e0eb5c10-8595-4e27-9838-39b529ab2b59" paramTypeForLog="7" paramdefclassname="nc.ui.querytemplate.querytree.IQueryScheme" sequence="0" typeDisplayName="自定义项" typeName="CUSTOM" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="提交" forBusinessEntity="N" help="" id="29019f18-62b6-4670-8565-daf6e4ebb368" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="save" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="NEVER" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="29019f18-62b6-4670-8565-daf6e4ebb368" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="29019f18-62b6-4670-8565-daf6e4ebb368" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="收回" forBusinessEntity="N" help="" id="0518a890-1ab0-47f6-91b0-915ef619fb99" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="unsave" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="NEVER" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="0518a890-1ab0-47f6-91b0-915ef619fb99" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="0518a890-1ab0-47f6-91b0-915ef619fb99" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="审批" forBusinessEntity="N" help="" id="7030cccb-632d-4a65-b8af-3cc201c01553" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="approve" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="NEVER" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="7030cccb-632d-4a65-b8af-3cc201c01553" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="7030cccb-632d-4a65-b8af-3cc201c01553" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="弃审" forBusinessEntity="N" help="" id="1e4a5402-b7c6-4e97-8f02-8c11529e9e5f" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="unapprove" opItfID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" transKind="NEVER" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="clientFullVOs" isAggVO="true" name="clientFullVOs" operationID="1e4a5402-b7c6-4e97-8f02-8c11529e9e5f" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                        <parameter dataType="9eeaa9d2-e011-4392-8a09-55fe4dc8c58a" dataTypeStyle="ARRAY" dbtype="" description="" displayName="originBills" isAggVO="true" name="originBills" operationID="1e4a5402-b7c6-4e97-8f02-8c11529e9e5f" paramTypeForLog="7" paramdefclassname="" sequence="1" typeDisplayName="奖金汇总申请主表" typeName="WaBaBonusHVO" versionType="0"/>
+                    </paramlist>
+                </operation>
+            </operationlist>
+            <opImpllist>
+                <opItfImpl createTime="2011-11-19 11:27:58" creator="" description="" displayName="实现类" fullClassName="nc.impl.hrwa.WaBonusMaintainImpl" id="c27a0d2c-869e-44d7-9a4e-3ef43551c1c8" name="Maintain" ownerElementID="72de8b22-db12-4cc0-8c0c-515350ac1b7d" tag="" type="" versionType="0"/>
+            </opImpllist>
+        </opinterface>
+    </celllist>
+    <connectlist/>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>
