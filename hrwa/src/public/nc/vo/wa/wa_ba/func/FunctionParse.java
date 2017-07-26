@@ -24,9 +24,9 @@ public class FunctionParse {
 	private static HashMap<String, String> tableWherePare = new HashMap<String, String>() {
 		{
 			put("wa_cacu_data", "wa_cacu_data.pk_wa_data = wa_ba_item.pk_wa_data");
-			put("bd_psndoc", "bd_psndoc.pk_psndoc = wa_ba_item.pk_psndoc");
-			put("bd_psnjob", "bd_psnjob.pk_psnjob = wa_ba_item.pk_psnjob");
-			put("hi_psnjob", "hi_psnjob.pk_psnjob = wa_ba_item.pk_psnjob");
+			put("bd_psndoc", "bd_psndoc.pk_psndoc = wa_ba_sch_psns.pk_psndoc");
+			put("bd_psnjob", "bd_psnjob.pk_psnjob = wa_ba_sch_psns.pk_om_job");
+			put("hi_psnjob", "hi_psnjob.pk_psnjob = wa_ba_sch_psns.pk_om_job");
 		}
 	};
 
@@ -73,6 +73,9 @@ public class FunctionParse {
 
 	public static String addSourceTable2Value(String valueFormula) {
 		if (valueFormula == null) {
+			return valueFormula;
+		}
+		if (valueFormula.indexOf("select")>-1) {//Óï¾äÖĞ°üº¬select
 			return valueFormula;
 		}
 		List<String> tableList = new LinkedList<String>();
