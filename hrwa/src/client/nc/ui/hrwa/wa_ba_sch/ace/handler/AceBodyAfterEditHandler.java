@@ -101,8 +101,8 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 						billForm.getBillCardPanel().setBodyValueAt(waBaUnitbvo.getPk_psndoc(), index, "pk_psndoc", "pk_s");// 人员
 						billForm.getBillCardPanel().setBodyValueAt(waBaUnitbvo.getPk_deptdoc(), index, "pk_deptdoc", "pk_s");// 部门
 						if (jobvo != null && jobvo.length > 0) {
-							billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_post(), index, "pk_om_job", "pk_s");// 岗位
-							billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_job(), index, "pk_om_duty", "pk_s");// 职务
+							billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_job(), index, "pk_om_job", "pk_s");// 职务
+							billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_post(), index, "pk_om_duty", "pk_s");// 岗位
 						}
 					}
 					e.getBillCardPanel().addLine();
