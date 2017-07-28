@@ -440,7 +440,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
 		if (aggvo != null && aggvo.length > 0) {
 			AceWaBaItemDataPubServiceImpl dataServer =
-					new AceWaBaItemDataPubServiceImpl(aggvo[0].getChildren(WaBaSchBVO.class));
+					new AceWaBaItemDataPubServiceImpl(aggvo[0].getChildren(WaBaSchBVO.class),aggvo[0].getParentVO().getCyear(),aggvo[0].getParentVO().getCperiod());
 			dataServer.doCaculate();
 
 		}
