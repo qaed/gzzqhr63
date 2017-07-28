@@ -30,21 +30,21 @@ public class WaBaSchBVO extends SuperVO {
 	 */
 	public String ba_unit_type;
 	/**
-	 * class1
+	 * 上期结余
 	 */
-	public String class1;
+	public UFDouble class1;
 	/**
-	 * class2
+	 * 本月计划分配总额
 	 */
-	public String class2;
+	public UFDouble class2;
 	/**
-	 * class3
+	 * 当期已分配总额
 	 */
-	public String class3;
+	public UFDouble class3;
 	/**
-	 * class4
+	 * 本期结余
 	 */
-	public String class4;
+	public UFDouble class4;
 	/**
 	 * class5
 	 */
@@ -116,7 +116,7 @@ public class WaBaSchBVO extends SuperVO {
 	/**
 	 * 累计可分配总额
 	 */
-	public String plan_totalmoney;
+	public UFDouble plan_totalmoney;
 	/**
 	 * 项目计划分配额1
 	 */
@@ -251,6 +251,14 @@ public class WaBaSchBVO extends SuperVO {
 	 * VO改造：孙实体数组
 	 */
 	public WaBaSchTVO[] pk_s = null;
+	/**
+	 * 奖金分配负责人2
+	 */
+	public String ba_mng_psnpk2;
+	/**
+	 * 奖金分配负责人3
+	 */
+	public String ba_mng_psnpk3;
 
 	/**
 	 * 获取奖金分配负责人
@@ -344,74 +352,74 @@ public class WaBaSchBVO extends SuperVO {
 	}
 
 	/**
-	 * 获取class1
+	 * 获取上期结余
 	 * 
-	 * @return class1
+	 * @return 上期结余
 	 */
-	public String getClass1() {
+	public UFDouble getClass1() {
 		return this.class1;
 	}
 
 	/**
-	 * 设置class1
+	 * 设置上期结余
 	 * 
-	 * @param class1 class1
+	 * @param class1 上期结余
 	 */
-	public void setClass1(String class1) {
+	public void setClass1(UFDouble class1) {
 		this.class1 = class1;
 	}
 
 	/**
-	 * 获取class2
+	 * 获取本月计划分配总额
 	 * 
-	 * @return class2
+	 * @return 本月计划分配总额
 	 */
-	public String getClass2() {
+	public UFDouble getClass2() {
 		return this.class2;
 	}
 
 	/**
-	 * 设置class2
+	 * 设置本月计划分配总额
 	 * 
-	 * @param class2 class2
+	 * @param class2 本月计划分配总额
 	 */
-	public void setClass2(String class2) {
+	public void setClass2(UFDouble class2) {
 		this.class2 = class2;
 	}
 
 	/**
-	 * 获取class3
+	 * 获取当期已分配总额
 	 * 
-	 * @return class3
+	 * @return 当期已分配总额
 	 */
-	public String getClass3() {
+	public UFDouble getClass3() {
 		return this.class3;
 	}
 
 	/**
-	 * 设置class3
+	 * 设置当期已分配总额
 	 * 
-	 * @param class3 class3
+	 * @param class3 当期已分配总额
 	 */
-	public void setClass3(String class3) {
+	public void setClass3(UFDouble class3) {
 		this.class3 = class3;
 	}
 
 	/**
-	 * 获取class4
+	 * 获取本期结余
 	 * 
-	 * @return class4
+	 * @return 本期结余
 	 */
-	public String getClass4() {
+	public UFDouble getClass4() {
 		return this.class4;
 	}
 
 	/**
-	 * 设置class4
+	 * 设置本期结余
 	 * 
-	 * @param class4 class4
+	 * @param class4 本期结余
 	 */
-	public void setClass4(String class4) {
+	public void setClass4(UFDouble class4) {
 		this.class4 = class4;
 	}
 
@@ -726,7 +734,7 @@ public class WaBaSchBVO extends SuperVO {
 	 * 
 	 * @return 累计可分配总额
 	 */
-	public String getPlan_totalmoney() {
+	public UFDouble getPlan_totalmoney() {
 		return this.plan_totalmoney;
 	}
 
@@ -735,7 +743,7 @@ public class WaBaSchBVO extends SuperVO {
 	 * 
 	 * @param plan_totalmoney 累计可分配总额
 	 */
-	public void setPlan_totalmoney(String plan_totalmoney) {
+	public void setPlan_totalmoney(UFDouble plan_totalmoney) {
 		this.plan_totalmoney = plan_totalmoney;
 	}
 
@@ -1316,5 +1324,21 @@ public class WaBaSchBVO extends SuperVO {
 
 	public void setPk_s(WaBaSchTVO[] pk_s) {
 		this.pk_s = pk_s;
+	}
+
+	public String getBa_mng_psnpk2() {
+		return ba_mng_psnpk2;
+	}
+
+	public void setBa_mng_psnpk2(String ba_mng_psnpk2) {
+		this.ba_mng_psnpk2 = ba_mng_psnpk2;
+	}
+
+	public String getBa_mng_psnpk3() {
+		return ba_mng_psnpk3;
+	}
+
+	public void setBa_mng_psnpk3(String ba_mng_psnpk3) {
+		this.ba_mng_psnpk3 = ba_mng_psnpk3;
 	}
 }
