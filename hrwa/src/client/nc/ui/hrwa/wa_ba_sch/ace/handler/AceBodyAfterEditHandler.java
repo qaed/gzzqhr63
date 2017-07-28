@@ -87,7 +87,9 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 						AggWaBaUnitHVO aggvo = (AggWaBaUnitHVO) aggvos[0];
 						WaBaUnitHVO hvo = aggvo.getParentVO();
 						e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i, "ba_unit_code");// 主键（编码）
-						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk(), e.getRow() + i, "ba_mng_psnpk");// 负责人
+						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk(), e.getRow() + i, "ba_mng_psnpk");// 负责人1
+						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk2(), e.getRow() + i, "ba_mng_psnpk2");// 负责人2
+						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk3(), e.getRow() + i, "ba_mng_psnpk3");// 负责人3
 						e.getBillCardPanel().setBodyValueAt(hvo.getName(), e.getRow() + i, "ba_unit_name");// 名字
 						e.getBillCardPanel().setBodyValueAt(hvo.getBa_unit_type(), e.getRow() + i, "ba_unit_type");// 类型
 						// 孙表面板
