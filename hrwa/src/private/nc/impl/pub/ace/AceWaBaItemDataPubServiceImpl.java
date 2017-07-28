@@ -1,5 +1,6 @@
 package nc.impl.pub.ace;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,8 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 	protected ItemsVO[] itemVOs = null;// 奖金分配项目
 	private Set<String> pk_wa_itemSet = null;// 需要特殊值的项目
 	ISuperVO[] schbvos = null;// 需要计算的所以表体
+	String year = null;
+	String period = null;
 
 	/**
 	 * 构造时，初始化需要的变量：奖金项目、表体（含孙表）
@@ -45,8 +48,10 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 	 * @param bvos
 	 * @throws BusinessException
 	 */
-	public AceWaBaItemDataPubServiceImpl(ISuperVO[] bvos) throws BusinessException {
+	public AceWaBaItemDataPubServiceImpl(ISuperVO[] bvos, String year, String period) throws BusinessException {
 		this.schbvos = bvos;
+		this.year = year;
+		this.period = period;
 		// 初始化项目
 		initItems();
 		// 得到需要获得调整值的项目set
@@ -54,10 +59,14 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 
 	}
 
+	/**
+	 * 供外部调用
+	 * 
+	 * @throws BusinessException
+	 */
 	public void doCaculate() throws BusinessException {
 
-		ItemsVO[] classItemVOs = getItemVOs();
-		doCaculate(classItemVOs);
+		doCaculate(getItemVOs());
 
 	}
 
@@ -66,13 +75,45 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		if (classItemVOs == null) {
 			return;
 		}
+		// 分别计算每个项目，更新所有孙表数据
 		for (ItemsVO waClassItemVO : classItemVOs) {
 			doCaculateSingle(waClassItemVO);
 		}
+		// 更新子表的上期结余
+		StringBuilder sql = new StringBuilder();
+		String[] yearAndperiod =  getPreviousPeriod();
+		sql.append(" update wa_ba_sch_unit now set now.class1=( ");
+		sql.append(" select pre.class4 from wa_ba_sch_unit pre ");
+		sql.append(" left join wa_ba_sch_h h on pre.pk_ba_sch_h=h.pk_ba_sch_h ");
+		sql.append(" where pre.ba_unit_code=now.ba_unit_code and h.cperiod='");
+		sql.append(yearAndperiod[1]);
+		sql.append("' and h.cyear='");
+		sql.append(yearAndperiod[0]);
+		sql.append("') where now.pk_ba_sch_h='");
+		sql.append(((WaBaSchBVO) schbvos[0]).getPk_ba_sch_h());
+		sql.append("'");
+		getBaseDao().executeUpdate(sql.toString());
+		// 更新子表本月计划分配总额
+		sql.delete(0, sql.length());
+		sql.append(" update wa_ba_sch_unit unit set class2=( ");
+		sql.append(" select sum(psns.f_10) ");
+		sql.append(" from wa_ba_sch_psns psns where unit.pk_ba_sch_unit = psns.pk_ba_sch_unit ) ");
+		sql.append(" where unit.pk_ba_sch_h='");
+		sql.append(((WaBaSchBVO) schbvos[0]).getPk_ba_sch_h());
+		sql.append("'");
+		getBaseDao().executeUpdate(sql.toString());
+		//更新子表累计可分配总额
+		sql.delete(0, sql.length());
+		sql.append(" update wa_ba_sch_unit unit set plan_totalmoney= ");
+		sql.append(" to_number(class1)+to_number(class2) ");
+		sql.append(" where unit.pk_ba_sch_h='");
+		sql.append(((WaBaSchBVO) schbvos[0]).getPk_ba_sch_h());
+		sql.append("'");
+		getBaseDao().executeUpdate(sql.toString());
 	}
 
 	/**
-	 * 计算薪资项目
+	 * 计算单个薪资项目
 	 */
 	private void doCaculateSingle(ItemsVO itemVO) throws BusinessException {
 		try {
@@ -340,6 +381,14 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 	private Set<String> setPk_wa_itemSet() throws DAOException {
 		pk_wa_itemSet = new HashSet<String>();
 		return pk_wa_itemSet;
+	}
+	
+	private String[] getPreviousPeriod(){
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, Integer.parseInt(this.year));
+		cal.set(Calendar.MONTH, Integer.parseInt(this.period));
+		cal.add(Calendar.MONTH, -1);
+		return new String[]{cal.get(Calendar.YEAR)+"",cal.get(Calendar.MONTH)+""};
 	}
 
 }
