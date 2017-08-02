@@ -10,6 +10,11 @@ import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
+/**
+ * 是否被使用校验规则
+ * 
+ * @author tsheay
+ */
 public class WaUnitDataIsNotUsedRule implements IRule<AggWaBaUnitHVO> {
 	@Override
 	public void process(AggWaBaUnitHVO[] aggvo) {
