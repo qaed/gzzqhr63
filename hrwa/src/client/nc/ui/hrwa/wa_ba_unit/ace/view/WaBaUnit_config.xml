@@ -79,6 +79,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<property name="fieldName" value="pk_psndoc" />
 			</bean>
 		</property>
+		<!--自动增行-->
+		<property name="autoAddLine" value="true" />
 		<!--tsy 添加表体按钮-->
 		<property name="bodyLineActions">
 			<list>
