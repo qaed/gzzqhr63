@@ -14,7 +14,7 @@ import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 public class WaUnitDataUniqueCheckRule implements IRule<AggWaBaUnitHVO> {
 	@Override
 	public void process(AggWaBaUnitHVO[] aggvo) {
-		Debug.debug("校验奖金单元编码、名字是否唯一:" + this.getClass().getName());
+		Logger.debug("校验奖金单元编码是否唯一:" + this.getClass().getName());
 		if (aggvo == null || aggvo.length == 0) {
 			return;
 		}
@@ -33,7 +33,7 @@ public class WaUnitDataUniqueCheckRule implements IRule<AggWaBaUnitHVO> {
 		}
 		IRowSet rowSet = new DataAccessUtils().query(this.getCheckSql(hvo));
 		if (rowSet.size() > 0) {
-			ExceptionUtils.wrappBusinessException("保存失败，当前所新增或修改的信息在该集团已经存在编码或名称相同的记录。");
+			ExceptionUtils.wrappBusinessException("保存失败，当前所新增或修改的信息在该集团已经存在编码相同的记录。");
 		}
 	}
 
@@ -52,10 +52,10 @@ public class WaUnitDataUniqueCheckRule implements IRule<AggWaBaUnitHVO> {
 		sql.append(" (code ='");
 		sql.append(vo.getCode());
 		sql.append("' ");
-		sql.append(" or ");
-		sql.append(" name='");
-		sql.append(vo.getName());
-		sql.append("' ");
+//		sql.append(" or ");
+//		sql.append(" name='");
+//		sql.append(vo.getName());
+//		sql.append("' ");
 		sql.append(");");
 		return sql.toString();
 	}
