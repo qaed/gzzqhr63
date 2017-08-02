@@ -11,6 +11,11 @@ import nc.vo.pubapp.pattern.log.Log;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
+/**
+ * 奖金分配单元编码唯一规则
+ * 
+ * @author tsheay
+ */
 public class WaUnitDataUniqueCheckRule implements IRule<AggWaBaUnitHVO> {
 	@Override
 	public void process(AggWaBaUnitHVO[] aggvo) {
@@ -52,10 +57,10 @@ public class WaUnitDataUniqueCheckRule implements IRule<AggWaBaUnitHVO> {
 		sql.append(" (code ='");
 		sql.append(vo.getCode());
 		sql.append("' ");
-//		sql.append(" or ");
-//		sql.append(" name='");
-//		sql.append(vo.getName());
-//		sql.append("' ");
+		// sql.append(" or ");
+		// sql.append(" name='");
+		// sql.append(vo.getName());
+		// sql.append("' ");
 		sql.append(");");
 		return sql.toString();
 	}
