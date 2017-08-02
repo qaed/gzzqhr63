@@ -58,6 +58,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 
 	<!--¿¨¿Ø¼þ -->
 	<!--
+	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.BillForm"
 	<bean id="billFormEditor" class="nc.ui.hrwa.wa_ba_item.ace.view.WaBaItemBillFormEditor"
 	-->
 	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.BillForm"
@@ -153,8 +154,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="addAction" class="nc.ui.pubapp.uif2app.actions.AddAction">
 		<property name="model" ref="appModel" />
 	</bean>
-	<bean id="editAction" class="nc.ui.pubapp.uif2app.actions.EditAction">
+	<bean id="editAction" class="nc.ui.hrwa.wa_ba_item.ace.aciton.WaBaItemEditAction">
 		<property name="model" ref="appModel" />
+		<property name="editor" ref="billFormEditor" />
 	</bean>
 	<bean id="deleteAction" class="nc.ui.pubapp.uif2app.actions.DeleteAction">
 		<property name="model" ref="appModel" />
