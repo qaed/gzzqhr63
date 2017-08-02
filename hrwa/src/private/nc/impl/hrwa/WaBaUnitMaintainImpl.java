@@ -21,43 +21,27 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	/*
 	 * 修改所有接口以及实现、把其中的具体的主 VO 类型修改为聚合 VO 类型
 	 */
-	IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
-	IMDPersistenceQueryService query = NCLocator.getInstance().lookup(IMDPersistenceQueryService.class);
+	//	IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
+	//	IMDPersistenceQueryService query = NCLocator.getInstance().lookup(IMDPersistenceQueryService.class);
 
 	@Override
 	public void delete(Object vos) throws BusinessException {
 		 super.deletetreeinfo(vos);
-//		persist.deleteBill(vos);
 	}
 
 	@Override
 	public Object insert(Object vos) throws BusinessException {
 		 return super.inserttreeinfo(vos);
-//		BillInsert<AggWaBaUnitHVO> billinsert = new BillInsert<AggWaBaUnitHVO>();
-//		AggWaBaUnitHVO[] aggvo = new AggWaBaUnitHVO[1];
-//		aggvo[0] = (AggWaBaUnitHVO) vos;
-//		new WaUnitDataUniqueCheckRule().process(aggvo);
-//		return billinsert.insert(aggvo)[0];
 	}
 
 	@Override
 	public Object update(Object vos) throws BusinessException {
-		// return super.updatetreeinfo(vos);
-		// 设置修改人和时间
-		WaBaUnitHVO hvo = ((AggWaBaUnitHVO) vos).getParentVO();
-		hvo.setModifier(AppContext.getInstance().getPkUser());
-		hvo.setModifiedtime(new UFDateTime());
-		String pk = persist.saveBill(vos);
-		ArrayList<String> pks = new ArrayList<String>();
-		pks.add(pk);
-		BillQuery<AggWaBaUnitHVO> query = new BillQuery<AggWaBaUnitHVO>(AggWaBaUnitHVO.class);
-		return query.query(pks.toArray(new String[0]));
+		 return super.updatetreeinfo(vos);
 	}
 
 	@Override
 	public Object[] query(String whereSql) throws BusinessException {
-		// return super.querytreeinfo(whereSql);
-		String sql = " isnull(dr,0)=0 and " + whereSql;
-		return query.queryBillOfVOByCond(AggWaBaUnitHVO.class, sql, false).toArray();
+		 return super.querytreeinfo(whereSql);
+		
 	}
 }
