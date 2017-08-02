@@ -4,6 +4,7 @@ import nc.vo.wa.wa_ba.item.ItemsVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.hrwa.wa_ba_item.ace.rule.WaItemDataUniqueCheckRule;
+import nc.bs.hrwa.wa_ba_item.ace.rule.WaItemDeleteCheckRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
@@ -39,9 +40,8 @@ public abstract class AceWa_ba_itemPubServiceImpl {
 		try {
 			// 添加BP规则
 			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
+			processer.addBeforeRule(new WaItemDeleteCheckRule());
 			processer.before(new ItemsVO[] { vo });
-			//TODO 已经使用过的不能删除
-//			query.queryBillOfNCObjectByCond(WaBaUnitHVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
 			VODelete<ItemsVO> voDel = new VODelete<ItemsVO>();
 			voDel.delete(new ItemsVO[] { vo });
 		} catch (Exception e) {
