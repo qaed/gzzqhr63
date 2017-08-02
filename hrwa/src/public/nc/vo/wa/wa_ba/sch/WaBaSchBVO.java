@@ -1341,4 +1341,9 @@ public class WaBaSchBVO extends SuperVO {
 	public void setBa_mng_psnpk3(String ba_mng_psnpk3) {
 		this.ba_mng_psnpk3 = ba_mng_psnpk3;
 	}
+
+	@Override
+	public String getParentPKFieldName() {
+		return "pk_ba_sch_h";
+	}
 }
