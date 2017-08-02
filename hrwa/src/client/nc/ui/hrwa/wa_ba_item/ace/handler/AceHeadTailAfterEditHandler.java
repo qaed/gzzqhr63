@@ -9,26 +9,28 @@ public class AceHeadTailAfterEditHandler implements IAppEventHandler<CardHeadTai
 
 	@Override
 	public void handleAppEvent(CardHeadTailAfterEditEvent e) {
-		// HYPubBO_Client bo = new HYPubBO_Client();
-		// 表体默认值
-		// 获取计算方式 1-手工输入 2公式 3其他来源
-		Integer datatype = (Integer) e.getBillCardPanel().getHeadItem("datatype").getValueObject();
-		// for (int i = 0; i <
-		// e.getBillCardPanel().getBillModel().getRowCount(); i++) {
-		// e.getBillCardPanel().setBodyValueAt(pk_rewardtype, i,
-		// "pk_rewardtype");
-		// }
-		if (datatype != null) {
-			e.getBillCardPanel().getHeadItem("value").setEnabled(false);
-			e.getBillCardPanel().getHeadItem("vformula").setEnabled(false);
-			e.getBillCardPanel().getHeadItem("vformulastr").setEnabled(false);
-			if (datatype == 1) {// 手工输入
-				e.getBillCardPanel().getHeadItem("value").setEnabled(true);
-			} else if (datatype == 2) {// 公式
-				e.getBillCardPanel().getHeadItem("vformula").setComponent(getUIButton());
-				e.getBillCardPanel().getHeadItem("vformula").setEnabled(true);
-			} else {// datetype==3 //其他数据源
-				e.getBillCardPanel().getHeadItem("vformulastr").setEnabled(true);
+		// 修改计算方式
+		if ("datatype".equals(e.getKey())) {
+			/* 获取计算方式
+			 * key值	|	涵义
+			 * 0	|	公式
+			 * 2	|	手工输入  
+			 * 3	|	固定值
+			 * 5	|	其他来源 
+			 */
+			Integer datatype = (Integer) e.getBillCardPanel().getHeadItem("datatype").getValueObject();
+			if (datatype != null) {
+				e.getBillCardPanel().getHeadItem("value").setEnabled(false);
+				e.getBillCardPanel().getHeadItem("vformula").setEnabled(false);
+				e.getBillCardPanel().getHeadItem("vformulastr").setEnabled(false);
+				if (datatype == 0) {// 由公式计算
+					e.getBillCardPanel().getHeadItem("vformula").setEnabled(true);
+				} else if (datatype == 2) {// 手工输入
+				} else if (datatype == 3) {// 固定值
+					e.getBillCardPanel().getHeadItem("value").setEnabled(true);
+				} else if (datatype == 5) {// 其他数据源
+					e.getBillCardPanel().getHeadItem("vformula").setEnabled(true);
+				}
 			}
 		}
 	}
