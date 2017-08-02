@@ -83,7 +83,7 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		StringBuilder sql = new StringBuilder();
 		String[] yearAndperiod =  getPreviousPeriod();
 		sql.append(" update wa_ba_sch_unit now set now.class1=( ");
-		sql.append(" select pre.class4 from wa_ba_sch_unit pre ");
+		sql.append(" select isnull(pre.class4,0) from wa_ba_sch_unit pre ");
 		sql.append(" left join wa_ba_sch_h h on pre.pk_ba_sch_h=h.pk_ba_sch_h ");
 		sql.append(" where pre.ba_unit_code=now.ba_unit_code and h.cperiod='");
 		sql.append(yearAndperiod[1]);
@@ -105,7 +105,7 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		//更新子表累计可分配总额
 		sql.delete(0, sql.length());
 		sql.append(" update wa_ba_sch_unit unit set plan_totalmoney= ");
-		sql.append(" to_number(class1)+to_number(class2) ");
+		sql.append(" class1+class2 ");
 		sql.append(" where unit.pk_ba_sch_h='");
 		sql.append(((WaBaSchBVO) schbvos[0]).getPk_ba_sch_h());
 		sql.append("'");
