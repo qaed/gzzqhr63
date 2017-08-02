@@ -2,22 +2,29 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.BusinessExceptionAdapter;
 import nc.bs.uif2.IActionCode;
 import nc.bs.uif2.validation.IValidationService;
 import nc.bs.uif2.validation.ValidationException;
+import nc.impl.pubapp.pattern.data.bill.BillQuery;
+import nc.itf.hrwa.IWaBaSchMaintain;
+import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.ui.pubapp.uif2app.actions.IDataOperationService;
 import nc.ui.pubapp.uif2app.components.grand.CardGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
 import nc.ui.pubapp.uif2app.view.ShowUpableBillForm;
+import nc.ui.trade.business.HYPubBO_Client;
 import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
+import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
+import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 
 public class MainGrandSaveAction extends NCAction {
 	/**
@@ -47,19 +54,28 @@ public class MainGrandSaveAction extends NCAction {
 	// 注意将孙面板XXX属性设置
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		
-//		editor.getModel().getBufferCardAddMap()
+
+		// editor.getModel().getBufferCardAddMap()
 		Object value = editor.getValue();
-//		model.getBufferCardAddMap();
+		// model.getBufferCardAddMap();
 		if (model.getMainModel().getUiState() == UIState.ADD) {
 			value = doAddSave(value);
 		} else if (model.getMainModel().getUiState() == UIState.EDIT) {
 			doEditSave(value);
 		}
 		// TODO 执行计算
-		WaBaSchCaculateAction action = new WaBaSchCaculateAction(((AggWaBaSchHVO)value));
+		WaBaSchCaculateAction action = new WaBaSchCaculateAction(((AggWaBaSchHVO) value));
 		action.doAction(e);
-		//end
+		// end
+		// BillQuery<AggWaBaSchHVO>
+		// query = new
+		// BillQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
+		// AggWaBaSchHVO[] aggvos =
+		// query.query(new String[] {
+		// });
+		AggregatedValueObject vo =
+				HYPubBO_Client.queryBillVOByPrimaryKey(new String[] { AggWaBaSchHVO.class.getName(), WaBaSchHVO.class.getName(), WaBaSchBVO.class.getName() }, ((AggWaBaSchHVO) value).getParentVO().getPk_ba_sch_h());
+		this.getModel().directlyAdd(vo);
 		showSuccessInfo();
 	}
 
@@ -73,20 +89,23 @@ public class MainGrandSaveAction extends NCAction {
 		IBill[] vos = this.getService().insert(new AggWaBaSchHVO[] { (AggWaBaSchHVO) value });
 		this.getModel().directlyAdd(vos[0]);
 		this.getModel().setUIstate(UIState.NOT_EDIT);
-		return (AggWaBaSchHVO)vos[0];
+		return (AggWaBaSchHVO) vos[0];
 	}
 
 	protected void showSuccessInfo() {
 		ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getSaveSuccessInfo(), model.getMainModel().getContext());
 		// // 将消息栏字段隐藏标志位复位
-		// if (getExceptionHandler() instanceof DefaultExceptionHanler) {
+		// if (getExceptionHandler()
+		// instanceof
+		// DefaultExceptionHanler) {
 		// ((DefaultExceptionHanler)
 		// getExceptionHandler()).setAutoClearError(true);
 		// }
 	}
 
 	/**
-	 * 此方法在调用模型的add或update调用。用来对从编辑器中取出的value对象进行校验。
+	 * 此方法在调用模型的add或update调用。
+	 * 用来对从编辑器中取出的value对象进行校验。
 	 * 
 	 * @param value
 	 */
