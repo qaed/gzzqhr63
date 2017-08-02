@@ -37,6 +37,7 @@ import nc.vo.pub.ISuperVO;
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
@@ -51,24 +52,27 @@ public abstract class AceWaBaSchPubServiceImpl {
 	// 新增
 	public AggWaBaSchHVO[] pubinsertBills(IBill[] vos) throws BusinessException {
 		// TODO 检查逻辑对不对
-		// try {
-		// // 数据库中数据和前台传递过来的差异VO合并后的结果
-		// BillTransferTool<AggWaBaSchHVO>
-		// transferTool = new
-		// BillTransferTool<AggWaBaSchHVO>(clientFullVOs);
-		// // 调用BP
-		// AceWaBaSchInsertBP action =
-		// new AceWaBaSchInsertBP();
-		// AggWaBaSchHVO[] retvos =
-		// action.insert(clientFullVOs);
-		// // 构造返回数据
-		// return
-		// transferTool.getBillForToClient(retvos);
-		// } catch (Exception e) {
-		// ExceptionUtils.marsh(e);
-		// }
+		/*
+		try {
+			// 数据库中数据和前台传递过来的差异VO合并后的结果
+			BillTransferTool<AggWaBaSchHVO> transferTool = new BillTransferTool<AggWaBaSchHVO>(clientFullVOs);
+			// 调用BP
+			AceWaBaSchInsertBP action = new AceWaBaSchInsertBP();
+			AggWaBaSchHVO[] retvos = action.insert(clientFullVOs);
+			// 构造返回数据
+			return transferTool.getBillForToClient(retvos);
+		} catch (Exception e) {
+			ExceptionUtils.marsh(e);
+		}*/
+
 		BillInsert<AggWaBaSchHVO> billinsert = new BillInsert<AggWaBaSchHVO>();
 		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
+		// 子表的上期结余默认为0，后计算进行覆盖
+		ISuperVO[] childvos = aggvo[0].getChildren(WaBaSchBVO.class);
+		for (int i = 0; i < childvos.length; i++) {
+			WaBaSchBVO bvo = (WaBaSchBVO) childvos[i];
+			bvo.setClass1(UFDouble.ZERO_DBL);
+		}
 		// 主子数据插入
 		AggWaBaSchHVO[] aftervo = billinsert.insert(aggvo);
 		String[] bodyTableCodes = aftervo[0].getTableCodes();
@@ -96,29 +100,29 @@ public abstract class AceWaBaSchPubServiceImpl {
 	public void pubdeleteBills(IBill[] vos) throws BusinessException {
 		try {
 			BillTransferTool<AggWaBaSchHVO> transferTool = new BillTransferTool<AggWaBaSchHVO>((AggWaBaSchHVO[]) vos);
+			// obtain AggVO
 			AggWaBaSchHVO[] fullBills = transferTool.getClientFullInfoBill();
-			String[] tableCodes = fullBills[0].getTableCodes();
-			for (String tableCode : tableCodes) {
-				SuperVO[] originChildrens = (SuperVO[]) fullBills[0].getTableVO(tableCode);
-				// 注意多子对多孙,map需要区分
-				Map<String, SuperVO[]> originGrandMap = new HashMap<String, SuperVO[]>();
-				for (SuperVO childVO : originChildrens) {
-					// 将当前页签下的当前子的所有孙都查询出来了,并赋值给originBills中的孙。
-					if (tableCode.equals("pk_b")) {
-						String originChildPK = ((WaBaSchBVO) childVO).getPrimaryKey();
-						Collection originGVOs =
-								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
-						WaBaSchTVO[] originGrandvos = (WaBaSchTVO[]) originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
-						((WaBaSchBVO) childVO).setPk_s(originGrandvos);
-						for (int i = 0; originGrandvos != null && i < originGrandvos.length; i++) {
-							persist.deleteBill(originGrandvos[i]);
-							// persist.deleteBillFromDB(originGrandvos[i]);
-						}
-					}
-				}
+			// obtain ChildVO
+			ISuperVO[] originChildrens = (ISuperVO[]) fullBills[0].getChildren(WaBaSchBVO.class);
+			for (ISuperVO childVO : originChildrens) {
+				String originChildPK = ((WaBaSchBVO) childVO).getPrimaryKey();
+				// obtain GrandVO
+				Collection originGVOs = query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
+				WaBaSchTVO[] originGrandvos = (WaBaSchTVO[]) originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
+				// put GrandVO to ChildVO
+				((WaBaSchBVO) childVO).setPk_s(originGrandvos);
 			}
+			// delete ParentVO and ChildVO
 			AceWaBaSchDeleteBP deleteBP = new AceWaBaSchDeleteBP();
 			deleteBP.delete(fullBills);
+			// delete GrandVO
+			for (ISuperVO childVO : originChildrens) {
+				WaBaSchTVO[] originGrandvos = ((WaBaSchBVO) childVO).getPk_s();
+				for (int i = 0; originGrandvos != null && i < originGrandvos.length; i++) {
+					// persist.deleteBill(originGrandvos[i]);//
+					persist.deleteBillFromDB(originGrandvos[i]);
+				}
+			}
 		} catch (Exception e) {
 			ExceptionUtils.marsh(e);
 		}
@@ -440,7 +444,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
 		if (aggvo != null && aggvo.length > 0) {
 			AceWaBaItemDataPubServiceImpl dataServer =
-					new AceWaBaItemDataPubServiceImpl(aggvo[0].getChildren(WaBaSchBVO.class),aggvo[0].getParentVO().getCyear(),aggvo[0].getParentVO().getCperiod());
+					new AceWaBaItemDataPubServiceImpl(aggvo[0].getChildren(WaBaSchBVO.class), aggvo[0].getParentVO().getCyear(), aggvo[0].getParentVO().getCperiod());
 			dataServer.doCaculate();
 
 		}
