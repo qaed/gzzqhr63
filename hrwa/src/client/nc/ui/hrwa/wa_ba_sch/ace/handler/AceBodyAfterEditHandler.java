@@ -46,9 +46,10 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 			// 已保存在表体中所有行的奖金单元pk(去除空行)
 			List<String> sourceValues = new ArrayList<String>();
 			if (baSchBVOs != null && baSchBVOs.length > 0) {
-				// 不要最后一个
-				for (int i = 0; i < baSchBVOs.length - 1; i++) {
-					sourceValues.add(baSchBVOs[i].getBa_unit_code());
+				for (WaBaSchBVO bvo : baSchBVOs) {
+					if (bvo.getBa_unit_code() != null) {
+						sourceValues.add(bvo.getBa_unit_code());
+					}
 				}
 			}
 			// 重复的奖金单元pk值
@@ -76,37 +77,24 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 			}
 			// 没有重复
 			for (int i = 0; i < refValues.length; i++) {
+
 				if (sourceValues.contains(refValues[i])) {
+					e.getBillCardPanel().addLine();
 					continue;
 				}
-				AggWaBaUnitHVO[] waBaUnitHVOs = null;
-				PsndocVO[] psnvo = null;
 				try {
 					Object[] aggvos = waBaUnitMaintain.query("pk_wa_ba_unit ='" + refValues[i] + "'");
 					if (aggvos != null && aggvos.length > 0) {
 						AggWaBaUnitHVO aggvo = (AggWaBaUnitHVO) aggvos[0];
-						WaBaUnitHVO hvo = aggvo.getParentVO();
 						e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i, "ba_unit_code");// 主键（编码）
-						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk(), e.getRow() + i, "ba_mng_psnpk");// 负责人1
-						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk2(), e.getRow() + i, "ba_mng_psnpk2");// 负责人2
-						e.getBillCardPanel().setBodyValueAt(hvo.getBa_mng_psnpk3(), e.getRow() + i, "ba_mng_psnpk3");// 负责人3
-						e.getBillCardPanel().setBodyValueAt(hvo.getName(), e.getRow() + i, "ba_unit_name");// 名字
-						e.getBillCardPanel().setBodyValueAt(hvo.getBa_unit_type(), e.getRow() + i, "ba_unit_type");// 类型
 						// 孙表面板
 						BillScrollPane TVObsp = billForm.getBillCardPanel().getBodyPanel("pk_s");
 						//
 						WaBaUnitBVO[] bvos = (WaBaUnitBVO[]) aggvo.getChildren(WaBaUnitBVO.class);
 						for (int index = 0; index < bvos.length; index++) {
 							WaBaUnitBVO waBaUnitbvo = bvos[index];
-							PsnJobVO[] jobvo =
-									(PsnJobVO[]) HYPubBO_Client.queryByCondition(PsnJobVO.class, "pk_psndoc='" + waBaUnitbvo.getPk_psndoc() + "'  and lastflag ='Y' and ismainjob ='Y'and pk_psnorg = (select pk_psnorg from hi_psnorg where pk_psndoc ='" + waBaUnitbvo.getPk_psndoc() + "' and lastflag ='Y' and indocflag='Y')");
 							TVObsp.addLine();
 							billForm.getBillCardPanel().setBodyValueAt(waBaUnitbvo.getPk_psndoc(), index, "pk_psndoc", "pk_s");// 人员
-							billForm.getBillCardPanel().setBodyValueAt(waBaUnitbvo.getPk_deptdoc(), index, "pk_deptdoc", "pk_s");// 部门
-							if (jobvo != null && jobvo.length > 0) {
-								billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_job(), index, "pk_om_job", "pk_s");// 职务
-								billForm.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_post(), index, "pk_om_duty", "pk_s");// 岗位
-							}
 						}
 						e.getBillCardPanel().addLine();
 					}
