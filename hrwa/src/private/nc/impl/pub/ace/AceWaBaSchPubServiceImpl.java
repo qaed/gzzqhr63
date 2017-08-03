@@ -16,20 +16,15 @@ import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUpdateBP;
-import nc.bs.hrwa.wa_ba_sch.ace.rule.GenWaBonusRule;
-import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedRule;
+import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
-import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
 import nc.impl.pubapp.pattern.data.vo.VOUpdate;
-import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
-import nc.md.model.MetaDataException;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
-import nc.ui.pubapp.uif2app.query2.action.QueryExecutor;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
@@ -42,8 +37,8 @@ import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
+import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
-import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 
 public abstract class AceWaBaSchPubServiceImpl {
 	IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
@@ -365,8 +360,11 @@ public abstract class AceWaBaSchPubServiceImpl {
 		try {
 			this.preQuery(queryScheme);
 			BillLazyQuery<AggWaBaSchHVO> query = new BillLazyQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
+			//			query.setOrderAttribute(WaBaSchHVO.class, new String[] { "cyear", "cperiod" });
 			bills = query.query(queryScheme, null);
+			loadGrandData(bills);
 		} catch (Exception e) {
+			Logger.error(e);
 			ExceptionUtils.marsh(e);
 		}
 		return bills;
@@ -391,6 +389,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 						bvo.setPk_s(tvos);
 					}
 				}
+				break;//查第一个就好了
 			}
 		}
 	}
