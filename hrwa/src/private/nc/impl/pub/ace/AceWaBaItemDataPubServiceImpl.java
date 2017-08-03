@@ -81,15 +81,15 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		}
 		// 更新子表的上期结余
 		StringBuilder sql = new StringBuilder();
-		String[] yearAndperiod =  getPreviousPeriod();
-		sql.append(" update wa_ba_sch_unit now set now.class1=( ");
-		sql.append(" select isnull(pre.class4,0) from wa_ba_sch_unit pre ");
+		String[] yearAndperiod = getPreviousPeriod();
+		sql.append(" update wa_ba_sch_unit now set now.class1=isnull(( ");
+		sql.append(" select pre.class4 from wa_ba_sch_unit pre ");
 		sql.append(" left join wa_ba_sch_h h on pre.pk_ba_sch_h=h.pk_ba_sch_h ");
 		sql.append(" where pre.ba_unit_code=now.ba_unit_code and h.cperiod='");
 		sql.append(yearAndperiod[1]);
 		sql.append("' and h.cyear='");
 		sql.append(yearAndperiod[0]);
-		sql.append("') where now.pk_ba_sch_h='");
+		sql.append("'),0) where now.pk_ba_sch_h='");
 		sql.append(((WaBaSchBVO) schbvos[0]).getPk_ba_sch_h());
 		sql.append("'");
 		getBaseDao().executeUpdate(sql.toString());
@@ -270,11 +270,11 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 	 * @return
 	 */
 	private String addDefaultVaule(ItemsVO itemVO, String value) {
-		if (itemVO.getDatatype().equals(TypeEnumVO.FLOATTYPE.value())) {
-			return " isnull((" + value + "),0)";
-		}
+		//		if (itemVO.getDatatype().equals(TypeEnumVO.FLOATTYPE.value())) {
+		return " isnull((" + value + "),0)";
+		//		}
 
-		return value;
+//		return value;
 
 	}
 
@@ -382,13 +382,13 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		pk_wa_itemSet = new HashSet<String>();
 		return pk_wa_itemSet;
 	}
-	
-	private String[] getPreviousPeriod(){
+
+	private String[] getPreviousPeriod() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR, Integer.parseInt(this.year));
 		cal.set(Calendar.MONTH, Integer.parseInt(this.period));
 		cal.add(Calendar.MONTH, -1);
-		return new String[]{cal.get(Calendar.YEAR)+"",cal.get(Calendar.MONTH)+""};
+		return new String[] { cal.get(Calendar.YEAR) + "", cal.get(Calendar.MONTH) + "" };
 	}
 
 }
