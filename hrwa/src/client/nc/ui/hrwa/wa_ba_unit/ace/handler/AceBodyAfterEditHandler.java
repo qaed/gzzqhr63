@@ -48,7 +48,7 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 			for (String pk : duplicatePks) {
 				sb.append("'" + pk + "',");
 			}
-			sb.deleteCharAt(sb.length()-1);
+			sb.deleteCharAt(sb.length() - 1);
 			sb.append(")");
 			try {
 				PsndocVO[] psnvos = (PsndocVO[]) HYPubBO_Client.queryByCondition(PsndocVO.class, sb.toString());
@@ -59,33 +59,26 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 				Logger.error("查询重复人员失败，pk值为" + duplicatePks);
 				e1.printStackTrace();
 			}
-			MessageDialog.showWarningDlg(e.getBillCardPanel(), "提示", "以下人员存在重复：" + names+"\n系统将自动过滤重复数据，请检查带出数据。");
+			MessageDialog.showWarningDlg(e.getBillCardPanel(), "提示", "以下人员存在重复：" + names + "\n系统将自动过滤重复数据，请检查表体中“空行”数据是否原为重复数据");
 		}
 		// 没有重复人员
 		for (int i = 0; i < refValues.length; i++) {
+			e.getBillCardPanel().addLine();
+
 			if (sourceValues.contains(refValues[i])) {
 				continue;
 			}
-			PsnJobVO[] jobvo = null;
-			PsndocVO[] psnvo = null;
-			try {
-				psnvo = (PsndocVO[]) HYPubBO_Client.queryByCondition(PsndocVO.class, "pk_psndoc='" + refValues[i] + "'");
-				jobvo =
-						(PsnJobVO[]) HYPubBO_Client.queryByCondition(PsnJobVO.class, "pk_psndoc='" + refValues[i] + "'  and lastflag ='Y' and ismainjob ='Y'and pk_psnorg = (select pk_psnorg from hi_psnorg where pk_psndoc ='" + refValues[i] + "' and lastflag ='Y' and indocflag='Y')");
-			} catch (UifException e1) {
-				Logger.error("查询人员工作信息失败，pk_psndoc='" + refValues[i] + "'", e1);
-				e1.printStackTrace();
-			}
-			if (jobvo != null) {
-				e.getBillCardPanel().addLine();
-				e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i, "pk_psndoc");
-				e.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_dept(), e.getRow() + i, "pk_deptdoc");
-				e.getBillCardPanel().setBodyValueAt(jobvo[0].getPk_org(), e.getRow() + i, "pk_corp");
-			}
-			if (psnvo != null) {
-				e.getBillCardPanel().setBodyValueAt(psnvo[0].getName(), e.getRow() + i, "psnname");
-				e.getBillCardPanel().setBodyValueAt(psnvo[0].getSex().toString(), e.getRow() + i, "sex");
-			}
+			//			PsnJobVO[] jobvo = null;
+			//			try {
+			//				jobvo =
+			//						(PsnJobVO[]) HYPubBO_Client.queryByCondition(PsnJobVO.class, "pk_psndoc='" + refValues[i] + "'  and lastflag ='Y' and ismainjob ='Y'and pk_psnorg = (select pk_psnorg from hi_psnorg where pk_psndoc ='" + refValues[i] + "' and lastflag ='Y' and indocflag='Y')");
+			//			} catch (UifException e1) {
+			//				Logger.error("查询人员工作信息失败，pk_psndoc='" + refValues[i] + "'", e1);
+			//				e1.printStackTrace();
+			//			}
+			//			if (jobvo != null) {
+			e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i, "pk_psndoc");
+			//			}
 		}
 	}
 
@@ -101,12 +94,15 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 	 */
 	public String[] checkDuplicatePk(String[] source, String[] newPk) {
 		List<String> DuplicatePks = new ArrayList<String>();
-		for (String s1 : source) {
-			for (String s2 : newPk) {
-				if (s1 != null && s1.equals(s2)) {
-					DuplicatePks.add(s1);
+		if (source != null) {
+			for (String s1 : source) {
+				for (String s2 : newPk) {
+					if (s1 != null && s1.equals(s2)) {
+						DuplicatePks.add(s1);
+					}
 				}
 			}
+
 		}
 		return DuplicatePks.toArray(new String[0]);
 	}
