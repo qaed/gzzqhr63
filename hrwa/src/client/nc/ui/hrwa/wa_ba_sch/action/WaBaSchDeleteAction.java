@@ -21,9 +21,11 @@ public class WaBaSchDeleteAction extends DeleteScriptAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		Object value = this.getMainGrandModel().getDeleteAggVO();
+		//		Object value = this.getModel().getSelectedData();
+		//		this.getModel().directlyDelete(value);
+		this.getModel().delete();
 		Object object = this.getSingleBillService().operateBill(value);
-		this.getModel().directlyDelete(object);
-		this.getMainGrandModel().directlyDelete(object);
+		this.getMainGrandModel().directlyDelete(null);
 		this.showSuccessInfo();
 	}
 
