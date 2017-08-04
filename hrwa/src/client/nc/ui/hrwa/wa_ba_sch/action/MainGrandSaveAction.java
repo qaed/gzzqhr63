@@ -75,7 +75,7 @@ public class MainGrandSaveAction extends NCAction {
 		// });
 		AggregatedValueObject vo =
 				HYPubBO_Client.queryBillVOByPrimaryKey(new String[] { AggWaBaSchHVO.class.getName(), WaBaSchHVO.class.getName(), WaBaSchBVO.class.getName() }, ((AggWaBaSchHVO) value).getParentVO().getPk_ba_sch_h());
-		this.getModel().directlyAdd(vo);
+		this.getModel().directlyUpdate(vo);
 		showSuccessInfo();
 	}
 
