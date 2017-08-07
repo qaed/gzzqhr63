@@ -584,6 +584,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="queryAuditFlowAction" />
 				<ref bean="separatorAction" />
 				<ref bean="cencelAllotAction" />
+				<ref bean="showAllotAction"/>
 			</list>
 		</property>
 
@@ -828,6 +829,13 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 		<property name="mainGrandModel" ref="mainGrandModel" />
 		<property name="listView" ref="MainGrandlistView" />
+	</bean>
+
+	<!--查看分配进度-->
+	<bean id="showAllotAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchShowAllotAction">
+		<property name="btnName" value="查看分配进度"/>
+		<property name="code" value="showAllotAction"/>
+		<property name="model" ref="manageAppModel" />
 	</bean>
 
 	<!-- 懒加载 -->
