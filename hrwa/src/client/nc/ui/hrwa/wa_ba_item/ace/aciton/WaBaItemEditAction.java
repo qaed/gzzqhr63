@@ -2,6 +2,7 @@ package nc.ui.hrwa.wa_ba_item.ace.aciton;
 
 import java.awt.event.ActionEvent;
 
+import nc.ui.hrwa.wa_ba_item.ace.view.WaBaItemBillFormEditor;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pubapp.uif2app.view.BillForm;
 import nc.ui.uif2.editor.IEditor;
@@ -19,8 +20,9 @@ public class WaBaItemEditAction extends nc.ui.pubapp.uif2app.actions.EditAction 
 	public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		ItemsVO vo = (ItemsVO) this.getModel().getSelectedData();
-		BillCardPanel panel = ((BillForm) editor).getBillCardPanel();
+		BillCardPanel panel = ((WaBaItemBillFormEditor) editor).getBillCardPanel();
 		Integer datatype = vo.getDatatype();
+		panel.getHeadItem("datatype").setEdit(true);
 		panel.getHeadItem("value").setEnabled(false);
 		panel.getHeadItem("vformula").setEnabled(false);
 		panel.getHeadItem("vformulastr").setEnabled(false);
