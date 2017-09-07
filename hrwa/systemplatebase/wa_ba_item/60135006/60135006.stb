@@ -1,15 +1,21 @@
-<?xml version="1.0" encoding="gbk"?>
+<?xml version="1.0" encoding="GBK"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<bean id="stbTotal" class="nc.pubapp.pade.systemplatebase.vo.SystempletBaseTotal"><property name="funcNode" value="60135006"/>
+<bean id="stbTotal" class="nc.pubapp.pade.systemplatebase.vo.SystempletBaseTotal">
+<property name="funcNode" value="60135006"/>
 <property name="stbList">
-<list><bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase"><property name="dr" value="0"/>
+<list>
+<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase">
+<property name="devorg" value="00001"/>
+<property name="dr" value="0"/>
 <property name="funnode" value="60135006"/>
+<property name="layer" value="0"/>
 <property name="moduleid" value="6013"/>
 <property name="nodekey" value="bt"/>
 <property name="pk_systemplate" value="0001ZZ10000000001NG2"/>
 <property name="templateid" value="0001ZZ10000000001NF0"/>
-<property name="templatename" value="单据模板"/>
+<property name="templatename" value="奖金项目主表"/>
 <property name="tempstyle" value="0"/>
+<property name="ts" value="2017-06-20 18:10:33"/>
 </bean>
 </list>
 </property>

@@ -63,6 +63,7 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 		}
 		// 没有重复人员
 		for (int i = 0; i < refValues.length; i++) {
+			if(i<refValues.length-1)
 			e.getBillCardPanel().addLine();
 
 			if (sourceValues.contains(refValues[i])) {

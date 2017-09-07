@@ -1,33 +1,59 @@
-<?xml version="1.0" encoding="gbk"?>
+<?xml version="1.0" encoding="GBK"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<bean id="stbTotal" class="nc.pubapp.pade.systemplatebase.vo.SystempletBaseTotal"><property name="funcNode" value="60135010"/>
+<bean id="stbTotal" class="nc.pubapp.pade.systemplatebase.vo.SystempletBaseTotal">
+<property name="funcNode" value="60135010"/>
 <property name="stbList">
-<list><bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase"><property name="dr" value="0"/>
+<list>
+<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase">
+<property name="devorg" value="00001"/>
+<property name="dr" value="0"/>
 <property name="funnode" value="60135010"/>
+<property name="layer" value="0"/>
 <property name="moduleid" value="6013"/>
 <property name="nodekey" value="bt"/>
-<property name="pk_systemplate" value="0001ZZ10000000002263"/>
+<property name="pk_systemplate" value="1001ZZ10000000006ERR"/>
 <property name="templateid" value="0001ZZ1000000000222S"/>
-<property name="templatename" value="单据模板"/>
+<property name="templatename" value="奖金方案申请主表"/>
 <property name="tempstyle" value="0"/>
+<property name="ts" value="2017-06-23 14:07:08"/>
 </bean>
-<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase"><property name="dr" value="0"/>
+<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase">
+<property name="devorg" value="00001"/>
+<property name="dr" value="0"/>
 <property name="funnode" value="60135010"/>
+<property name="layer" value="0"/>
 <property name="moduleid" value="6013"/>
 <property name="nodekey" value="qt"/>
-<property name="pk_systemplate" value="0001ZZ1000000000227P"/>
+<property name="pk_systemplate" value="1001ZZ10000000006ERS"/>
 <property name="templateid" value="0001ZZ10000000002264"/>
-<property name="templatename" value="查询模板"/>
+<property name="templatename" value="奖金方案申请主表"/>
 <property name="tempstyle" value="1"/>
+<property name="ts" value="2017-06-23 14:07:08"/>
 </bean>
-<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase"><property name="dr" value="0"/>
+<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase">
+<property name="devorg" value="00001"/>
+<property name="dr" value="0"/>
 <property name="funnode" value="60135010"/>
+<property name="layer" value="0"/>
 <property name="moduleid" value="6013"/>
 <property name="nodekey" value="ot"/>
-<property name="pk_systemplate" value="0001ZZ100000000022NK"/>
+<property name="pk_systemplate" value="1001ZZ10000000006ERT"/>
 <property name="templateid" value="0001ZZ1000000000227Q"/>
-<property name="templatename" value="打印模板"/>
+<property name="templatename" value="奖金方案申请主表"/>
 <property name="tempstyle" value="3"/>
+<property name="ts" value="2017-06-23 14:07:08"/>
+</bean>
+<bean class="nc.pubapp.pade.systemplatebase.vo.SystemplateBase">
+<property name="dr" value="0"/>
+<property name="funnode" value="60135010"/>
+<property name="layer" value="0"/>
+<property name="moduleid" value="6013"/>
+<property name="nodekey" value="btg"/>
+<property name="pk_systemplate" value="1001ZZ10000000006ERU"/>
+<property name="templateid" value="1001ZZ10000000006EPQ"/>
+<property name="templatename" value="奖金方案申请主表"/>
+<property name="tempstyle" value="0"/>
+<property name="ts" value="2017-06-23 14:07:08"/>
 </bean>
 </list>
 </property>

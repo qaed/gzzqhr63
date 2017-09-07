@@ -4,7 +4,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- 环境变量 -->
-	<bean id="context" class="nc.vo.uif2.LoginContext" />
+	<bean id="context" class="nc.vo.wa.wa_ba.item.WaBaLoginContext" />
 
 	<!-- 应用服务类，负责进行模型操作的处理 -->
 	<bean id="modelService" class="nc.ui.hrwa.wa_ba_item.ace.maintain.AceWa_ba_itemService" />
@@ -59,9 +59,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<!--卡控件 -->
 	<!--
 	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.BillForm"
-	<bean id="billFormEditor" class="nc.ui.hrwa.wa_ba_item.ace.view.WaBaItemBillFormEditor"
 	-->
-	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.BillForm"
+	<bean id="billFormEditor" class="nc.ui.hrwa.wa_ba_item.ace.view.WaBaItemBillFormEditor"
 	init-method="initUI">
 		<property name="model" ref="appModel" />
 		<property name="templateContainer" ref="templateContainer" />

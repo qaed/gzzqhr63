@@ -149,6 +149,11 @@ public String vformula;
 *外部数据源
 */
 public String vformulastr;
+
+
+private Integer iitemtype;
+private Integer ifromflag;
+
 /** 
 * 获取项目编码
 *
@@ -778,7 +783,7 @@ return this.vformulastr;
 * @param vformulastr 外部数据源
 */
 public void setVformulastr ( String vformulastr) {
-this.vformulastr=vformulastr;
+	this.vformulastr=vformulastr;
  } 
 
 
@@ -786,4 +791,70 @@ this.vformulastr=vformulastr;
   public IVOMeta getMetaData() {
     return VOMetaFactory.getInstance().getVOMeta("hrwa.wa_ba_item");
   }
+
+/**
+ * @return iitemtype
+ */
+public Integer getIitemtype() {
+	return this.datatype;
+}
+
+/**
+ * @param iitemtype 要设置的 iitemtype
+ */
+public void setIitemtype(Integer iitemtype) {
+	this.iitemtype = iitemtype;
+}
+
+/**
+ * @return ifromflag
+ */
+public Integer getIfromflag() {
+	return this.datatype;
+}
+
+/**
+ * @param ifromflag 要设置的 ifromflag
+ */
+public void setIfromflag(Integer ifromflag) {
+	this.ifromflag = ifromflag;
+}
+
+
+@Override
+public Object getAttributeValue(String key) {
+	// TODO 自动生成的方法存根
+	if(key.equals("iitemtype")||key.equals("ifromflag")){
+		if(super.getAttributeValue("datatype")!=null){
+			return super.getAttributeValue("datatype");
+		}else{
+			return 0;
+		}
+		
+	}	
+	return super.getAttributeValue(key);
+}
+
+
+@Override
+public void setAttributeValue(String name, Object value) {
+	// TODO 自动生成的方法存根
+	
+	if(name.equals("datatype")){
+		
+		if(value instanceof ItemsVO){
+			
+		}else{
+			super.setAttributeValue(name, value);
+		}
+		
+		System.out.println(value);
+		
+	}else{
+		super.setAttributeValue(name, value);
+
+	}
+	
+	
+}
 }

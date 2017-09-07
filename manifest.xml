@@ -38,7 +38,79 @@
       <funnode name="奖金项目设置" code="60135006" funnode="hrwa/ace/client/60135006.fnf" service="hrwa/ace/service/60135006.smf"/>
       <funnode name="奖金分配单元" code="60135007" funnode="hrwa/ace/client/60135007.fnf" service="hrwa/ace/service/60135007.smf"/>
       <funnode name="奖金分配方案申请" code="60135010" funnode="hrwa/ace/client/60135010.fnf" service="hrwa/ace/service/60135010.smf"/>
-      <funnode name="奖金分配汇总" code="60135015" funnode="hrwa/ace/client/60135015.fnf" service="hrwa/ace/service/60135015.smf"/>
+      <funnode name="奖金汇总" code="60135015" funnode="hrwa/ace/client/60135015.fnf" service="hrwa/ace/service/60135015.smf"/>
     </funnodes>
+  </BusinessComponet>
+  <BusinessComponet name="uap" dispname="uap">
+    <public>
+      <src name="src/public"/>
+    </public>
+    <client>
+      <src name="src/client"/>
+    </client>
+    <private>
+      <src name="src/private"/>
+    </private>
+    <test>
+      <src name="src/test"/>
+    </test>
+    <resource>
+      <src name="resources"/>
+    </resource>
+    <funnodes/>
+  </BusinessComponet>
+  <BusinessComponet name="websm" dispname="websm">
+    <public>
+      <src name="src/public"/>
+    </public>
+    <client>
+      <src name="src/client"/>
+    </client>
+    <private>
+      <src name="src/private"/>
+    </private>
+    <test>
+      <src name="src/test"/>
+    </test>
+    <resource>
+      <src name="resources"/>
+    </resource>
+    <funnodes/>
+  </BusinessComponet>
+  <BusinessComponet name="hrhi" dispname="hrhi">
+    <public>
+      <src name="src/public"/>
+    </public>
+    <client>
+      <src name="src/client"/>
+    </client>
+    <private>
+      <src name="src/private"/>
+    </private>
+    <test>
+      <src name="src/test"/>
+    </test>
+    <resource>
+      <src name="resources"/>
+    </resource>
+    <funnodes/>
+  </BusinessComponet>
+  <BusinessComponet name="hrta" dispname="hrta">
+    <public>
+      <src name="src/public"/>
+    </public>
+    <client>
+      <src name="src/client"/>
+    </client>
+    <private>
+      <src name="src/private"/>
+    </private>
+    <test>
+      <src name="src/test"/>
+    </test>
+    <resource>
+      <src name="resources"/>
+    </resource>
+    <funnodes/>
   </BusinessComponet>
 </Manifest>

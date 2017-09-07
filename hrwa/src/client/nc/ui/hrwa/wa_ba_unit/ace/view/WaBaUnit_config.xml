@@ -173,6 +173,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
 				<ref bean="separatorAction" />
+				<ref bean="queryAction" />	
+				<ref bean="separatorAction" />
 				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
 			</list>
@@ -214,4 +216,24 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="cancelAction" class="nc.ui.uif2.actions.CancelAction">
 		<property name="model" ref="appModel" />
 	</bean>
+	
+	<!-- 增加查询 -->
+		<!-- 查询模板加载bean -->
+	<bean id="queryTemplateContainer" class="nc.ui.uif2.editor.QueryTemplateContainer">
+		<property name="context" ref="context"></property>
+		<property name="nodeKey" value="qt"></property>
+	</bean>
+	
+	<bean id="qryCondInitializer" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitQueryConditionInitializer" />
+	
+		<!-- 查询按钮 -->
+	<bean id="queryAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitQueryAction">
+		<property name="model" ref="appModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="qryCondDLGInitializer" ref="qryCondInitializer" />
+		<property name="templateContainer" ref="queryTemplateContainer" />
+	</bean>
+	
+	
+	
 </beans>
