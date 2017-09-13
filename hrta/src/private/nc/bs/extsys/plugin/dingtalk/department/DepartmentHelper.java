@@ -177,7 +177,7 @@ public class DepartmentHelper {
 		if (autoAddUser != null) {
 			args.put("autoAddUser", autoAddUser);
 		}
-		if (deptManagerUseridList != null) {
+		if (deptManagerUseridList != null && !"".equals(deptManagerUseridList.trim())) {
 			args.put("deptManagerUseridList", deptManagerUseridList);
 		}
 		if (deptHiding != null) {

@@ -119,16 +119,16 @@ public class SyncDept implements IBackgroundWorkPlugin {
 		// 正常推送的部门
 		sql.delete(0, sql.length());
 		//		sql.append("select * from org_dept where isnull(dr,0)=0 and hrcanceled = 'N' order by def1 desc,innercode asc");//先把没有同步的放到前面，先新增部门，再按部门级别排序，父部门在前面（父部门优先进行新增、更新）
-		sql.append("select b.name,b.pk_dept,b.def1,b.pk_fatherorg,null parentid from org_dept b left join org_corp a on a.pk_corp = b.pk_org where a.name in( '广州证券股份有限公司','广证领秀投资有限公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N' order by b.def1 desc,b.innercode asc,b.pk_fatherorg desc");
+		sql.append("select b.name,b.pk_dept,b.def1,b.pk_fatherorg,null parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.name in( '广州证券股份有限公司','广证领秀投资有限公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N' order by b.def1 desc,b.innercode asc,b.pk_fatherorg desc");
 		List<Map<String, String>> depts = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		// 营业部，在“经纪业务事业部”下，要手动创建
 		sql.delete(0, sql.length());
-		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'49455037' parentid from org_dept b left join org_corp a on a.pk_corp = b.pk_org where a.pk_fatherorg =(select pk_corp from org_corp where name = '营业部') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
+		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'49455037' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_fatherorg =(select pk_corp from org_corp where name = '营业部') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
 		List<Map<String, String>> depts2 = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		depts.addAll(depts2);
 		// 分公司，在“客户与机构管理总部”，要手动创建
 		sql.delete(0, sql.length());
-		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'49427088' parentid from org_dept b left join org_corp a on a.pk_corp = b.pk_org where a.pk_fatherorg =(select pk_corp from org_corp where name = '分公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
+		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'49427088' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_fatherorg =(select pk_corp from org_corp where name = '分公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
 		List<Map<String, String>> depts3 = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		depts.addAll(depts3);
 		// 领袖资本
@@ -138,7 +138,7 @@ public class SyncDept implements IBackgroundWorkPlugin {
 		//		depts.addAll(depts4);
 		// 广州证券创新投资管理有限公司，一级部门，要手动创建
 		sql.delete(0, sql.length());
-		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'49414244' parentid from org_dept b left join org_corp a on a.pk_corp = b.pk_org where a.pk_corp =(select pk_corp from org_corp where name = '广州证券创新投资管理有限公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
+		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'49414244' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_corp =(select pk_corp from org_corp where name = '广州证券创新投资管理有限公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
 		List<Map<String, String>> depts5 = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		depts.addAll(depts5);
 		returnmsg.append("本次同步部门数量总计:" + depts.size());
@@ -156,7 +156,7 @@ public class SyncDept implements IBackgroundWorkPlugin {
 				//				returnmsg.append("「新增部门」:" + dept.get("name"));
 				creatDept(dept.get("pk_dept"), dept.get("name"), parentId);
 			} else {//更新信息
-				updateDept(dept.get("pk_dept"), dept.get("def1"), dept.get("name"), parentId);
+				updateDept(dept.get("pk_dept"), dept.get("def1"), dept.get("name"), parentId, dept.get("principal"));
 			}
 
 		}
@@ -267,9 +267,10 @@ public class SyncDept implements IBackgroundWorkPlugin {
 	 * @param parentId
 	 * @throws BusinessException
 	 */
-	private void updateDept(String pk_dept, String dingDeptId, String deptName, String parentId) throws BusinessException {
+	private void updateDept(String pk_dept, String dingDeptId, String deptName, String parentId, String deptManagerUseridList)
+			throws BusinessException {
 		try {
-			DepartmentHelper.updateDepartment(getToken(), Long.parseLong(dingDeptId), deptName, parentId, null, null, null, null, null, null, null, null, null, null, null);
+			DepartmentHelper.updateDepartment(getToken(), Long.parseLong(dingDeptId), deptName, parentId, null, null, null, deptManagerUseridList, null, null, null, null, null, null, null);
 		} catch (Exception e) {
 			if (e.getMessage().contains("60003")) {//部门不存在,新增部门
 				creatDept(pk_dept, deptName, parentId);
