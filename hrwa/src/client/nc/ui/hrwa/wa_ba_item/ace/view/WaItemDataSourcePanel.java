@@ -449,7 +449,7 @@ public class WaItemDataSourcePanel extends AbstractBillItemEditor{
 	 */
 	@Override
 	public boolean stopEditing() {
-		System.out.println("aaaaaaaaaaaaaaa");
+		System.out.println("stopEditing");
 		return false;
 	}
 	

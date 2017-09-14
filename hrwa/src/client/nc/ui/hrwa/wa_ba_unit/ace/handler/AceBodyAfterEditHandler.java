@@ -23,7 +23,9 @@ import nc.vo.bd.psn.PsndocVO;
  * @version 2011-7-12 下午08:17:33
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEditEvent> {
+
 	@Override
 	public void handleAppEvent(CardBodyAfterEditEvent e) {
 		// 带出人员名字
@@ -38,6 +40,9 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 				sourceValues.add(bvo.getPk_psndoc());
 			}
 		}
+		// 1.若为新增的行，则sourceValues中包含新增的pk值，要剔除
+		// 2.若修改原有行，则sourceValues会包含原来的pk值，且下行获取的值也是原来的pk值
+		sourceValues.remove(((WaBaUnitBVO) e.getBillCardPanel().getBillModel().getBodyValueRowVO(e.getRow(), WaBaUnitBVO.class.getName())).getPk_psndoc());
 		// 重复人员的pk值
 		String[] duplicatePks = checkDuplicatePk(sourceValues.toArray(new String[0]), refValues);
 		if (duplicatePks.length > 0) {
@@ -63,8 +68,8 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 		}
 		// 没有重复人员
 		for (int i = 0; i < refValues.length; i++) {
-			if(i<refValues.length-1)
-			e.getBillCardPanel().addLine();
+			if (i < refValues.length - 1)
+				e.getBillCardPanel().addLine();
 
 			if (sourceValues.contains(refValues[i])) {
 				continue;

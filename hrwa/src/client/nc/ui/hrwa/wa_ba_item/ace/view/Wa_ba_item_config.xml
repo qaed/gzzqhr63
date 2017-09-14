@@ -164,7 +164,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="appModel" />
 		<property name="dataManager" ref="modelDataManager" />
 	</bean>
-	<bean id="saveAction" class="nc.ui.pubapp.uif2app.actions.SaveAction">
+	<!--nc.ui.pubapp.uif2app.actions.SaveAction-->
+	<bean id="saveAction" class="nc.ui.hrwa.wa_ba_item.ace.aciton.WaBaItemSaveAction">
 		<property name="model" ref="appModel" />
 		<property name="editor" ref="billFormEditor" />
 	</bean>

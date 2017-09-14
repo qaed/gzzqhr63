@@ -20,8 +20,7 @@ import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
 /**
- * @see nc.impl.hrwa.WaBaUnitMaintainImpl
- *      重写了方法，把主VO改为聚合VO
+ * @see nc.impl.hrwa.WaBaUnitMaintainImpl 重写了方法，把主VO改为聚合VO
  * @author tsheay
  */
 public abstract class AceWaBaUnitPubServiceImpl {
@@ -85,7 +84,9 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			WaBaUnitHVO[] superVOs = upd.update(new WaBaUnitHVO[] { hvo }, originVOs);
 			*/
 			String pk = persist.saveBill(vo);
-			return aggvo;
+			BillQuery<AggWaBaUnitHVO> querybill = new BillQuery<AggWaBaUnitHVO>(AggWaBaUnitHVO.class);
+			//			return aggvo;
+			return querybill.query(new String[] { pk });
 		} catch (Exception e) {
 			ExceptionUtils.marsh(e);
 		}

@@ -52,6 +52,7 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 					}
 				}
 			}
+			sourceValues.remove(((WaBaSchBVO) e.getBillCardPanel().getBillModel().getBodyValueRowVO(e.getRow(), WaBaSchBVO.class.getName())).getBa_unit_code());
 			// 重复的奖金单元pk值
 			String[] duplicatePks = checkDuplicatePk(sourceValues.toArray(new String[0]), refValues);
 			if (duplicatePks.length > 0) {
@@ -104,6 +105,7 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 				}
 
 			}
+			e.getBillCardPanel().delLine();
 		}
 	}
 

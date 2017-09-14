@@ -52,6 +52,7 @@ public class WaBaWageFormDataProcess extends WaBaCommonProcess {
 		sqlB.append(" where wa_ba_sch_psns.pk_psndoc=hi_psnjob.pk_psndoc ");
 		sqlB.append(" and wa_ba_sch_psns.pk_psndoc=bd_psndoc.pk_psndoc ");
 		sqlB.append(" and hi_psnjob.lastflag='Y' ");
+		sqlB.append(" and hi_psnjob.ismainjob='Y' ");
 		/*
 		 * select case 
 		 * 		when(hi_psnjob.pk_org = '0001A110000000000HED') then 1.20000000

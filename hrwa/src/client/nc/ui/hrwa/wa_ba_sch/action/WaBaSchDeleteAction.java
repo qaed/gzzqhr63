@@ -3,6 +3,7 @@ package nc.ui.hrwa.wa_ba_sch.action;
 import java.awt.event.ActionEvent;
 
 import nc.bs.uif2.IActionCode;
+import nc.ui.pub.beans.UIDialog;
 import nc.ui.pubapp.pub.task.ISingleBillService;
 import nc.ui.pubapp.uif2app.actions.pflow.DeleteScriptAction;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
@@ -10,6 +11,7 @@ import nc.ui.pubapp.uif2app.model.BillManageModel;
 import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.actions.ActionInitializer;
+import nc.ui.uif2.components.CommonConfirmDialogUtils;
 
 public class WaBaSchDeleteAction extends DeleteScriptAction {
 	private static final long serialVersionUID = 1L;
@@ -20,13 +22,16 @@ public class WaBaSchDeleteAction extends DeleteScriptAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		Object value = this.getMainGrandModel().getDeleteAggVO();
-		//		Object value = this.getModel().getSelectedData();
-		//		this.getModel().directlyDelete(value);
-		this.getModel().delete();
-		Object object = this.getSingleBillService().operateBill(value);
-		this.getMainGrandModel().directlyDelete(null);
-		this.showSuccessInfo();
+		if (UIDialog.ID_YES == CommonConfirmDialogUtils.showConfirmDeleteDialog(getModel().getContext().getEntranceUI())) {
+			Object value = this.getMainGrandModel().getDeleteAggVO();
+			//		Object value = this.getModel().getSelectedData();
+			//		this.getModel().directlyDelete(value);
+			this.getModel().delete();
+			Object object = this.getSingleBillService().operateBill(value);
+			this.getMainGrandModel().directlyDelete(null);
+			this.showSuccessInfo();
+		}
+
 	}
 
 	public String getBillCodeName() {

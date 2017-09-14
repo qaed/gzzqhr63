@@ -86,10 +86,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 			<list>
 				<!-- 提供了一组默认实现 -->
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction"/>
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction"/>
+				<!--
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction"/>
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction"/>
+				-->
 			</list>
 		</property>
 	</bean>
@@ -169,14 +171,20 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		</property>
 		<property name="actions">
 			<list>
-				<ref bean="addAction" />
+				<!--<ref bean="addAction" />-->
+				<ref bean="AddActionGroup"/>
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
 				<ref bean="separatorAction" />
-				<ref bean="queryAction" />	
+				<ref bean="queryAction" />
+				<!--
 				<ref bean="separatorAction" />
 				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
+				<ref bean="generateByDeptAction" />
+				<ref bean="separatorAction" />
+				<ref bean="BatchAddAction"/>
+				-->
 			</list>
 		</property>
 		<property name="editActions">
@@ -196,6 +204,16 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 
 	<!-- 分隔按钮 -->
 	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	<!--新增组-->
+	<bean id="AddActionGroup" class="nc.funcnode.ui.action.GroupAction">
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="BatchAddAction" />
+				<ref bean="generateByDeptAction" />
+			</list>
+		</property>
+	</bean>
 	<bean id="addAction" class="nc.ui.pubapp.uif2app.actions.AddAction">
 		<property name="model" ref="appModel" />
 	</bean>
@@ -209,31 +227,41 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="appModel" />
 		<property name="dataManager" ref="modelDataManager" />
 	</bean>
-	<bean id="saveAction" class="nc.ui.pubapp.uif2app.actions.SaveAction">
+	<!--点击保存时，弹出提示信息___nc.ui.pubapp.uif2app.actions.SaveAction-->
+	<bean id="saveAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitSaveAction">
 		<property name="model" ref="appModel" />
 		<property name="editor" ref="billFormEditor" />
 	</bean>
 	<bean id="cancelAction" class="nc.ui.uif2.actions.CancelAction">
 		<property name="model" ref="appModel" />
 	</bean>
-	
+	<!--按部门生成-->
+	<bean id="generateByDeptAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitGenerateByDeptAction">
+		<property name="code" value="generateByDeptAction" />
+		<property name="btnName" value="按部门生成"/>
+		<property name="billform" ref="billFormEditor" />
+		<property name="model" ref="appModel" />
+		<property name="dataManager" ref="modelDataManager" />
+	</bean>
+	<!--批量新增-->
+	<bean id="BatchAddAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitBatchAddAction">
+		<property name="model" ref="appModel"/>
+		<property name="dataManager" ref="modelDataManager"/>
+	</bean>
 	<!-- 增加查询 -->
-		<!-- 查询模板加载bean -->
+	<!-- 查询模板加载bean -->
 	<bean id="queryTemplateContainer" class="nc.ui.uif2.editor.QueryTemplateContainer">
 		<property name="context" ref="context"></property>
 		<property name="nodeKey" value="qt"></property>
 	</bean>
-	
 	<bean id="qryCondInitializer" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitQueryConditionInitializer" />
-	
-		<!-- 查询按钮 -->
+
+	<!-- 查询按钮 -->
 	<bean id="queryAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitQueryAction">
 		<property name="model" ref="appModel" />
 		<property name="dataManager" ref="modelDataManager" />
 		<property name="qryCondDLGInitializer" ref="qryCondInitializer" />
 		<property name="templateContainer" ref="queryTemplateContainer" />
 	</bean>
-	
-	
-	
+
 </beans>

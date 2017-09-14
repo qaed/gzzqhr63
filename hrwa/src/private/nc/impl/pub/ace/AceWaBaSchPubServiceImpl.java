@@ -16,13 +16,17 @@ import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUpdateBP;
+import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchDataUniqueCheckRule;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
+import nc.impl.pubapp.pattern.data.bill.BillUpdate;
 import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
 import nc.impl.pubapp.pattern.data.vo.VOUpdate;
+import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
 import nc.ui.querytemplate.querytree.IQueryScheme;
@@ -39,6 +43,7 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
+import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 
 public abstract class AceWaBaSchPubServiceImpl {
 	IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
@@ -46,6 +51,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 
 	// 新增
 	public AggWaBaSchHVO[] pubinsertBills(IBill[] vos) throws BusinessException {
+
 		// TODO 检查逻辑对不对
 		/*
 		try {
@@ -62,6 +68,12 @@ public abstract class AceWaBaSchPubServiceImpl {
 
 		BillInsert<AggWaBaSchHVO> billinsert = new BillInsert<AggWaBaSchHVO>();
 		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
+
+		// 添加BP规则
+		AroundProcesser<AggWaBaSchHVO> processer = new AroundProcesser<AggWaBaSchHVO>(null);
+		processer.addBeforeRule(new WaSchDataUniqueCheckRule());
+		processer.before(aggvo);
+
 		// 子表的上期结余默认为0，后计算进行覆盖
 		ISuperVO[] childvos = aggvo[0].getChildren(WaBaSchBVO.class);
 		for (int i = 0; i < childvos.length; i++) {
@@ -150,6 +162,11 @@ public abstract class AceWaBaSchPubServiceImpl {
 			// 孙VO的修改
 			// nc.impl.pubapp.pattern.data.vo.template.UpdateBPTemplate
 			AggWaBaSchHVO[] aggvos = (AggWaBaSchHVO[]) vos;
+			// 添加BP规则
+			AroundProcesser<AggWaBaSchHVO> processer = new AroundProcesser<AggWaBaSchHVO>(null);
+			processer.addBeforeRule(new WaSchDataUniqueCheckRule());
+			processer.before(aggvos);
+			//
 			String[] tableCodes = originBills[0].getTableCodes();
 			Map<IVOMeta, List<ISuperVO>> fullGrandVOs = new HashMap<IVOMeta, List<ISuperVO>>();
 			Map<IVOMeta, List<ISuperVO>> originGrandVOs = new HashMap<IVOMeta, List<ISuperVO>>();
@@ -173,12 +190,16 @@ public abstract class AceWaBaSchPubServiceImpl {
 						}
 					}
 				}
+				BillUpdate billupdate = new BillUpdate<AggWaBaSchHVO>();
+				fullBills = (AggWaBaSchHVO[]) billupdate.update(aggvos, originBills);
 				SuperVO[] currentChildrens = (SuperVO[]) aggvos[0].getTableVO(tableCode);
 				for (SuperVO childVO : currentChildrens) {
 					if (tableCode.equals("pk_b")) {
 						ISuperVO[] currentGrandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 						for (int i = 0; currentGrandvos != null && i < currentGrandvos.length; i++) {
 							((WaBaSchTVO) currentGrandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
+							((WaBaSchTVO) currentGrandvos[i]).setPk_ba_sch_h(((WaBaSchBVO) childVO).getPk_ba_sch_h());
+							((WaBaSchTVO) currentGrandvos[i]).setPk_wa_ba_unit(((WaBaSchBVO) childVO).getPk_ba_sch_unit());
 						}
 						if (currentGrandvos != null && currentGrandvos.length != 0) {
 							IVOMeta meta = ((SuperVO) (currentGrandvos[0])).getMetaData();
@@ -194,9 +215,9 @@ public abstract class AceWaBaSchPubServiceImpl {
 			}
 			fullGrandVOs = this.getFullGrandVOs(fullGrandVOs, originGrandVOs);
 			this.persistent(fullGrandVOs, originGrandVOs);
-			AceWaBaSchUpdateBP bp = new AceWaBaSchUpdateBP();
-			AggWaBaSchHVO[] retBills = bp.update(fullBills, originBills);
-			return aggvos;
+			//			AceWaBaSchUpdateBP bp = new AceWaBaSchUpdateBP();
+			//			AggWaBaSchHVO[] retBills = bp.update(fullBills, originBills);
+			return fullBills;
 		} catch (Exception e) {
 			ExceptionUtils.marsh(e);
 		}
@@ -395,8 +416,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	}
 
 	/**
-	 * 由子类实现，查询之前对queryScheme进行加工，
-	 * 加入自己的逻辑
+	 * 由子类实现，查询之前对queryScheme进行加工， 加入自己的逻辑
 	 * 
 	 * @param queryScheme
 	 */
