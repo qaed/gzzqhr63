@@ -85,7 +85,7 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		sql.append(" update wa_ba_sch_unit now set now.class1=isnull(( ");
 		sql.append(" select pre.class4 from wa_ba_sch_unit pre ");
 		sql.append(" left join wa_ba_sch_h h on pre.pk_ba_sch_h=h.pk_ba_sch_h ");
-		sql.append(" where pre.ba_unit_code=now.ba_unit_code and h.cperiod='");
+		sql.append(" where pre.ba_unit_code=now.ba_unit_code and nvl(pre.dr,0)=0 and h.cperiod='");
 		sql.append(yearAndperiod[1]);
 		sql.append("' and h.cyear='");
 		sql.append(yearAndperiod[0]);
@@ -274,7 +274,7 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		return " isnull((" + value + "),0)";
 		//		}
 
-//		return value;
+		//		return value;
 
 	}
 

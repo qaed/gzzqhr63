@@ -15,9 +15,7 @@ import nc.ui.wa.formular.WaBznessFuncBuilder;
 import nc.ui.wa.item.view.ItemFormularFactory;
 import nc.vo.hr.func.HrFormula;
 
-
 /**
- * 
  * @author: xuanlt
  * @date: 2010-4-1 上午10:19:59
  * @since: eHR V6.0
@@ -33,45 +31,41 @@ public class WaBaItemFormulaRefPane extends HRFormulaRefPane {
 	 * @param model
 	 * @param parentEditor
 	 */
-	public WaBaItemFormulaRefPane(AbstractUIAppModel model,
-			HrBillFormEditor parentEditor) {
+	public WaBaItemFormulaRefPane(AbstractUIAppModel model, HrBillFormEditor parentEditor) {
 		super(parentEditor, model);
 
 	}
 
 	@Override
-	protected String getConfigFileName(){
-		return  "/nc/ui/hrwa/wa_ba_item/ace/view/waitem_formulaedit.xml";
+	protected String getConfigFileName() {
+		return "/nc/ui/hrwa/wa_ba_item/ace/view/waitem_formulaedit.xml";
 
 	}
 
 	@Override
-	protected IVariableFactory getWaVaribleFactory(){
+	protected IVariableFactory getWaVaribleFactory() {
 		//必须实现该
-		ItemFormularFactory f =new  ItemFormularFactory();
+		//20170915 tsy 改为新增的Factory
+		//		ItemFormularFactory f =new  ItemFormularFactory();
+		WabaItemFormularFactory f = new WabaItemFormularFactory();
+		// 20170915 end 
 		f.setModel(getModel());
 		return f;
 
 	}
 
-
-
 	@Override
-	protected void setParas(HRFormulaEditorDialog dlg)
-	{
-
+	protected void setParas(HRFormulaEditorDialog dlg) {
 
 		super.setParas(dlg);
 		FormulaFunctionPanel functionPanel = (FormulaFunctionPanel) dlg.getFormulaFunctionPanel();
 
 		// 找到WaBznessFuncBuilder 设定 model
-		List<IFormulaTabBuilder> builder  = functionPanel.getCustomerTabBuilders();
+		List<IFormulaTabBuilder> builder = functionPanel.getCustomerTabBuilders();
 
-		for (int index = 0; index < builder.size(); index++)
-		{
+		for (int index = 0; index < builder.size(); index++) {
 			// xxx
-			if (builder.get(index) instanceof WaBznessFuncBuilder)
-			{
+			if (builder.get(index) instanceof WaBznessFuncBuilder) {
 				((WaBznessFuncBuilder) builder.get(index)).setModel(getModel());
 			}
 		}
@@ -87,8 +81,7 @@ public class WaBaItemFormulaRefPane extends HRFormulaRefPane {
 
 			// return;
 		}
-		formula.setReturnType(((WaBaItemBillFormEditor) this.getParentEditor())
-				.getTypeEnumValue().value());
+		formula.setReturnType(((WaBaItemBillFormEditor) this.getParentEditor()).getTypeEnumValue().value());
 		// 改变为设置 formular
 		getFormulaDialog().setFormula(formula);
 
@@ -101,10 +94,8 @@ public class WaBaItemFormulaRefPane extends HRFormulaRefPane {
 		// HrFormulaRealEditorPanel ep = (HrFormulaRealEditorPanel)
 		// getDlg().getFormulaRealEditorPanel() ;
 
-		String businessDes = ((FormulaRealEditorPanel) getFormulaDialog()
-				.getFormulaRealEditorPanel()).getText();
-		String scriptLang = ((FormulaRealEditorPanel) getFormulaDialog()
-				.getFormulaRealEditorPanel()).getConvertedText();// ((FormulaRealEditorPanel)getDlg().getFormulaRealEditorPanel()).getConvertedText();
+		String businessDes = ((FormulaRealEditorPanel) getFormulaDialog().getFormulaRealEditorPanel()).getText();
+		String scriptLang = ((FormulaRealEditorPanel) getFormulaDialog().getFormulaRealEditorPanel()).getConvertedText();// ((FormulaRealEditorPanel)getDlg().getFormulaRealEditorPanel()).getConvertedText();
 
 		// 得到是否默认公式
 
