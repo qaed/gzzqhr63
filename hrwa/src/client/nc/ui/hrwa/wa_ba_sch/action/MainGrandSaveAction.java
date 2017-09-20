@@ -54,25 +54,18 @@ public class MainGrandSaveAction extends NCAction {
 	// 注意将孙面板XXX属性设置
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-
 		// editor.getModel().getBufferCardAddMap()
 		Object value = editor.getValue();
-		// model.getBufferCardAddMap();
+		validate(value);//校验
 		if (model.getMainModel().getUiState() == UIState.ADD) {
 			value = doAddSave(value);
 		} else if (model.getMainModel().getUiState() == UIState.EDIT) {
 			doEditSave(value);
 		}
-		// TODO 执行计算
-		WaBaSchCaculateAction action = new WaBaSchCaculateAction(((AggWaBaSchHVO) value));
-		action.doAction(e);
-		// end
-		// BillQuery<AggWaBaSchHVO>
-		// query = new
-		// BillQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
-		// AggWaBaSchHVO[] aggvos =
-		// query.query(new String[] {
-		// });
+		// 执行计算
+		WaBaSchCaculateAction caculateAction = new WaBaSchCaculateAction(((AggWaBaSchHVO) value));
+		caculateAction.doAction(e);
+		
 		AggregatedValueObject vo =
 				HYPubBO_Client.queryBillVOByPrimaryKey(new String[] { AggWaBaSchHVO.class.getName(), WaBaSchHVO.class.getName(), WaBaSchBVO.class.getName() }, ((AggWaBaSchHVO) value).getParentVO().getPk_ba_sch_h());
 		this.getModel().directlyUpdate(vo);

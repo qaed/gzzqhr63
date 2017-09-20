@@ -202,6 +202,17 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="saveAction" ref="saveAction" />
 	</bean>
 
+	<!-- 保存组合校验 -->
+	<bean id="validateService" class="nc.ui.pubapp.uif2app.validation.CompositeValidation">
+		<property name="validators">
+			<list>
+				<bean class="nc.ui.pubapp.uif2app.validation.TemplateNotNullValidation">
+					<property name="billForm" ref="billFormEditor" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
 	<!-- 分隔按钮 -->
 	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction" />
 	<!--新增组-->
@@ -231,6 +242,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="saveAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitSaveAction">
 		<property name="model" ref="appModel" />
 		<property name="editor" ref="billFormEditor" />
+		<!--保存时校验-->
+		<property name="validationService" ref="validateService" />
 	</bean>
 	<bean id="cancelAction" class="nc.ui.uif2.actions.CancelAction">
 		<property name="model" ref="appModel" />
