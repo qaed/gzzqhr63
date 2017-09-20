@@ -26,8 +26,8 @@ public class WaBaWaAdjustDocProcess extends WaBaCommonProcess {
 
 	public String parse(String pk_org, String functionName, Object... params) throws BusinessException {
 		/*
-		 * params:[f_18, #2#f_17#]
-		 * arguments:[2,f_17]
+		 * params:[f_18, #2#1001A41000000000458K#]
+		 * arguments:[2,1001A41000000000458K]
 		 */
 		String[] arguments = getArguments(params);
 		// 取数类型
@@ -47,7 +47,8 @@ public class WaBaWaAdjustDocProcess extends WaBaCommonProcess {
 			sqlB.append("select hi_psndoc_wadoc.nmoney ");
 			sqlB.append("from hi_psndoc_wadoc ");
 			sqlB.append("where hi_psndoc_wadoc.pk_psndoc = wa_ba_sch_psns.pk_psndoc ");
-			sqlB.append("	and hi_psndoc_wadoc.pk_wa_item = (select pk_wa_item from wa_item where itemkey = '" + itemKey + "') ");
+//			sqlB.append("	and hi_psndoc_wadoc.pk_wa_item = (select pk_wa_item from wa_item where itemkey = '" + itemKey + "') ");
+			sqlB.append("	and hi_psndoc_wadoc.pk_wa_item =  '" + itemKey + "' ");
 			sqlB.append("	and hi_psndoc_wadoc.lastflag = 'Y' ");// 最新标识
 			sqlB.append("   and hi_psndoc_wadoc.waflag = 'Y' ");// 发放标识
 			sqlB.append("	and hi_psndoc_wadoc.dr = 0");
