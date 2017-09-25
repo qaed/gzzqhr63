@@ -188,8 +188,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<value>ts</value>
 				</list>
 				</property>
-				</bean>-->
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
+				</bean>
+				
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />-->
 			</list>
 		</property>
 
@@ -266,10 +267,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 是否自动增行 -->
 		<property name="autoAddLine" value="false" />
 		<!-- 表体行操作按钮注册，与表体右键菜单保持一致 -->
-		<!--
 		<property name="bodyLineActions">
 			<list>
-				<!-- 提供了一组默认实现 -->
+				<!-- 提供了一组默认实现 
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
@@ -290,10 +290,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 						</list>
 					</property>
 				</bean>
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />-->
 			</list>
 		</property>
-		-->
 		<!-- 卡片自定义项处理 -->
 		<property name="userdefitemPreparator">
 			<bean class="nc.ui.pubapp.uif2app.view.CompositeBillDataPrepare">
@@ -548,12 +547,11 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="deleteAction" />
 				<ref bean="copyAction" />
 				<ref bean="separatorAction" />
+				-->
 				<ref bean="queryAction" />
 				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="commitMenuAction" />
-				-->
-				
 				<ref bean="auditMenuAction" />
 				<ref bean="separatorAction" />
 				<ref bean="printMenuAction" />
@@ -573,15 +571,17 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 此处配置的Action浏览态始终可见 -->
 		<property name="actions">
 			<list>
-			<!--
+				<!--
 				<ref bean="addAction" />
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
 				<ref bean="copyAction" />
 				<ref bean="separatorAction" />
+				-->
 				<ref bean="queryAction" />
 				<ref bean="cardRefreshAction" />
 				<ref bean="separatorAction" />
+				<!--
 				<ref bean="commitMenuAction" />
 				-->
 				<ref bean="auditMenuAction" />
@@ -590,7 +590,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="separatorAction" />
 				<ref bean="queryAuditFlowAction" />
 				<ref bean="separatorAction" />
+				<!--
 				<ref bean="cencelAllotAction" />
+				-->
 				<ref bean="showAllotAction"/>
 			</list>
 		</property>

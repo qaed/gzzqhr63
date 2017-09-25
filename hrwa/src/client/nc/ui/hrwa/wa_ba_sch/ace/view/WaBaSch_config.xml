@@ -549,14 +549,17 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="commitMenuAction" />
+				<!--
 				<ref bean="auditMenuAction" />
+				-->
 				<ref bean="separatorAction" />
 				<ref bean="printMenuAction" />
 				<ref bean="separatorAction" />
 				<ref bean="queryAuditFlowAction" />
 				<ref bean="separatorAction" />
-				<!--
-				<ref bean="cencelAllotAction" />-->
+				
+				<ref bean="cencelAllotAction" />
+				<ref bean="showAllotAction"/>
 			</list>
 		</property>
 	</bean>

@@ -72,10 +72,10 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 					<property name="prefix" value="vdef" />
 				</bean>
 				<bean class="nc.ui.uif2.editor.UserdefQueryParam">
-					<property name="mdfullname" value="hrwa.WaBaBonusBVO" />
+					<property name="mdfullname" value="hrwa.WaBaSchBVO2" />
 					<property name="pos" value="1" />
 					<property name="prefix" value="vbdef" />
-					<property name="tabcode" value="WaBaBonusBVO" />
+					<property name="tabcode" value="WaBaSchBVO2" />
 				</bean>
 			</list>
 		</property>
@@ -89,28 +89,28 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 表体行操作按钮注册，与表体右键菜单保持一致 -->
 		<property name="bodyLineActions">
 			<list>
-				<!-- 提供了一组默认实现 -->
+				<!-- 提供了一组默认实现
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteLineAction" >
-					<property name="clearItems">
-						<list>
-							<value>pk_bonus_b</value>
-							<value>ts</value>
-						</list>
-					</property>
+				<property name="clearItems">
+				<list>
+				<value>pk_ba_sch_unit</value>
+				<value>ts</value>
+				</list>
+				</property>
 				</bean>
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteToTailAction">
-					<property name="clearItems">
-						<list>
-							<value>pk_bonus_b</value>
-							<value>ts</value>
-						</list>
-					</property>
+				<property name="clearItems">
+				<list>
+				<value>pk_ba_sch_unit</value>
+				<value>ts</value>
+				</list>
+				</property>
 				</bean>
-				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />
+				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />    -->
 			</list>
 		</property>
 		<!-- 卡片自定义项处理 -->
@@ -137,10 +137,10 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 					<property name="prefix" value="vdef" />
 				</bean>
 				<bean class="nc.ui.uif2.editor.UserdefQueryParam">
-					<property name="mdfullname" value="hrwa.WaBaBonusBVO" />
+					<property name="mdfullname" value="hrwa.WaBaSchBVO2" />
 					<property name="pos" value="1" />
 					<property name="prefix" value="vbdef" />
-					<property name="tabcode" value="WaBaBonusBVO" />
+					<property name="tabcode" value="WaBaSchBVO2" />
 				</bean>
 			</list>
 		</property>
@@ -161,7 +161,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 					<property name="mdfullname" value="hrwa.waBonus" />
 				</bean>
 				<bean class="nc.ui.uif2.userdefitem.QueryParam">
-					<property name="mdfullname" value="hrwa.WaBaBonusBVO" />
+					<property name="mdfullname" value="hrwa.WaBaSchBVO2" />
 				</bean>
 				<bean class="nc.ui.uif2.userdefitem.QueryParam">
 					<property name="rulecode" value="materialassistant" />
@@ -261,7 +261,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="billform" ref="billFormEditor" />
 		<property name="bodyVoClasses">
 			<list>
-				<value>nc.vo.wa.wa_ba.bonus.WaBaBonusBVO</value>
+				<value>nc.vo.wa.wa_ba.sch.WaBaSchBVO</value>
 			</list>
 		</property>
 	</bean>
@@ -341,17 +341,17 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 		<property name="actions">
 			<list>
-				<!--
+			<!--
 				<ref bean="addAction" />
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
 				<ref bean="copyAction" />
 				<ref bean="separatorAction" />
+				-->
 				<ref bean="queryAction" />
 				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="commitMenuAction" />
-				-->
 				<ref bean="auditMenuAction" />
 				<ref bean="separatorAction" />
 				<ref bean="printMenuAction" />
@@ -369,17 +369,17 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 此处配置的Action浏览态始终可见 -->
 		<property name="actions">
 			<list>
-				<!--
+			<!--
 				<ref bean="addAction" />
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
 				<ref bean="copyAction" />
 				<ref bean="separatorAction" />
+				-->
 				<ref bean="queryAction" />
 				<ref bean="cardRefreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="commitMenuAction" />
-				-->
 				<ref bean="auditMenuAction" />
 				<ref bean="separatorAction" />
 				<ref bean="printMenuAction" />
