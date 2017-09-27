@@ -3,6 +3,7 @@ package nc.bs.extsys.plugin.dingtalk.workflow;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -11,21 +12,23 @@ import nc.bs.dao.BaseDAO;
 import nc.bs.extsys.plugin.dingtalk.Env;
 import nc.bs.extsys.plugin.dingtalk.auth.AuthHelper;
 import nc.bs.framework.common.NCLocator;
+import nc.bs.logging.Logger;
 import nc.bs.pub.pa.PreAlertObject;
 import nc.bs.pub.pa.PreAlertReturnType;
 import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.bs.pub.taskcenter.IBackgroundWorkPlugin;
+import nc.itf.bd.psn.psndoc.IPsndocQueryService;
 import nc.itf.ta.IAwayRegisterInfoDisplayer;
 import nc.itf.ta.IAwayRegisterManageMaintain;
-import nc.itf.ta.IAwayRegisterQueryMaintain;
 import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.jdbc.framework.processor.MapProcessor;
+import nc.vo.bd.psn.PsndocVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.lang.UFLiteralDate;
 import nc.vo.ta.away.AwayRegVO;
-import uap.xbrl.adapter.log.Logger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -61,8 +64,26 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 		returnmsg.append("--------开始同步出差、外出数据----------------\n");
 		doSyncBusinessTrip(null);
 		doSyncStepOut(null);
+		//过滤时长为0的单据
+		IPsndocQueryService psnQueryService = NCLocator.getInstance().lookup(IPsndocQueryService.class);
+		Iterator<AwayRegVO> iterator = insertvos.iterator();
+		while (iterator.hasNext()) {
+			AwayRegVO vo = iterator.next();
+			if (vo.getAwayhour().compareTo(UFDouble.ZERO_DBL) == 0) {
+				PsndocVO[] psndocVO = psnQueryService.queryPsndocByPks(new String[] { vo.getPk_psndoc() });
+				if (psndocVO.length > 0) {
+					returnmsg.append(psndocVO[0].getName() + "的单据：");
+				}
+				returnmsg.append(vo.getAwaybegintime().toStdString() + " -- " + vo.getAwayendtime().toStdString());
+				returnmsg.append("__有效时长为0，无法导入。\n");
+				iterator.remove();
+			}
+		}
+
+		//导入到数据表中
 		maintain.insertData(insertvos.toArray(new AwayRegVO[0]), true);
 		returnmsg.append("--------------出差、外出数据同步完成--------------\n");
+		returnmsg.append("本次共导入数据：" + insertvos.size() + "条\n");
 		alert.setReturnObj(returnmsg.toString());
 		return alert;
 	}
@@ -72,6 +93,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 		SmartworkBpmsProcessinstanceListRequest req = new SmartworkBpmsProcessinstanceListRequest();
 		req.setProcessCode(Env.BUSINESS_TRIP_PROCESS_CODE);
 		Calendar calendar = Calendar.getInstance();
+		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(1).toStdString() + " 23:30:00");
 		//		calendar.add(Calendar.MINUTE, -5);
 		//		req.setEndTime(calendar.getTimeInMillis());
 		calendar.add(Calendar.DATE, -40);
@@ -88,6 +110,10 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				ProcessInstanceTopVo dingtalkvo = list.get(i);
 				String result = dingtalkvo.getProcessInstanceResult();//审批结果，分为agree和refuse
 				if (!"agree".equals(result)) {
+					continue;
+				}
+				//只保存前一天23:00到今天的数据
+				if (new UFDateTime(dingtalkvo.getFinishTime()).before(minEndTime)) {
 					continue;
 				}
 				//				querymaintain.queryByCond(paramLoginContext, paramFromWhereSQL, paramObject)
@@ -175,6 +201,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 		SmartworkBpmsProcessinstanceListRequest req = new SmartworkBpmsProcessinstanceListRequest();
 		req.setProcessCode(Env.STEP_OUT_PROCESS_CODE);
 		Calendar calendar = Calendar.getInstance();
+		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(1).toStdString() + " 23:30:00");
 		//		calendar.add(Calendar.MINUTE, -5);
 		//		req.setEndTime(calendar.getTimeInMillis());
 		calendar.add(Calendar.DATE, -40);
@@ -190,6 +217,10 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				ProcessInstanceTopVo dingtalkvo = list.get(i);
 				String result = dingtalkvo.getProcessInstanceResult();//审批结果，分为agree和refuse
 				if (!"agree".equals(result)) {
+					continue;
+				}
+				//只保存前一天23:00到今天的数据
+				if (new UFDateTime(dingtalkvo.getFinishTime()).before(minEndTime)) {
 					continue;
 				}
 				sql.delete(0, sql.length());

@@ -15,6 +15,7 @@ import nc.bs.dao.DAOException;
 import nc.bs.extsys.plugin.dingtalk.OApiException;
 import nc.bs.extsys.plugin.dingtalk.auth.AuthHelper;
 import nc.bs.extsys.plugin.dingtalk.department.DepartmentHelper;
+import nc.bs.logging.Logger;
 import nc.bs.pub.pa.PreAlertObject;
 import nc.bs.pub.pa.PreAlertReturnType;
 import nc.bs.pub.taskcenter.BgWorkingContext;
@@ -29,7 +30,6 @@ import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFLiteralDate;
 import nc.vo.ta.importdata.ImportDataVO;
 import nc.vo.ta.log.TaBusilogUtil;
-import uap.xbrl.adapter.log.Logger;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -92,7 +92,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 				// 构建准备插入数据库的VO
 				for (int j = 0; j < attendanceRecord.size(); j++) {
 					Map recordMap = (Map) attendanceRecord.get(j);
-					Date workDate = new Date((Long) recordMap.get("workDate"));
+					Date workDate = new Date((Long) recordMap.get("userCheckTime"));
 					int datastatus = "OnDuty".equals(recordMap.get("checkType")) ? 0 : 1; //进出标识（签到、签退标志）   0=进，1=出，2=非门禁数据，
 					sql.delete(0, sql.length());
 					sql.append("select * from tbm_psndoc where timecardid='" + (String) recordMap.get("userId") + "'");

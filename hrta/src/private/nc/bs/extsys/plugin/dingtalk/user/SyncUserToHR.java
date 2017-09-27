@@ -3,8 +3,10 @@ package nc.bs.extsys.plugin.dingtalk.user;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.extsys.plugin.dingtalk.OApiException;
@@ -57,6 +59,7 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 		StringBuilder sql = new StringBuilder();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
 		List<TBMPsndocVO> insertvos = new ArrayList<TBMPsndocVO>();
+		List<String> insertpsndocs = new ArrayList<String>();
 		/*
 		//分布try包围，方便记录错误信息
 		List<Department> departs = null;
@@ -128,6 +131,10 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 				returnmsg.append("未能找到相应的手机号码，请在HR系统维护手机号码__钉钉人员:" + userDetail.getName() + ",手机号:" + userDetail.getMobile() + "\n");
 				continue;
 			}
+			//过滤重复人员
+			if (insertpsndocs.contains(result.get("pk_psndoc"))) {
+				continue;
+			}
 			//保存待插入数据
 			TBMPsndocVO vo = new TBMPsndocVO();
 			vo.setBegindate(new UFLiteralDate("2017-08-01"));//考勤开始时间result.get("begindate")
@@ -142,6 +149,7 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 			vo.setTbm_prop(2);//考勤方式:1=手工考勤，2=机器考勤
 			vo.setTimecardid(userDetail.getUserid());//考勤卡号
 			vo.setPk_adminorg(result.get("pk_org"));//管理组织
+			insertpsndocs.add(result.get("pk_psndoc"));//保存到一个list，方便去重
 			insertvos.add(vo);
 		}
 		//		VOInsert<TBMPsndocVO> voInsert = new VOInsert<TBMPsndocVO>();

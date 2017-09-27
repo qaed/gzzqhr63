@@ -29,6 +29,7 @@ public class SyncUser implements IBackgroundWorkPlugin {
 	private int getUserDetailErrorTimes = 0;
 	private int getUserDetailErrorTimesMax = 20;
 	private List<CorpUserDetail> userDetails = new ArrayList<CorpUserDetail>();
+	private List<CorpUserDetail> newUserDetail = new ArrayList<CorpUserDetail>();
 
 	public SyncUser(BaseDAO dao) {
 		this.dao = dao;
@@ -82,6 +83,8 @@ public class SyncUser implements IBackgroundWorkPlugin {
 						try {
 							String userid = UserHelper.createUser(getToken(), userDetail);
 							returnmsg.append("新增钉钉用户：" + userDetail.getName() + "\n");
+							userDetail.setUserid(userid);
+							newUserDetail.add(userDetail);
 							//更新考勤卡号
 							sql.delete(0, sql.length());
 							sql.append("update tbm_psndoc set timecardid='" + userid + "' where pk_psndoc=(select pk_psndoc from bd_psndoc where mobile='" + userDetail.getMobile() + "')");
@@ -103,6 +106,8 @@ public class SyncUser implements IBackgroundWorkPlugin {
 				try {
 					//先尝试新增
 					String userid = UserHelper.createUser(getToken(), userDetail);
+					userDetail.setUserid(userid);
+					newUserDetail.add(userDetail);
 					//更新考勤卡号
 					sql.delete(0, sql.length());
 					sql.append("update tbm_psndoc set timecardid='" + userid + "' where pk_psndoc=(select pk_psndoc from bd_psndoc where mobile='" + userDetail.getMobile() + "')");
@@ -170,6 +175,10 @@ public class SyncUser implements IBackgroundWorkPlugin {
 
 	private List<CorpUserDetail> getAllUser() throws BusinessException {
 		if (this.userDetails != null && this.userDetails.size() > 0) {
+			if (this.newUserDetail != null && this.newUserDetail.size() > 0) {
+				this.userDetails.addAll(newUserDetail);
+				newUserDetail.clear();
+			}
 			return this.userDetails;
 		}
 		try {
@@ -180,6 +189,12 @@ public class SyncUser implements IBackgroundWorkPlugin {
 				for (int j = 0; j < userlist.size(); j++) {
 					this.userDetails.add(UserHelper.getUser(getToken(), userlist.get(j).getUserid()));
 				}
+			}
+			//还有根部门的
+			CorpUserList rootcorpuserlist = UserHelper.getDepartmentUser(getToken(), 1L, null, null, null);
+			List<CorpUser> rootuserlist = rootcorpuserlist.getUserlist();
+			for (int j = 0; j < rootuserlist.size(); j++) {
+				this.userDetails.add(UserHelper.getUser(getToken(), rootuserlist.get(j).getUserid()));
 			}
 		} catch (Exception e) {
 			this.getUserDetailErrorTimes++;
@@ -194,6 +209,10 @@ public class SyncUser implements IBackgroundWorkPlugin {
 			} else {
 				throw new BusinessException(e);
 			}
+		}
+		if (this.newUserDetail != null && this.newUserDetail.size() > 0) {
+			this.userDetails.addAll(newUserDetail);
+			newUserDetail.clear();
 		}
 		return this.userDetails;
 	}
