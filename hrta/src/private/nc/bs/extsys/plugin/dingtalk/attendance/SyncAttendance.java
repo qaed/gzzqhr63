@@ -54,7 +54,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 		alert.setReturnType(PreAlertReturnType.RETURNMESSAGE);
 		alert.setMsgTitle("同步钉钉考勤数据\n");
 		StringBuilder returnmsg = new StringBuilder();
-		returnmsg.append("-----------开始同步钉钉考勤数据--------\n");
+		returnmsg.append("===============开始同步钉钉考勤数据===============\n");
 		StringBuilder sql = new StringBuilder();
 		Calendar calendar = Calendar.getInstance();
 		Map<String, Object> map = arg0.getKeyMap();
@@ -64,16 +64,20 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 		//		SimpleDateFormat sdfwithtime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 		if (checkDateFrom == null || "".equals(checkDateFrom.trim())) {
+			returnmsg.append("未发现自定义checkDateFrom(开始时期)，默认「开始时期」为 " + sdf.format(calendar.getTime()) + "\n");
 			checkDateFrom = sdf.format(calendar.getTime()) + " 00:00:00";
 		} else {
+			returnmsg.append("发现自定义checkDateFrom(开始时期):" + checkDateFrom + "\n");
 			checkDateFrom += " 00:00:00";
 		}
 		if (checkDateTo == null || "".equals(checkDateTo.trim())) {
+			returnmsg.append("未发现自定义checkDateTo(结束时期)，默认「结束时期」为 " + sdf.format(calendar.getTime()) + "\n");
 			checkDateTo = sdf.format(calendar.getTime()) + " 23:59:59";
 		} else {
+			returnmsg.append("发现自定义checkDateTo(结束时期):" + checkDateTo + "\n");
 			checkDateTo += " 23:59:59";
 		}
-		returnmsg.append("本次导入考勤及签到数据日期为：").append(checkDateFrom).append("----").append(checkDateTo).append("\n");
+		returnmsg.append("本次导入考勤及签到数据日期为：").append(checkDateFrom).append(" --- ").append(checkDateTo).append("\n");
 
 		try {
 
@@ -84,7 +88,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 			List<ImportDataVO> importdatas = new ArrayList<ImportDataVO>();
 
 			// 每次最多获取50个人的考勤数据
-			returnmsg.append("本次需要导入考勤人员数量为：" + userIds.size() + "\n");
+			returnmsg.append("本次需要导入考勤人员(考勤档案人员)数为：" + userIds.size() + "\n");
 			for (int i = 0; i < userIds.size(); i = i + 50) {
 				List<String> subUserIds = userIds.subList(i, i + 50 > userIds.size() ? userIds.size() : i + 50);
 				JSONArray attendanceRecord =
@@ -111,9 +115,9 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 					importdatas.add(importDataVO);
 				}
 			}
+			returnmsg.append("共需要导入考勤数据数为：" + importdatas.size() + "条\n");
 			if (importdatas.size() > 0) {
-				returnmsg.append("共需要考勤数据数为：" + importdatas.size() + "条\n");
-				//				IImportDataManageMaintain matain = NCLocator.getInstance().lookup(IImportDataManageMaintain.class);
+				//IImportDataManageMaintain matain = NCLocator.getInstance().lookup(IImportDataManageMaintain.class);
 				//由于Maintain东西太杂了，直接使用DAO进行操作
 				ImportDataDAO dmo = new ImportDataDAO();
 				//先判断是否是重复导入，如果为重复导入，则删除掉以前的数据
@@ -128,6 +132,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 				TaBusilogUtil.writeImportDataBusiLog(importdatas.toArray(new ImportDataVO[0]));
 			}
 			//-------------------------同步人员签卡数据
+			returnmsg.append("===============开始同步钉钉签到数据===============\n");
 			//删除重复签到数据
 			deleteCheckindata(checkDateFrom, checkDateTo);
 			//插入签到数据
@@ -139,7 +144,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 			Logger.error(e);
 			throw new BusinessException(e);
 		}
-		returnmsg.append("----------导入考勤及签到数据「完成」---------\n\n");
+		returnmsg.append("===============导入考勤及签到数据「完成」===============\n\n");
 		alert.setReturnObj(returnmsg.toString());
 		return alert;
 	}
@@ -158,6 +163,13 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 		this.dao = dao;
 	}
 
+	/**
+	 * 删除签到数据
+	 * 
+	 * @param checkDateFrom yyyy-MM-dd hh:mm:dd
+	 * @param checkDateTo yyyy-MM-dd hh:mm:dd
+	 * @throws DAOException
+	 */
 	private void deleteCheckindata(String checkDateFrom, String checkDateTo) throws DAOException {
 		StringBuilder sql = new StringBuilder();
 		SQLParameter parameter = new SQLParameter();
@@ -167,13 +179,30 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 		getDao().executeUpdate(sql.toString(), parameter);
 	}
 
+	/**
+	 * 导入签到数据（只同步部门下的人，没有部门的不同步）
+	 * 
+	 * @param checkDateFrom yyyy-MM-dd hh:mm:dd
+	 * @param checkDateTo yyyy-MM-dd hh:mm:dd
+	 * @return
+	 * @throws ServiceNotExistException
+	 * @throws SdkInitException
+	 * @throws ServiceException
+	 * @throws OApiException
+	 * @throws DAOException
+	 */
 	private Integer insertCheckindate(String checkDateFrom, String checkDateTo) throws ServiceNotExistException, SdkInitException,
 			ServiceException, OApiException, DAOException {
-		List<Department> departments = DepartmentHelper.listDepartments(AuthHelper.getAccessToken(), "1");
+		List<Department> departments = DepartmentHelper.listDepartments(AuthHelper.getAccessToken(), "1");//钉钉会获取该父部门下所有的子部门（含下下级部门）
 		StringBuilder sql = new StringBuilder();
 		SQLParameter parameter = new SQLParameter();
 		int size = 0;
 		for (int i = 0; i < departments.size(); i++) {
+			if (departments.get(i).getParentid() != 1L) {
+				//只要一级部门，不要下级部门，否则数据会重复
+				continue;
+			}
+			//获取的数据包含下级部门的人签到数据
 			JSONArray checkinData =
 					AttendanceHelper.listCheckinRecord(AuthHelper.getAccessToken(), departments.get(i).getId().toString(), new UFDateTime(checkDateFrom).getMillis(), new UFDateTime(checkDateTo).getMillis(), null, null, null);
 			for (int j = 0; j < checkinData.size(); j++) {
@@ -200,6 +229,13 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 
 	}
 
+	/**
+	 * 更新签到数据的人员主键 tbm_checkindata表的pk_psndoc,pk_psnjob
+	 * 
+	 * @param checkDateFrom
+	 * @param checkDateTo
+	 * @throws DAOException
+	 */
 	private void updatePsnAndJob(String checkDateFrom, String checkDateTo) throws DAOException {
 		StringBuilder sql = new StringBuilder();
 		SQLParameter parameter = new SQLParameter();
