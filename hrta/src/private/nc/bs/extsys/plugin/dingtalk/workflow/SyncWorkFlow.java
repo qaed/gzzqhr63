@@ -1,11 +1,14 @@
 package nc.bs.extsys.plugin.dingtalk.workflow;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import nc.bs.dao.BaseDAO;
@@ -61,9 +64,36 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 		alert.setReturnType(PreAlertReturnType.RETURNMESSAGE);
 		alert.setMsgTitle("出差、外出同步任务执行情况");
 		StringBuilder returnmsg = new StringBuilder();
-		returnmsg.append("--------开始同步出差、外出数据----------------\n");
-		doSyncBusinessTrip(null);
-		doSyncStepOut(null);
+		returnmsg.append("===============开始同步出差、外出数据===============\n");
+		Properties pro = new Properties();
+		InputStream in;
+		String longleave = "";
+		String shortleave = "";
+		try {
+			in = SyncWorkFlow.class.getClassLoader().getResourceAsStream("dingtalk.properties");
+			pro.load(in);
+			longleave = pro.getProperty("longleave");
+			shortleave = pro.getProperty("shortleave");
+			in.close();
+		} catch (Exception e) {
+			Logger.error(e);
+			throw new BusinessException(e);
+		}
+		//后台任务参数列表
+		Map<String, Object> map = arg0.getKeyMap();
+		Integer dayBefore = 1;
+		String dayBeforestr = (String) map.get("dayBefore");
+		if (dayBeforestr != null && !"".equals(dayBeforestr)) {
+			dayBefore = Integer.parseInt(dayBeforestr);
+		}
+		if (dayBeforestr == null) {
+			returnmsg.append("未发现自定义dayBefore(同步审批时间范围)，默认「时间范围」为 " + 1 + "\n");
+		} else {
+			returnmsg.append("发现自定义dayBefore(同步审批时间范围)为: " + dayBefore + "\n");
+		}
+		returnmsg.append("本次导入 " + new UFLiteralDate().getDateBefore(dayBefore).toStdString() + " 23:30:00" + "--至今 出差、外出审批通过的数据\n");
+		doSyncBusinessTrip(null, dayBefore, longleave);
+		doSyncStepOut(null, dayBefore, shortleave);
 		//过滤时长为0的单据
 		IPsndocQueryService psnQueryService = NCLocator.getInstance().lookup(IPsndocQueryService.class);
 		Iterator<AwayRegVO> iterator = insertvos.iterator();
@@ -82,18 +112,24 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 
 		//导入到数据表中
 		maintain.insertData(insertvos.toArray(new AwayRegVO[0]), true);
-		returnmsg.append("--------------出差、外出数据同步完成--------------\n");
+		returnmsg.append("===============出差、外出数据同步完成===============\n");
 		returnmsg.append("本次共导入数据：" + insertvos.size() + "条\n");
 		alert.setReturnObj(returnmsg.toString());
 		return alert;
 	}
 
-	private void doSyncBusinessTrip(Long cursor) throws BusinessException {
+	/**
+	 * 同步出差--对应外地出差
+	 * 
+	 * @param cursor
+	 * @throws BusinessException
+	 */
+	private void doSyncBusinessTrip(Long cursor, Integer dayBefore, String pk_timeitem) throws BusinessException {
 		DingTalkClient client = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
 		SmartworkBpmsProcessinstanceListRequest req = new SmartworkBpmsProcessinstanceListRequest();
 		req.setProcessCode(Env.BUSINESS_TRIP_PROCESS_CODE);
 		Calendar calendar = Calendar.getInstance();
-		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(1).toStdString() + " 23:30:00");
+		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(dayBefore).toStdString() + " 23:30:00");
 		//		calendar.add(Calendar.MINUTE, -5);
 		//		req.setEndTime(calendar.getTimeInMillis());
 		calendar.add(Calendar.DATE, -40);
@@ -118,7 +154,8 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				}
 				//				querymaintain.queryByCond(paramLoginContext, paramFromWhereSQL, paramObject)
 				sql.delete(0, sql.length());
-				sql.append("select tbm_psndoc.pk_psndoc,tbm_psndoc.pk_org,tbm_psndoc.pk_group,tbm_psndoc.pk_psnorg,tbm_psndoc.pk_psnjob,tbm_timeitemcopy.pk_timeitem,tbm_timeitemcopy.pk_timeitemcopy from tbm_psndoc left join tbm_timeitemcopy on tbm_timeitemcopy.pk_org=tbm_psndoc.pk_org where tbm_psndoc.timecardid='" + dingtalkvo.getOriginatorUserid() + "' and tbm_timeitemcopy.pk_timeitem='1002Z710000000021ZLZ'");
+
+				sql.append("select tbm_psndoc.pk_psndoc,tbm_psndoc.pk_org,tbm_psndoc.pk_group,tbm_psndoc.pk_psnorg,tbm_psndoc.pk_psnjob,tbm_timeitemcopy.pk_timeitem,tbm_timeitemcopy.pk_timeitemcopy from tbm_psndoc left join tbm_timeitemcopy on tbm_timeitemcopy.pk_org=tbm_psndoc.pk_org where tbm_psndoc.timecardid='" + dingtalkvo.getOriginatorUserid() + "' and tbm_timeitemcopy.pk_timeitem='" + pk_timeitem + "'");
 				Map<String, String> psndetail = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
 				if (psndetail == null) {
 					continue;
@@ -148,7 +185,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 					vo.setPk_group(psndetail.get("pk_group"));
 					vo.setPk_org(psndetail.get("pk_org"));
 					vo.setCreationtime(new UFDateTime(dingtalkvo.getCreateTime()));//创建时间
-					JSONArray innerDetail = jsonobject.getJSONArray(k);//一共2条，分别为：1个出差地点和相关详细内容extendValue
+					JSONArray innerDetail = jsonobject.getJSONArray(k);//innerDetail下一共2条，分别为：1个出差地点和相关详细内容extendValue
 					for (int l = 0; l < innerDetail.size(); l++) {
 						JSONObject value = innerDetail.getJSONObject(l);
 						if ("出差地点".equals(value.get("key"))) {
@@ -156,15 +193,15 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 						} else {//相关详细内容extendValue
 							JSONArray detailList = JSON.parseObject(value.get("extendValue").toString()).getJSONArray("detailList");
 							/* 
-							 * detailList
+							 * detailList（如果多天出差，会分成多条记录，取第一天的开始时间，和最后一条的结束时间）
 							 *	index	value
 							 *	0		开始时间信息
-							 *	1		结束时间信息
+							 *	size-1	结束时间信息
 							 */
 							Date begindate = detailList.getJSONObject(0).getJSONObject("approveInfo").getDate("fromTime");
 							vo.setAwaybegindate(new UFLiteralDate(begindate));
 							vo.setAwaybegintime(new UFDateTime(begindate));
-							Date enddate = detailList.getJSONObject(0).getJSONObject("approveInfo").getDate("toTime");
+							Date enddate = detailList.getJSONObject(detailList.size() - 1).getJSONObject("approveInfo").getDate("toTime");
 							vo.setAwayenddate(new UFLiteralDate(enddate));
 							vo.setAwayendtime(new UFDateTime(enddate));
 						}
@@ -179,7 +216,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				}
 			}
 			if (rsp.getResult().getResult().getNextCursor() != null) {//还有下一页
-				doSyncBusinessTrip(rsp.getResult().getResult().getNextCursor());
+				doSyncBusinessTrip(rsp.getResult().getResult().getNextCursor(), dayBefore, pk_timeitem);
 			}
 
 		} catch (Exception e) {
@@ -190,18 +227,18 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 	}
 
 	/**
-	 * 同步外出
+	 * 同步外出--对应本地出差
 	 * 
 	 * @param cursor
 	 * @throws BusinessException
 	 */
-	private void doSyncStepOut(Long cursor) throws BusinessException {
+	private void doSyncStepOut(Long cursor, Integer dayBefore, String pk_timeitem) throws BusinessException {
 
 		DingTalkClient client = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
 		SmartworkBpmsProcessinstanceListRequest req = new SmartworkBpmsProcessinstanceListRequest();
 		req.setProcessCode(Env.STEP_OUT_PROCESS_CODE);
 		Calendar calendar = Calendar.getInstance();
-		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(1).toStdString() + " 23:30:00");
+		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(dayBefore).toStdString() + " 23:30:00");
 		//		calendar.add(Calendar.MINUTE, -5);
 		//		req.setEndTime(calendar.getTimeInMillis());
 		calendar.add(Calendar.DATE, -40);
@@ -224,7 +261,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 					continue;
 				}
 				sql.delete(0, sql.length());
-				sql.append("select tbm_psndoc.pk_psndoc,tbm_psndoc.pk_org,tbm_psndoc.pk_group,tbm_psndoc.pk_psnorg,tbm_psndoc.pk_psnjob,tbm_timeitemcopy.pk_timeitem,tbm_timeitemcopy.pk_timeitemcopy from tbm_psndoc left join tbm_timeitemcopy on tbm_timeitemcopy.pk_org=tbm_psndoc.pk_org where tbm_psndoc.timecardid='" + dingtalkvo.getOriginatorUserid() + "' and tbm_timeitemcopy.pk_timeitem='1001Z71000000002Q5YD'");
+				sql.append("select tbm_psndoc.pk_psndoc,tbm_psndoc.pk_org,tbm_psndoc.pk_group,tbm_psndoc.pk_psnorg,tbm_psndoc.pk_psnjob,tbm_timeitemcopy.pk_timeitem,tbm_timeitemcopy.pk_timeitemcopy from tbm_psndoc left join tbm_timeitemcopy on tbm_timeitemcopy.pk_org=tbm_psndoc.pk_org where tbm_psndoc.timecardid='" + dingtalkvo.getOriginatorUserid() + "' and tbm_timeitemcopy.pk_timeitem='" + pk_timeitem + "'");
 				Map<String, String> psndetail = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
 				if (psndetail == null) {
 					continue;
@@ -266,7 +303,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				}
 			}
 			if (rsp.getResult().getResult().getNextCursor() != null) {//还有下一页
-				doSyncStepOut(rsp.getResult().getResult().getNextCursor());
+				doSyncStepOut(rsp.getResult().getResult().getNextCursor(), dayBefore, pk_timeitem);
 			}
 
 		} catch (Exception e) {
