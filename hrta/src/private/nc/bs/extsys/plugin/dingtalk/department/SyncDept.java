@@ -1,13 +1,16 @@
 package nc.bs.extsys.plugin.dingtalk.department;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.extsys.plugin.dingtalk.OApiException;
 import nc.bs.extsys.plugin.dingtalk.auth.AuthHelper;
+import nc.bs.extsys.plugin.dingtalk.workflow.SyncWorkFlow;
 import nc.bs.logging.Logger;
 import nc.bs.pub.pa.PreAlertObject;
 import nc.bs.pub.pa.PreAlertReturnType;
@@ -66,7 +69,22 @@ public class SyncDept implements IBackgroundWorkPlugin {
 		StringBuilder returnmsg = new StringBuilder();
 		returnmsg.append("---------开始同步部门架构-------------------\n");
 		StringBuilder sql = new StringBuilder();
-
+		//初始化参数
+		String salesDepartment;//营业部id
+		String branchOffice;//分公司id
+		String VentureOffice;//创投id
+		try {
+			Properties pro = new Properties();
+			InputStream in = SyncWorkFlow.class.getClassLoader().getResourceAsStream("dingtalk.properties");
+			pro.load(in);
+			salesDepartment = pro.getProperty("salesDepartment");
+			branchOffice = pro.getProperty("branchOffice");
+			VentureOffice = pro.getProperty("VentureOffice");
+			in.close();
+		} catch (Exception e) {
+			Logger.error(e);
+			throw new BusinessException(e);
+		}
 		//---------------------------------开始同步新增、更新---------------------------
 		// 正常推送的部门
 		sql.delete(0, sql.length());
@@ -75,12 +93,12 @@ public class SyncDept implements IBackgroundWorkPlugin {
 		List<Map<String, String>> depts = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		// 营业部，在“经纪业务事业部”下，要手动创建
 		sql.delete(0, sql.length());
-		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'50886559' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_fatherorg =(select pk_corp from org_corp where name = '营业部') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
+		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'" + salesDepartment + "' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_fatherorg =(select pk_corp from org_corp where name = '营业部') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
 		List<Map<String, String>> depts2 = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		depts.addAll(depts2);
 		// 分公司，在“客户与机构管理总部”，要手动创建
 		sql.delete(0, sql.length());
-		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'50821402' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_fatherorg =(select pk_corp from org_corp where name = '分公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
+		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'" + branchOffice + "' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_fatherorg =(select pk_corp from org_corp where name = '分公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
 		List<Map<String, String>> depts3 = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		depts.addAll(depts3);
 		// 领袖资本
@@ -90,7 +108,7 @@ public class SyncDept implements IBackgroundWorkPlugin {
 		//		depts.addAll(depts4);
 		// 广州证券创新投资管理有限公司，一级部门，要手动创建
 		sql.delete(0, sql.length());
-		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'50842359' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_corp =(select pk_corp from org_corp where name = '广州证券创新投资管理有限公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
+		sql.append("select b.name,b.pk_dept,b.def1,case when b.pk_fatherorg='~' then null else b.pk_fatherorg end pk_fatherorg,'" + VentureOffice + "' parentid,c.timecardid principal from org_dept b left join org_corp a on a.pk_corp = b.pk_org left join tbm_psndoc c on c.pk_psndoc = b.principal where a.pk_corp =(select pk_corp from org_corp where name = '广州证券创新投资管理有限公司') and nvl(b.dr,0)=0 and b.hrcanceled = 'N'");
 		List<Map<String, String>> depts5 = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
 		depts.addAll(depts5);
 		returnmsg.append("本次同步部门数量总计:" + depts.size());
@@ -138,7 +156,7 @@ public class SyncDept implements IBackgroundWorkPlugin {
 						//部门有人员，可能人员还没有同步
 						Logger.error("「删除部门」失败，部门id(钉钉):" + deleteIds.get(i) + ",错误信息:" + e.getMessage(), e);
 						returnmsg.append("「删除部门」失败，部门id(钉钉):" + deleteIds.get(i) + ",错误信息:" + e.getMessage() + ",将于下次执行任务时删除，或稍后删除\n");
-					} else{
+					} else {
 						Logger.error("「删除部门」失败，部门id(钉钉):" + deleteIds.get(i) + ",错误信息:" + e.getMessage(), e);
 						returnmsg.append("「删除部门」失败，部门id(钉钉):" + deleteIds.get(i) + ",错误信息:" + e.getMessage() + "\n");
 						//throw new BusinessException("同步删除失败", e);
