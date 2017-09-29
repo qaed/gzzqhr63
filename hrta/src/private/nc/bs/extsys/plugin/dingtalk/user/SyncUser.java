@@ -13,6 +13,7 @@ import nc.bs.pub.pa.PreAlertObject;
 import nc.bs.pub.pa.PreAlertReturnType;
 import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.bs.pub.taskcenter.IBackgroundWorkPlugin;
+import nc.jdbc.framework.processor.ColumnListProcessor;
 import nc.jdbc.framework.processor.MapListProcessor;
 import nc.vo.pub.BusinessException;
 
@@ -46,6 +47,31 @@ public class SyncUser implements IBackgroundWorkPlugin {
 		returnmsg.append("----------------开始同步人员------------\n");
 		StringBuilder sql = new StringBuilder();
 		//---------------------------------开始同步删除---------------------------
+		//查询离职人员
+		sql.delete(0, sql.length());
+		sql.append("select distinct tbm_psndoc.timecardid timecardid,bd_psndoc.code code,bd_psndoc.name name ");
+		sql.append(" from tbm_psndoc ");
+		sql.append(" left join bd_psndoc on bd_psndoc.pk_psndoc = tbm_psndoc.pk_psndoc ");
+		sql.append(" left join hi_psnorg on hi_psnorg.pk_psndoc = tbm_psndoc.pk_psndoc ");
+		sql.append(" where isnull(tbm_psndoc.dr,0)=0 ");
+		sql.append(" and hi_psnorg.lastflag='Y' and hi_psnorg.endflag='Y' ");
+		List<Map<String, String>> deleteUsers = (List<Map<String, String>>) getDao().executeQuery(sql.toString(), new MapListProcessor());
+		if (deleteUsers != null && deleteUsers.size() > 0) {
+			for (Map<String, String> user : deleteUsers) {
+				try {
+					UserHelper.deleteUser(getToken(), user.get("timecardid"));//不使用批量删除，放止部分删除失败
+				} catch (Exception e) {
+					if (e.getMessage().contains("60121")) {//找不到该用户，已经被删除
+						//不用动
+					} else {
+						Logger.error("删除钉钉用户失败,HR用户为：" + user.get("name") + ",用户编码：" + user.get("code") + "\n", e);
+						//returnmsg.append("删除钉钉用户失败:HR用户为：" + user.get("name") + ",用户编码：" + user.get("code") + " " + e.getMessage() + "\n");
+						throw new BusinessException(e);
+					}
+				}
+			}
+		}
+
 		//---------------------------------开始同步新增、更新---------------------------
 		sql.delete(0, sql.length());
 		sql.append("select tbm_psndoc.timecardid timecardid,bd_psndoc.code code,bd_psndoc.name name ,org_dept.def1 departmentid,om_post.postname position,bd_psndoc.mobile mobile ");
