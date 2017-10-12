@@ -9,15 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import nc.bs.dao.BaseDAO;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchDeleteBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnSendApproveBP;
-import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUpdateBP;
 import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchDataUniqueCheckRule;
-import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
@@ -27,8 +26,16 @@ import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
 import nc.impl.pubapp.pattern.data.vo.VOUpdate;
 import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
+import nc.itf.hrwa.IWaBaUnitMaintain;
+import nc.itf.uap.IUAPQueryBS;
+import nc.jdbc.framework.SQLParameter;
+import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
+import nc.message.util.MessageCenter;
+import nc.message.vo.MessageVO;
+import nc.message.vo.NCMessage;
+import nc.ui.pub.workflownote.WorknoteAttPanelCreator;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
@@ -36,12 +43,14 @@ import nc.vo.pub.ISuperVO;
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pub.workflownote.WorkflownoteVO;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
+import nc.vo.sm.UserVO;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
-import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 
@@ -428,6 +437,67 @@ public abstract class AceWaBaSchPubServiceImpl {
 	public AggWaBaSchHVO[] pubsendapprovebills(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
 		AceWaBaSchSendApproveBP bp = new AceWaBaSchSendApproveBP();
 		AggWaBaSchHVO[] retvos = bp.sendApprove(clientFullVOs, originBills);
+		IWaBaUnitMaintain UnitMaintain = NCLocator.getInstance().lookup(IWaBaUnitMaintain.class);
+		//添加消息推送
+		for (AggWaBaSchHVO aggWaBaSchHVO : retvos) {
+
+			ISuperVO[] vos = aggWaBaSchHVO.getChildren(WaBaSchBVO.class);
+			for (int i = 0; i < vos.length; i++) {
+				WaBaSchBVO bvo = (WaBaSchBVO) vos[i];
+				Object[] aggunitvos = UnitMaintain.query("pk_wa_ba_unit='" + bvo.getBa_unit_code() + "'");
+				if (aggunitvos.length == 0 || aggunitvos[0] == null) {
+					continue;
+				}
+				//插入代办
+				BaseDAO dao = new BaseDAO();
+				//				VOInsert<WorkflownoteVO> voinsert = new VOInsert<WorkflownoteVO>();
+				WorkflownoteVO workflownoteVO = new WorkflownoteVO();
+				workflownoteVO.setBillid(aggWaBaSchHVO.getParentVO().getPk_ba_sch_h());
+				workflownoteVO.setBillno(aggWaBaSchHVO.getParentVO().getSch_code());
+				workflownoteVO.setUserobject(null);
+				workflownoteVO.setWorkflow_type(2);
+				dao.insertVO(workflownoteVO);
+				//构造消息
+				NCMessage[] ncmsg = new NCMessage[1];
+				MessageVO msg = new MessageVO();
+				//				IUAPQueryBS queryBS = NCLocator.getInstance().lookup(IUAPQueryBS.class);
+				//				List<UserVO> uservolist = (List<UserVO>) queryBS.retrieveByClause(UserVO.class, "pk_psndoc='"+((AggWaBaUnitHVO)aggunitvos[0]).getParentVO().getBa_mng_psnpk()+"'");
+				//查接收人
+				SQLParameter parameter = new SQLParameter();
+				parameter.clearParams();
+				parameter.addParam(((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getBa_mng_psnpk());
+				String receiver =
+						(String) dao.executeQuery("select sm_user.cuserid from sm_user where pk_psndoc=?", parameter, new ColumnProcessor());
+				//查创建人姓名
+				parameter.clearParams();
+				parameter.addParam(aggWaBaSchHVO.getParentVO().getCreator());
+				String creatorName =
+						(String) dao.executeQuery("select user_name from sm_user where sm_user.cuserid=?", parameter, new ColumnProcessor());
+				//构造消息
+				msg.setSender(aggWaBaSchHVO.getParentVO().getCreator());//发送人
+				msg.setReceiver(receiver);//接受人
+				msg.setMsgsourcetype("worklist");//消息来源类型
+				msg.setPriority(5);//优先级
+				msg.setSendtime(new UFDateTime());//发送信息时间
+				msg.setSubject("请审批 " + creatorName + " 发起的 " + ((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getName());//标题
+				msg.setPk_group(aggWaBaSchHVO.getParentVO().getPk_group());
+				msg.setPk_detail(workflownoteVO.getPrimaryKey());
+				msg.setPk_org(aggWaBaSchHVO.getParentVO().getPk_org());
+				msg.setDestination("inbox");
+				msg.setDetail(aggWaBaSchHVO.getParentVO().getPk_ba_sch_h() + "@" + aggWaBaSchHVO.getParentVO().getBilltype() + "@" + aggWaBaSchHVO.getParentVO().getSch_code());//详细信息
+				msg.setContenttype("~");
+				//msg.setDomainflag("AUM");
+				ncmsg[0] = new NCMessage();
+				ncmsg[0].setMessage(msg);
+				//保存当前分配人pk
+				dao.executeUpdate("update wa_ba_sch_unit set vdef1='" + ((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getBa_mng_psnpk() + "' where pk_ba_sch_unit='" + bvo.getPk_ba_sch_unit() + "'");
+				try {
+					MessageCenter.sendMessage(ncmsg);
+				} catch (Exception e) {
+					throw new BusinessException(e);
+				}
+			}
+		}
 		return retvos;
 	}
 

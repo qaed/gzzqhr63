@@ -83,7 +83,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 					Dataset detailDs = widget.getViewModels().getDataset(dr.getDetailDataset());
 					detailDs.clear();
 				}
-				updateButtons();
+				//				updateButtons();
 				return;
 			}
 			for (int i = 0; i < masterRels.length; i++) {
@@ -129,10 +129,13 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 				//进一步进行查询条件处理
 				String wherePart = postProcessRowSelectVO(vo, detailDs);
 				if ("nc.vo.wa.wa_ba.sch.WaBaSchTVO".equals(clazz)) {
-					if (sqlin != null) {
+					if (sqlin != null && !"".equals(sqlin)) {
 						wherePart = " 1 = 1 and pk_ba_sch_unit in ( " + sqlin.substring(0, sqlin.length() - 1) + ")";
 						LfwSysOutWrapper.println("查询孙表数据where：" + wherePart);
 
+					} else {
+						//没有需要分配的数据
+						return;
 					}
 				}
 				//进行元数据Tabcode特性支持的条件处理
@@ -148,10 +151,11 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 						LfwSysOutWrapper.println("仅显示当前登录人可分配的数据，当前登录人pk：" + SessionUtil.getPk_psndoc());
 						for (SuperVO v : vos) {
 							WaBaSchBVO vv = (WaBaSchBVO) v;
-							if (vv.getMemo1() == null || !SessionUtil.getPk_psndoc().equals(vv.getMemo1())) {//仅显示当前登录人可分配的数据
+							if (vv.getVdef1() == null || !SessionUtil.getPk_psndoc().equals(vv.getVdef1())) {//仅显示当前登录人可分配的数据
 								continue;
 							}
 							sqlin += "'" + vv.getPk_ba_sch_unit() + "',";
+							break;//一次只分配一个单元的数据，防止后面逻辑复杂化
 						}
 					}
 
@@ -167,7 +171,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 				}
 			}
 		}
-		updateButtons();
+		//		updateButtons();
 
 	}
 }

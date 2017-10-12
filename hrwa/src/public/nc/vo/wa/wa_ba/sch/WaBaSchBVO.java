@@ -74,7 +74,7 @@ public class WaBaSchBVO extends SuperVO {
 	 */
 	public String item5;
 	/**
-	 * 备注1
+	 * 当前进行分配的分配人
 	 */
 	public String memo1;
 	/**

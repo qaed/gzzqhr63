@@ -77,6 +77,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			WaBaUnitHVO[] originVOs = this.getTreeCardVOs(new WaBaUnitHVO[] { hvo });
 			if (originVOs != null && originVOs[0] != null && !originVOs[0].getCode().equals(hvo.getCode())) {
 				processer.addBeforeRule(new WaUnitDataUniqueCheckRule());
+				processer.addBeforeRule(new WaUnitDataIsNotUsedRule());
 			}
 			processer.before(aggvo);
 			/*
