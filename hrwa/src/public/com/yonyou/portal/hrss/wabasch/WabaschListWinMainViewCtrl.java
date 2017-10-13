@@ -1,58 +1,46 @@
 package com.yonyou.portal.hrss.wabasch;
 
-import nc.uap.lfw.core.event.DataLoadEvent;
-import nc.uap.lfw.core.event.ScriptEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import nc.uap.cpb.org.querycmd.QueryCmd;
+import nc.uap.ctrl.tpl.print.ICpPrintTemplateService;
+import nc.uap.ctrl.tpl.print.init.DefaultPrintService;
+import nc.uap.lfw.core.LfwRuntimeEnvironment;
+import nc.uap.lfw.core.cmd.CmdInvoker;
+import nc.uap.lfw.core.cmd.UifAttachCmd;
 import nc.uap.lfw.core.cmd.UifDatasetAfterSelectCmd;
-import nc.uap.lfw.core.cmd.UifEnableCmd;
-import nc.uap.lfw.core.ctx.OpenProperties;
-import nc.uap.lfw.core.ContextResourceUtil;
-import nc.uap.lfw.core.comp.WebElement;
 import nc.uap.lfw.core.cmd.UifDatasetLoadCmd;
-import nc.uap.lfw.core.ctx.ApplicationContext;
-import nc.uap.lfw.core.ctx.AppLifeCycleContext;
+import nc.uap.lfw.core.cmd.UifDelCmdRV;
+import nc.uap.lfw.core.cmd.UifEnableCmd;
+import nc.uap.lfw.core.cmd.base.FromWhereSQL;
+import nc.uap.lfw.core.comp.MenubarComp;
+import nc.uap.lfw.core.comp.WebElement;
+import nc.uap.lfw.core.constants.AppConsts;
+import nc.uap.lfw.core.ctx.OpenProperties;
+import nc.uap.lfw.core.data.Dataset;
+import nc.uap.lfw.core.data.Row;
+import nc.uap.lfw.core.event.DataLoadEvent;
+import nc.uap.lfw.core.event.DatasetEvent;
+import nc.uap.lfw.core.event.MouseEvent;
+import nc.uap.lfw.core.exception.LfwRuntimeException;
+import nc.uap.lfw.core.log.LfwLogger;
 import nc.uap.lfw.core.model.plug.TranslatedRow;
 import nc.uap.lfw.file.LfwFileConstants;
-import java.util.List;
-import nc.uap.lfw.core.log.LfwLogger;
-import nc.uap.lfw.core.cmd.UifAttachCmd;
-import nc.uap.wfm.itf.IWfmTaskQry;
-import nc.uap.lfw.core.exception.LfwRuntimeException;
-import nc.uap.wfm.vo.WfmTaskVO;
-import java.io.File;
-import java.io.FileNotFoundException;
-import nc.uap.lfw.core.cmd.CmdInvoker;
-import java.util.Map;
-import nc.uap.lfw.core.LfwRuntimeEnvironment;
-import java.io.IOException;
-import java.util.HashMap;
-import uap.lfw.dbl.uiengine.CommonObjectConstants;
-import uap.lfw.core.itf.ctrl.AbstractMasterSlaveViewController;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import nc.uap.wfm.utils.WfmCPUtilFacade;
-import nc.uap.cpb.org.querycmd.QueryCmd;
-import nc.uap.lfw.core.data.Row;
-import nc.uap.lfw.core.cmd.base.FromWhereSQL;
-import nc.uap.lfw.core.data.Dataset;
-import nc.uap.lfw.core.exception.LfwBusinessException;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import nc.uap.ctrl.tpl.print.init.DefaultPrintService;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import nc.uap.lfw.core.cmd.UifDelCmdRV;
-import nc.uap.wfm.utils.WfmUtilFacade;
-import nc.vo.pub.SuperVO;
-import nc.uap.lfw.core.AppInteractionUtil;
-import nc.uap.ctrl.excel.UifExcelImportCmd;
-import nc.uap.ctrl.tpl.print.ICpPrintTemplateService;
 import nc.uap.lfw.file.UploadFileHelper;
-import nc.vo.pub.BusinessException;
 import nc.uap.wfm.constant.WfmConstants;
-import nc.uap.lfw.core.constants.AppConsts;
-import uap.web.bd.pub.AppUtil;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import nc.uap.lfw.core.event.DatasetEvent;
+import nc.uap.wfm.itf.IWfmTaskQry;
+import nc.uap.wfm.utils.WfmCPUtilFacade;
+import nc.uap.wfm.utils.WfmUtilFacade;
+import nc.uap.wfm.vo.WfmTaskVO;
+import nc.vo.pub.BusinessException;
+import nc.vo.pub.SuperVO;
+import uap.lfw.core.itf.ctrl.AbstractMasterSlaveViewController;
 import uap.lfw.core.locator.ServiceLocator;
-import nc.uap.lfw.core.event.MouseEvent;
+import uap.lfw.dbl.uiengine.CommonObjectConstants;
+import uap.web.bd.pub.AppUtil;
 
 /**
  * 信息列表默认逻辑
@@ -80,6 +68,10 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	public void onAfterRowSelect(DatasetEvent datasetEvent) {
 		Dataset ds = datasetEvent.getSource();
 		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId()));
+		MenubarComp comp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
+
+		comp.getItem("add").setEnabled(false);
+		comp.getItem("del").setEnabled(false);
 	}
 
 	/**

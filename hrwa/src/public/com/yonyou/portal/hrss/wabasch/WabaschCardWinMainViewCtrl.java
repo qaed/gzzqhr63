@@ -589,6 +589,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	public void onSave(MouseEvent mouseEvent) {
 		String id = "WaBaSchTVO";
 		Dataset ds = this.getCurrentView().getViewModels().getDataset(id);
+		//		this.getCurrentView().getViewModels().getDataset("WaBaSchBVO").getRowSet("1001ZZ1000000000CBOD").getRowDatas()
 		//ds.getValue("pk_ba_sch_unit");
 		//		ArrayList<String> list = new ArrayList<String>();
 		//		for (int i = 0; i < this.getDetailDsIds().length; i++) {
@@ -631,6 +632,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		} catch (DAOException e) {
 			throw new LfwRuntimeException(e);
 		}
+		AppInteractionUtil.showShortMessage(NCLangRes4VoTransl.getNCLangRes().getStrByID("pa", "PaPropertySaveListener-000000"));/*±£´æ³É¹¦£¡*/
 	}
 
 	protected void onAfterSave(Dataset masterDs, Dataset detailDss) {

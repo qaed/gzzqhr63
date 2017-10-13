@@ -189,7 +189,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				</list>
 				</property>
 				</bean>
-				
+
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />-->
 			</list>
 		</property>
@@ -269,26 +269,26 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!-- 表体行操作按钮注册，与表体右键菜单保持一致 -->
 		<property name="bodyLineActions">
 			<list>
-				<!-- 提供了一组默认实现 
+				<!-- 提供了一组默认实现
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyAddLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyInsertLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyDelLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyCopyLineAction" />
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteLineAction" >
-					<property name="clearItems">
-						<list>
-							<value>pk_ba_sch_unit</value>
-							<value>ts</value>
-						</list>
-					</property>
+				<property name="clearItems">
+				<list>
+				<value>pk_ba_sch_unit</value>
+				<value>ts</value>
+				</list>
+				</property>
 				</bean>
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyPasteToTailAction">
-					<property name="clearItems">
-						<list>
-							<value>pk_ba_sch_unit</value>
-							<value>ts</value>
-						</list>
-					</property>
+				<property name="clearItems">
+				<list>
+				<value>pk_ba_sch_unit</value>
+				<value>ts</value>
+				</list>
+				</property>
 				</bean>
 				<bean class="nc.ui.pubapp.uif2app.actions.BodyLineEditAction" />-->
 			</list>
@@ -560,6 +560,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="separatorAction" />
 				<!--
 				<ref bean="cencelAllotAction" />-->
+				<ref bean="showAllotAction"/>
 			</list>
 		</property>
 	</bean>

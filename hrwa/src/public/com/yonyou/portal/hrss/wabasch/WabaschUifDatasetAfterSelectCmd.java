@@ -1,8 +1,12 @@
 package com.yonyou.portal.hrss.wabasch;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import nc.bs.hrss.pub.tool.SessionUtil;
 import nc.bs.logging.Logger;
-import nc.uap.lfw.core.LfwRuntimeEnvironment;
 import nc.uap.lfw.core.cmd.UifDatasetAfterSelectCmd;
 import nc.uap.lfw.core.data.Dataset;
 import nc.uap.lfw.core.data.DatasetRelation;
@@ -16,7 +20,6 @@ import nc.uap.lfw.core.page.LfwView;
 import nc.uap.lfw.util.LfwClassUtil;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.SuperVO;
-import nc.vo.pubapp.AppContext;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 
 public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
@@ -148,15 +151,28 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 
 					SuperVO[] vos = queryChildVOs(pinfo, vo, wherePart, isNewMaster, orderPart);//设置了主表主键，所以根据它进行查询
 					if ("nc.vo.wa.wa_ba.sch.WaBaSchBVO".equals(clazz)) {
+						/*
+						 * 卡片的BVO只查出一个就好,即一次只分配一个单元的数据
+						 * 因为在卡片页面，修改-保存操作时调用savecmd需要传入BVOdataset「masterDataset」和TVOdataset「detailDataset」
+						 * 由于原始设计，第一个参数masterDataset会默认只拿第一个，如果可能导致TVO和BVO不对应
+						 */
 						LfwSysOutWrapper.println("仅显示当前登录人可分配的数据，当前登录人pk：" + SessionUtil.getPk_psndoc());
-						for (SuperVO v : vos) {
-							WaBaSchBVO vv = (WaBaSchBVO) v;
-							if (vv.getVdef1() == null || !SessionUtil.getPk_psndoc().equals(vv.getVdef1())) {//仅显示当前登录人可分配的数据
-								continue;
+						List<SuperVO> bvos = new ArrayList<SuperVO>(vos.length);
+						Collections.addAll(bvos, vos);
+						boolean hasConstructedSQL = false;//是否已构造sql语句
+						Iterator<SuperVO> it = bvos.iterator();
+						while (it.hasNext()) {
+							WaBaSchBVO bvo = (WaBaSchBVO) it.next();
+							//仅显示当前登录人可分配的数据
+							if (bvo.getVdef1() == null || !SessionUtil.getPk_psndoc().equals(bvo.getVdef1()) || hasConstructedSQL) {
+								it.remove();
+							} else if (!hasConstructedSQL) {//还未构造sql语句
+								sqlin += "'" + bvo.getPk_ba_sch_unit() + "',";
+								hasConstructedSQL = true;
 							}
-							sqlin += "'" + vv.getPk_ba_sch_unit() + "',";
-							break;//一次只分配一个单元的数据，防止后面逻辑复杂化
 						}
+						//此时bvos应该只剩下1个
+						vos = bvos.toArray(vos);
 					}
 
 					modifyVos(vos);
