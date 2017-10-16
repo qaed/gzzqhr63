@@ -1,6 +1,7 @@
 package nc.impl.pub.ace;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nc.bs.framework.common.NCLocator;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedRule;
@@ -8,7 +9,6 @@ import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.vo.VOQuery;
-import nc.impl.pubapp.pattern.data.vo.VOUpdate;
 import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
@@ -17,6 +17,7 @@ import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pubapp.AppContext;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
+import nc.vo.wa.wa_ba.unit.WaBaUnitBVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
 /**
@@ -84,7 +85,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			VOUpdate<WaBaUnitHVO> upd = new VOUpdate<WaBaUnitHVO>();
 			WaBaUnitHVO[] superVOs = upd.update(new WaBaUnitHVO[] { hvo }, originVOs);
 			*/
-			String pk = persist.saveBill(vo);
+			String pk = persist.saveBillWithRealDelete(vo);
 			BillQuery<AggWaBaUnitHVO> querybill = new BillQuery<AggWaBaUnitHVO>(AggWaBaUnitHVO.class);
 			//			return aggvo;
 			return querybill.query(new String[] { pk });

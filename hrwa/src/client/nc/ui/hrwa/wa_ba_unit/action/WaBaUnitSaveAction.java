@@ -47,12 +47,12 @@ public class WaBaUnitSaveAction extends SaveAction {
 	 */
 	@Override
 	protected void validate(Object value) {
-		AggWaBaUnitHVO aggvo = (AggWaBaUnitHVO) ((BillForm) getEditor()).getModel().getSelectedData();
-		if (aggvo.getChildrenVO().length < 1) {
-			List<ValidationFailure> list = new ArrayList();
-			list.add(new ValidationFailure("表体不能为空"));
-			throw new BusinessExceptionAdapter(new ValidationException(list));
-		}
+//		AggWaBaUnitHVO aggvo = (AggWaBaUnitHVO) ((BillForm) getEditor()).getModel().getSelectedData();
+//		if (aggvo.getChildrenVO()==null || aggvo.getChildrenVO().length < 1) {
+//			List<ValidationFailure> list = new ArrayList();
+//			list.add(new ValidationFailure("表体不能为空"));
+//			throw new BusinessExceptionAdapter(new ValidationException(list));
+//		}
 		super.validate(value);
 	}
 

@@ -231,7 +231,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="editAction" class="nc.ui.pubapp.uif2app.actions.EditAction">
 		<property name="model" ref="appModel" />
 	</bean>
-	<bean id="deleteAction" class="nc.ui.pubapp.uif2app.actions.DeleteAction">
+	<!--<bean id="deleteAction" class="nc.ui.pubapp.uif2app.actions.DeleteAction">-->
+	<bean id="deleteAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitDeleteAction">
 		<property name="model" ref="appModel" />
 	</bean>
 	<bean id="refreshAction" class="nc.ui.pubapp.uif2app.actions.RefreshAction">

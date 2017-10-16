@@ -722,7 +722,26 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 				//把分配人置为空
 				getDao().executeUpdate("update wa_ba_sch_unit set vdef1=null where pk_ba_sch_unit='" + (String) getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("pk_ba_sch_unit") + "'");
 			}
+			this.getCurrentAppCtx();
+			//主表SCHHVO主键
+			String pk_h = getMasterDs().getValue(this.getMasterDs().getPrimaryKeyField()).toString();
+			//分配单元UnitHVO主键
+			String pk_unit_h = getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("ba_unit_code").toString();
+			sql.delete(0, sql.length());
+			sql.append("select name from wa_ba_unit where pk_wa_ba_unit='" + pk_unit_h + "'");
+			//分配单元的名字
+			String unitName = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
+			//当期分配人pk
+			String currentMngpsnpk = getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("vdef1").toString();
+			sql.delete(0, sql.length());
+			sql.append("select cuserid from sm_user where pk_psndoc='" + currentMngpsnpk + "'");
+			//当期分配人的cuserid
+			String userid = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
+			sql.delete(0, sql.length());
+			sql.append("update sm_msg_content set isread='Y',ishandled='Y' where  detail like '" + pk_h + "@BAAL%' and receiver='" + userid + "' and subject like '%" + unitName + "%' ");
+			getDao().executeUpdate(sql.toString());
 			AppInteractionUtil.showShortMessage("分配成功");
+			this.getCurrentAppCtx().closeWinDialog();
 		} catch (Exception e) {
 			//保持异常链
 			throw new LfwRuntimeException(e);
@@ -779,7 +798,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		msg.setMsgsourcetype("worklist");//消息来源类型
 		msg.setPriority(5);//优先级
 		msg.setSendtime(new UFDateTime());//发送信息时间
-		msg.setSubject("请审批 " + creatorName + " 发起的 " + unitName);//标题
+		msg.setSubject("请审批 " + creatorName + " 发起的 " + unitName + "_" + getMasterDs().getValue("sch_name").toString());//标题
 		msg.setPk_group((String) getMasterDs().getValue("pk_group"));
 		msg.setPk_detail(workflownoteVO.getPrimaryKey());
 		msg.setPk_org((String) getMasterDs().getValue("pk_org"));

@@ -479,7 +479,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 				msg.setMsgsourcetype("worklist");//消息来源类型
 				msg.setPriority(5);//优先级
 				msg.setSendtime(new UFDateTime());//发送信息时间
-				msg.setSubject("请审批 " + creatorName + " 发起的 " + ((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getName());//标题
+				msg.setSubject("请审批 " + creatorName + " 发起的 " + ((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getName() + "_" + aggWaBaSchHVO.getParentVO().getSch_name());//标题
 				msg.setPk_group(aggWaBaSchHVO.getParentVO().getPk_group());
 				msg.setPk_detail(workflownoteVO.getPrimaryKey());
 				msg.setPk_org(aggWaBaSchHVO.getParentVO().getPk_org());
