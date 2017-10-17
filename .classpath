@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/public"/>
+	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/client"/>
+	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/private"/>
+	<classpathentry kind="src" output="uapbd/classes" path="uapbd/resources"/>
+	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/test"/>
+	<classpathentry kind="src" output="hrta/classes" path="hrta/src/public"/>
+	<classpathentry kind="src" output="hrta/classes" path="hrta/src/client"/>
+	<classpathentry kind="src" output="hrta/classes" path="hrta/src/private"/>
+	<classpathentry kind="src" output="hrta/classes" path="hrta/resources"/>
+	<classpathentry kind="src" output="hrta/classes" path="hrta/src/test"/>
+	<classpathentry kind="src" output="hrhi/classes" path="hrhi/src/public"/>
+	<classpathentry kind="src" output="hrhi/classes" path="hrhi/src/client"/>
+	<classpathentry kind="src" output="hrhi/classes" path="hrhi/src/private"/>
+	<classpathentry kind="src" output="hrhi/classes" path="hrhi/resources"/>
+	<classpathentry kind="src" output="hrhi/classes" path="hrhi/src/test"/>
+	<classpathentry kind="src" output="websm/classes" path="websm/src/public"/>
+	<classpathentry kind="src" output="websm/classes" path="websm/src/client"/>
+	<classpathentry kind="src" output="websm/classes" path="websm/src/private"/>
+	<classpathentry kind="src" output="websm/classes" path="websm/resources"/>
+	<classpathentry kind="src" output="websm/classes" path="websm/src/test"/>
+	<classpathentry kind="src" output="uap/classes" path="uap/src/public"/>
+	<classpathentry kind="src" output="uap/classes" path="uap/src/client"/>
+	<classpathentry kind="src" output="uap/classes" path="uap/src/private"/>
+	<classpathentry kind="src" output="uap/classes" path="uap/resources"/>
+	<classpathentry kind="src" output="uap/classes" path="uap/src/test"/>
+	<classpathentry kind="src" output="hrwa/classes" path="hrwa/src/public"/>
+	<classpathentry kind="src" output="hrwa/classes" path="hrwa/src/client"/>
+	<classpathentry kind="src" output="hrwa/classes" path="hrwa/src/private"/>
+	<classpathentry kind="src" output="hrwa/classes" path="hrwa/resources"/>
+	<classpathentry kind="src" output="hrwa/classes" path="hrwa/src/test"/>
+	<classpathentry kind="src" output="hrss/classes" path="hrss/src/public"/>
+	<classpathentry kind="src" output="hrss/classes" path="hrss/src/client"/>
+	<classpathentry kind="src" output="hrss/classes" path="hrss/src/private"/>
+	<classpathentry kind="src" output="hrss/classes" path="hrss/resources"/>
+	<classpathentry kind="src" output="hrss/classes" path="hrss/src/test"/>
+	<classpathentry kind="src" output="out/resources" path="resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Ant_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Product_Common_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Middleware_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Framework_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Public_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Client_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Private_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Lang_Library"/>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Generated_EJB"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
