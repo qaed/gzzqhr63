@@ -20,7 +20,7 @@ import nc.vo.pub.BusinessException;
 public class Test {
 	private List<CorpUserDetail> userDetails = new ArrayList<CorpUserDetail>();
 	private int getUserDetailErrorTimes = 0;
-	private int getUserDetailErrorTimesMax = 20;
+	private int getUserDetailErrorTimesMax = 20;//1
 
 	@org.junit.Test
 	public void deletedept() {
