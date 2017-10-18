@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.dao.BaseDAO;
+import nc.jdbc.framework.processor.MapProcessor;
 import nc.uap.cpb.org.querycmd.QueryCmd;
 import nc.uap.ctrl.tpl.print.ICpPrintTemplateService;
 import nc.uap.ctrl.tpl.print.init.DefaultPrintService;
@@ -49,6 +51,7 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	private static final String MAIN_VIEW_ID = "main";
 	private static final String CARD_WIN_ID = "com.yonyou.portal.hrss.WabaschComps.wabasch_cardwin";
 	private static final String CARD_WIN_TITLE = "编辑";
+	private BaseDAO dao = null;
 
 	/**
 	 * 主数据加载
@@ -69,7 +72,28 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		Dataset ds = datasetEvent.getSource();
 		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId()));
 		MenubarComp comp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
-
+		Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
+		Row[] rows = Bodyds.getAllRow();
+		StringBuilder sql = new StringBuilder();
+		try {
+			for (Row row : rows) {
+				sql.delete(0, sql.length());
+				sql.append("select doc1.name vdef1,doc2.name name1,doc3.name name2,doc4.name name3 from wa_ba_sch_unit sch");
+				sql.append(" left join wa_ba_unit unit on sch.ba_unit_code=unit.pk_wa_ba_unit");
+				sql.append(" left join bd_psndoc doc1 on doc1.pk_psndoc=sch.vdef1");
+				sql.append(" left join bd_psndoc doc2 on doc2.pk_psndoc=unit.ba_mng_psnpk");
+				sql.append(" left join bd_psndoc doc3 on doc3.pk_psndoc=unit.ba_mng_psnpk2");
+				sql.append(" left join bd_psndoc doc4 on doc4.pk_psndoc=unit.ba_mng_psnpk3");
+				sql.append(" where sch.pk_ba_sch_unit='" + row.getString(Bodyds.nameToIndex("pk_ba_sch_unit")) + "'");
+				Map<String, String> nameMap = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
+				row.setValue(Bodyds.nameToIndex("vdef1_name"), nameMap.get("vdef1"));//当期分配人
+				row.setValue(Bodyds.nameToIndex("ba_mng_name1"), nameMap.get("name1"));//分配人1
+				row.setValue(Bodyds.nameToIndex("ba_mng_name2"), nameMap.get("name2"));//分配人2
+				row.setValue(Bodyds.nameToIndex("ba_mng_name3"), nameMap.get("name3"));//分配人3
+			}
+		} catch (Exception e) {
+			throw new LfwRuntimeException(e);
+		}
 		comp.getItem("add").setEnabled(false);
 		comp.getItem("del").setEnabled(false);
 	}
@@ -367,5 +391,15 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	@Override
 	protected String getMasterDsId() {
 		return "WaBaSchHVO";
+	}
+
+	/**
+	 * @return dao
+	 */
+	private BaseDAO getDao() {
+		if (this.dao == null) {
+			this.dao = new BaseDAO();
+		}
+		return this.dao;
 	}
 }

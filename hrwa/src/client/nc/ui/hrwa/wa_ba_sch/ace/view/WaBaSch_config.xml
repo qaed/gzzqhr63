@@ -580,7 +580,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="cardRefreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="commitMenuAction" />
+				<!--
 				<ref bean="auditMenuAction" />
+				-->
 				<ref bean="separatorAction" />
 				<ref bean="printMenuAction" />
 				<ref bean="separatorAction" />

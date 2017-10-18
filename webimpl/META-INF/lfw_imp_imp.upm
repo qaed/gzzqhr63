@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="uap.lfw.imp.ImpEjb">
+  <public>
+  	<!--office file service-->
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.portal.ctrl.office.data.IOfficeFileQuery</interface>
+		<implementation>nc.uap.portal.ctrl.office.impl.OfficeFileQuery</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.portal.ctrl.office.data.sign.ISignQuery</interface>
+		<implementation>nc.uap.portal.ctrl.office.impl.SignQuery</implementation>
+	</component>
+	
+	<component remote="true" singleton="true" tx="CMT">
+		<interface>nc.uap.portal.ctrl.office.data.sign.ISignService</interface>
+		<implementation>nc.uap.portal.ctrl.office.impl.SignServiceImpl</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.portal.ctrl.office.data.sign.IsignLogQuery</interface>
+		<implementation>nc.uap.portal.ctrl.office.impl.SignLogQuery</implementation>
+	</component>
+	
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.tpl.ICpTplService</interface>
+		<implementation>nc.uap.ctrl.tpl.impl.CpTplServiceImpl</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.tpl.qry.ICpQryTemplateInnerQryService</interface>
+		<implementation>nc.uap.ctrl.tpl.qry.impl.CpQryTemplateInnerQryServiceImpl</implementation>
+	</component>
+	
+	<component remote="true" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.scan.IScancfgService</interface>
+		<implementation>nc.uap.ctrl.scan.ScancfgService</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.scan.IScancfgQryService</interface>
+		<implementation>nc.uap.ctrl.scan.ScancfgQryService</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.tpl.print.ICpPrintTemplateInnerQryService</interface>
+		<implementation>nc.uap.ctrl.tpl.print.impl.CpPrintTemplateInnerQryServiceImpl</implementation>
+	</component>
+	  
+	<component remote="false" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.tpl.gz.ICpGzTemplateInnerQryService</interface>
+		<implementation>nc.uap.ctrl.tpl.gz.impl.CpGzTemplateInnerQryServiceImpl</implementation>
+	</component>
+	
+	<component remote="false" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.excel.ICpExcelOpeWithSettingService</interface>
+		<implementation>nc.uap.ctrl.excel.CpExcelOpeWithSettingServiceImpl</implementation>
+	</component>
+
+	<component remote="false" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.excel.ICpExcelOpeService</interface>
+		<implementation>nc.uap.ctrl.excel.CpExcelOpeServiceImpl</implementation>
+	</component>
+	
+	<component remote="false" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.tpl.gz.ICpGzTemplateInnerService</interface>
+		<implementation>nc.uap.ctrl.tpl.gz.impl.CpGzTemplateInnerServiceImpl</implementation>
+	</component>
+	
+	
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.tpl.print.ICpPrintTemplateInnerService</interface>
+		<implementation>nc.uap.ctrl.tpl.print.impl.CpPrintTemplateInnerServiceImpl</implementation>
+	</component>
+	
+	<component remote="false" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.tpl.print.ICpPrintTemplateService</interface>
+		<implementation>nc.uap.ctrl.tpl.print.impl.CpPrintTemplateServiceImpl</implementation>
+	</component>
+	
+	<component remote="false" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.tpl.print.ICpPrintXmlService</interface>
+		<implementation>nc.uap.ctrl.tpl.print.impl.CpPrintXmlServiceImpl</implementation>
+	</component>
+	
+	<component remote="false" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.tpl.print.ICpPopWordTemplateService</interface>
+		<implementation>nc.uap.ctrl.tpl.print.impl.CpPopWordTemplateServiceImpl</implementation>
+	</component>
+	
+	<component remote="false" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.tpl.print.ICpPrintTemplateOuterService</interface>
+		<implementation>nc.uap.ctrl.tpl.print.impl.CpPrintTemplateOuterServiceImpl</implementation>
+	</component>
+	
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.tpl.qry.ICpQryTemplateInnerService</interface>
+		<implementation>nc.uap.ctrl.tpl.qry.impl.CpQryTemplateInnerServiceImpl</implementation>
+	</component>
+	<component remote="false" singleton="true" tx="CMT">
+		<interface>nc.uap.ctrl.tpl.IAddressService</interface>
+		<implementation>nc.uap.ctrl.tpl.AddressServiceImpl</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.lfw.file.IFilemanagerLoader</interface>
+		<implementation>nc.uap.ctrl.file.DefaultFileManagerLoader</implementation>
+	</component>
+	<component remote="false" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.docx.itf.IDocxFileViewService</interface>
+		<implementation>nc.uap.ctrl.docx.DocxFileViewServiceImpl</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		<interface>nc.uap.ctrl.pa.itf.IPageElementSerializer</interface>
+		<implementation>nc.uap.ctrl.pa.imp.PageElementSerializer</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="NONE">
+		    <interface>nc.uap.ctrl.pa.itf.IPaPublicQryService</interface>
+		    <implementation>nc.uap.ctrl.pa.imp.PaPublicQryServiceImpl</implementation>
+	</component>
+	<component remote="true" singleton="true" tx="CMT">
+		    <interface>nc.uap.ctrl.pa.itf.IPaPublicService</interface>
+		    <implementation>nc.uap.ctrl.pa.imp.PaPublicServiceImpl</implementation>
+	</component>
+
+	<component remote="true" singleton="true" tx="NONE">
+	    <interface>uap.lfw.sign.itf.ISignService</interface>
+	    <implementation>nc.uap.portal.ctrl.office.data.sign.signlog.SignInfoService</implementation>
+	</component>
+  </public>
+  <private>
+  </private>
+</module>
