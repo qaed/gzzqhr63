@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="webimpl/classes" path="webimpl/src/public"/>
+	<classpathentry kind="src" output="webimpl/classes" path="webimpl/src/client"/>
+	<classpathentry kind="src" output="webimpl/classes" path="webimpl/src/private"/>
+	<classpathentry kind="src" output="webimpl/classes" path="webimpl/resources"/>
+	<classpathentry kind="src" output="webimpl/classes" path="webimpl/src/test"/>
 	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/public"/>
 	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/client"/>
 	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/private"/>
@@ -35,7 +40,6 @@
 	<classpathentry kind="src" output="hrss/classes" path="hrss/src/private"/>
 	<classpathentry kind="src" output="hrss/classes" path="hrss/resources"/>
 	<classpathentry kind="src" output="hrss/classes" path="hrss/src/test"/>
-	<classpathentry kind="src" output="out/resources" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Ant_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Product_Common_Library"/>
@@ -46,6 +50,5 @@
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Private_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Lang_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Generated_EJB"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
