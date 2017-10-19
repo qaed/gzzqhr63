@@ -1,9 +1,7 @@
 package nc.impl.pub.ace;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nc.bs.framework.common.NCLocator;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedDelRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
@@ -17,8 +15,9 @@ import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pubapp.AppContext;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
-import nc.vo.wa.wa_ba.unit.WaBaUnitBVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @see nc.impl.hrwa.WaBaUnitMaintainImpl 重写了方法，把主VO改为聚合VO
@@ -54,7 +53,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			aggvo[0] = (AggWaBaUnitHVO) vo;
 			// 添加BP规则
 			AroundProcesser<AggWaBaUnitHVO> processer = new AroundProcesser<AggWaBaUnitHVO>(null);
-			processer.addBeforeRule(new WaUnitDataIsNotUsedRule());
+			processer.addBeforeRule(new WaUnitDataIsNotUsedDelRule());
 			processer.before(aggvo);
 
 			persist.deleteBillFromDB(aggvo[0]);
@@ -76,9 +75,17 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			// 添加BP规则
 			AroundProcesser<AggWaBaUnitHVO> processer = new AroundProcesser<AggWaBaUnitHVO>(null);
 			WaBaUnitHVO[] originVOs = this.getTreeCardVOs(new WaBaUnitHVO[] { hvo });
-			if (originVOs != null && originVOs[0] != null && !originVOs[0].getCode().equals(hvo.getCode())) {
-				processer.addBeforeRule(new WaUnitDataUniqueCheckRule());
-				processer.addBeforeRule(new WaUnitDataIsNotUsedRule());
+			if (originVOs != null && originVOs[0] != null) {
+
+				if (!originVOs[0].getCode().equals(hvo.getCode())) {
+					//修改编号时要校验，新编号不能重名
+					processer.addBeforeRule(new WaUnitDataUniqueCheckRule());
+				}
+
+				if (!StringUtils.equals(originVOs[0].getBa_mng_psnpk(), hvo.getBa_mng_psnpk()) || !StringUtils.equals(originVOs[0].getBa_mng_psnpk2(), hvo.getBa_mng_psnpk2()) || !StringUtils.equals(originVOs[0].getBa_mng_psnpk3(), hvo.getBa_mng_psnpk3()) || aggvo[0].getChildrenVO().length != 0) {
+					//修改了分配人或表体时，已使用的单元不允许修改
+					processer.addBeforeRule(new WaUnitDataIsNotUsedRule());
+				}
 			}
 			processer.before(aggvo);
 			/*

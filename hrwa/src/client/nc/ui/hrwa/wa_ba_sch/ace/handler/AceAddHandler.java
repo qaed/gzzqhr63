@@ -15,6 +15,7 @@ import nc.vo.pub.pf.BillStatusEnum;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pubapp.AppContext;
 
+@SuppressWarnings("restriction")
 public class AceAddHandler implements IAppEventHandler<AddEvent> {
 
 	@SuppressWarnings("restriction")
@@ -38,7 +39,8 @@ public class AceAddHandler implements IAppEventHandler<AddEvent> {
 		// 年度、带出期间
 		Calendar cal = Calendar.getInstance();
 		panel.setHeadItem("cyear", cal.get(Calendar.YEAR));
-		panel.setHeadItem("cperiod", cal.get(Calendar.MONTH) + "");
+		String month = cal.get(Calendar.MONTH) + 1 + "";
+		panel.setHeadItem("cperiod", month.length() == 1 ? "0" + month : month);
 		// 单据类型
 		panel.setHeadItem("billtype", "BAAL");
 		// 创建人、创建时间
