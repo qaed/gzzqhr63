@@ -60,7 +60,7 @@ public class PsndocRefTreeModel extends AbstractRefGridTreeModel {
 
 	private String getPkhrorg(String pkOrg) {
 		try {
-			OrgVO hrorgVO = ((IAOSQueryService) NCLocator.getInstance().lookup(IAOSQueryService.class)).queryHROrgByOrgPK(getPk_org());
+			OrgVO hrorgVO = NCLocator.getInstance().lookup(IAOSQueryService.class).queryHROrgByOrgPK(getPk_org());
 			return hrorgVO == null ? pkOrg : hrorgVO.getPk_org();
 		} catch (BusinessException e) {
 			Logger.error(e.getMessage());
@@ -110,7 +110,7 @@ public class PsndocRefTreeModel extends AbstractRefGridTreeModel {
 
 		setWherePart(" hi_psnorg.indocflag = 'Y' ");
 		resetFieldName();
-		Hashtable content = new Hashtable();
+		Hashtable<String, String> content = new Hashtable<String, String>();
 		content.put("0", ResHelper.getString("6001ref", "06001ref0004"));/* @res "身份证" */
 		content.put("1", ResHelper.getString("6001ref", "06001ref0005"));/* @res "军官证" */
 		content.put("2", ResHelper.getString("6001ref", "06001ref0006"));/* @res "护照" */
@@ -120,7 +120,7 @@ public class PsndocRefTreeModel extends AbstractRefGridTreeModel {
 		content.put("6", ResHelper.getString("10140psn", "2psndoc-000029"));/* @res "澳门身份证" */
 		content.put("7", ResHelper.getString("10140psn", "2psndoc-000030"));/* @res "台胞证 " */
 		content.put("8", ResHelper.getString("10140psn", "2psndoc-000031"));/* @res "外国人永久居留证" */
-		Hashtable convert = new Hashtable();
+		Hashtable<String, Hashtable<String, String>> convert = new Hashtable<String, Hashtable<String, String>>();
 		convert.put("idtype", content);
 		setDispConvertor(convert);
 		setMutilLangNameRef(false);
