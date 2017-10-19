@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import nc.hr.utils.ResHelper;
 import nc.ui.hr.uif2.action.HrAction;
 import nc.ui.hrwa.wa_ba_unit.ace.maintain.AceWaBaUnitDataManager;
@@ -22,11 +20,14 @@ import nc.vo.bm.data.BmDataVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.uif2.LoginContext;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 向导公共类
  * 
  * @author tsheay
  */
+@SuppressWarnings("restriction")
 public abstract class WaBaUnitWizardAction extends HrAction implements IWizardDialogListener {
 	private static final long serialVersionUID = 1L;
 	WizardModel wizardModel = null;
@@ -51,7 +52,7 @@ public abstract class WaBaUnitWizardAction extends HrAction implements IWizardDi
 	 * @return
 	 */
 	protected List<WizardStep> getSteps() {
-		List<WizardStep> list = new ArrayList();
+		List<WizardStep> list = new ArrayList<WizardStep>();
 		list.add(new WaBaUnitSearchPsnWizardStep(getBtnName(), getModel()));
 		//		list.add(new WaBaUnitSelectPsnWizardStep(getLoginContext(), getBtnName(), (String) getValue("Code")));
 		return list;

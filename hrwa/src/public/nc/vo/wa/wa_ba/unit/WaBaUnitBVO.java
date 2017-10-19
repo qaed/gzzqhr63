@@ -2,13 +2,14 @@ package nc.vo.wa.wa_ba.unit;
 
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.lang.UFBoolean;
-import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
-import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 public class WaBaUnitBVO extends SuperVO {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1305084669154804919L;
 	/**
 	 * 所属组织
 	 */
@@ -21,6 +22,12 @@ public class WaBaUnitBVO extends SuperVO {
 	 * 人员编码
 	 */
 	public String pk_psndoc;
+
+	/**
+	 * 人员工作记录
+	 */
+	private String pk_psnjob;
+
 	/**
 	 * 上层单据主键
 	 */
@@ -138,8 +145,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置所属组织
 	 * 
-	 * @param pk_corp
-	 *            所属组织
+	 * @param pk_corp 所属组织
 	 */
 	public void setPk_corp(String pk_corp) {
 		this.pk_corp = pk_corp;
@@ -157,8 +163,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置所属部门
 	 * 
-	 * @param pk_deptdoc
-	 *            所属部门
+	 * @param pk_deptdoc 所属部门
 	 */
 	public void setPk_deptdoc(String pk_deptdoc) {
 		this.pk_deptdoc = pk_deptdoc;
@@ -176,8 +181,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置人员编码
 	 * 
-	 * @param pk_psndoc
-	 *            人员编码
+	 * @param pk_psndoc 人员编码
 	 */
 	public void setPk_psndoc(String pk_psndoc) {
 		this.pk_psndoc = pk_psndoc;
@@ -195,8 +199,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置上层单据主键
 	 * 
-	 * @param pk_wa_ba_unit
-	 *            上层单据主键
+	 * @param pk_wa_ba_unit 上层单据主键
 	 */
 	public void setPk_wa_ba_unit(String pk_wa_ba_unit) {
 		this.pk_wa_ba_unit = pk_wa_ba_unit;
@@ -214,8 +217,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置子表主键
 	 * 
-	 * @param pk_wa_ba_unit_b
-	 *            子表主键
+	 * @param pk_wa_ba_unit_b 子表主键
 	 */
 	public void setPk_wa_ba_unit_b(String pk_wa_ba_unit_b) {
 		this.pk_wa_ba_unit_b = pk_wa_ba_unit_b;
@@ -233,8 +235,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置人员名称
 	 * 
-	 * @param psnname
-	 *            人员名称
+	 * @param psnname 人员名称
 	 */
 	public void setPsnname(String psnname) {
 		this.psnname = psnname;
@@ -253,8 +254,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置性别
 	 * 
-	 * @param sex
-	 *            性别
+	 * @param sex 性别
 	 * @see String
 	 */
 	public void setSex(Integer sex) {
@@ -273,8 +273,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置时间戳
 	 * 
-	 * @param ts
-	 *            时间戳
+	 * @param ts 时间戳
 	 */
 	public void setTs(UFDateTime ts) {
 		this.ts = ts;
@@ -292,8 +291,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项1
 	 * 
-	 * @param vdef1
-	 *            自定义项1
+	 * @param vdef1 自定义项1
 	 */
 	public void setVdef1(String vdef1) {
 		this.vdef1 = vdef1;
@@ -311,8 +309,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项10
 	 * 
-	 * @param vdef10
-	 *            自定义项10
+	 * @param vdef10 自定义项10
 	 */
 	public void setVdef10(String vdef10) {
 		this.vdef10 = vdef10;
@@ -330,8 +327,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项11
 	 * 
-	 * @param vdef11
-	 *            自定义项11
+	 * @param vdef11 自定义项11
 	 */
 	public void setVdef11(String vdef11) {
 		this.vdef11 = vdef11;
@@ -349,8 +345,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项12
 	 * 
-	 * @param vdef12
-	 *            自定义项12
+	 * @param vdef12 自定义项12
 	 */
 	public void setVdef12(String vdef12) {
 		this.vdef12 = vdef12;
@@ -368,8 +363,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项13
 	 * 
-	 * @param vdef13
-	 *            自定义项13
+	 * @param vdef13 自定义项13
 	 */
 	public void setVdef13(String vdef13) {
 		this.vdef13 = vdef13;
@@ -387,8 +381,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项14
 	 * 
-	 * @param vdef14
-	 *            自定义项14
+	 * @param vdef14 自定义项14
 	 */
 	public void setVdef14(String vdef14) {
 		this.vdef14 = vdef14;
@@ -406,8 +399,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项15
 	 * 
-	 * @param vdef15
-	 *            自定义项15
+	 * @param vdef15 自定义项15
 	 */
 	public void setVdef15(String vdef15) {
 		this.vdef15 = vdef15;
@@ -425,8 +417,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项16
 	 * 
-	 * @param vdef16
-	 *            自定义项16
+	 * @param vdef16 自定义项16
 	 */
 	public void setVdef16(String vdef16) {
 		this.vdef16 = vdef16;
@@ -444,8 +435,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项17
 	 * 
-	 * @param vdef17
-	 *            自定义项17
+	 * @param vdef17 自定义项17
 	 */
 	public void setVdef17(String vdef17) {
 		this.vdef17 = vdef17;
@@ -463,8 +453,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项18
 	 * 
-	 * @param vdef18
-	 *            自定义项18
+	 * @param vdef18 自定义项18
 	 */
 	public void setVdef18(String vdef18) {
 		this.vdef18 = vdef18;
@@ -482,8 +471,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项19
 	 * 
-	 * @param vdef19
-	 *            自定义项19
+	 * @param vdef19 自定义项19
 	 */
 	public void setVdef19(String vdef19) {
 		this.vdef19 = vdef19;
@@ -501,8 +489,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项2
 	 * 
-	 * @param vdef2
-	 *            自定义项2
+	 * @param vdef2 自定义项2
 	 */
 	public void setVdef2(String vdef2) {
 		this.vdef2 = vdef2;
@@ -520,8 +507,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项20
 	 * 
-	 * @param vdef20
-	 *            自定义项20
+	 * @param vdef20 自定义项20
 	 */
 	public void setVdef20(String vdef20) {
 		this.vdef20 = vdef20;
@@ -539,8 +525,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项3
 	 * 
-	 * @param vdef3
-	 *            自定义项3
+	 * @param vdef3 自定义项3
 	 */
 	public void setVdef3(String vdef3) {
 		this.vdef3 = vdef3;
@@ -558,8 +543,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项4
 	 * 
-	 * @param vdef4
-	 *            自定义项4
+	 * @param vdef4 自定义项4
 	 */
 	public void setVdef4(String vdef4) {
 		this.vdef4 = vdef4;
@@ -577,8 +561,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项5
 	 * 
-	 * @param vdef5
-	 *            自定义项5
+	 * @param vdef5 自定义项5
 	 */
 	public void setVdef5(String vdef5) {
 		this.vdef5 = vdef5;
@@ -596,8 +579,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项6
 	 * 
-	 * @param vdef6
-	 *            自定义项6
+	 * @param vdef6 自定义项6
 	 */
 	public void setVdef6(String vdef6) {
 		this.vdef6 = vdef6;
@@ -615,8 +597,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项7
 	 * 
-	 * @param vdef7
-	 *            自定义项7
+	 * @param vdef7 自定义项7
 	 */
 	public void setVdef7(String vdef7) {
 		this.vdef7 = vdef7;
@@ -634,8 +615,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项8
 	 * 
-	 * @param vdef8
-	 *            自定义项8
+	 * @param vdef8 自定义项8
 	 */
 	public void setVdef8(String vdef8) {
 		this.vdef8 = vdef8;
@@ -653,8 +633,7 @@ public class WaBaUnitBVO extends SuperVO {
 	/**
 	 * 设置自定义项9
 	 * 
-	 * @param vdef9
-	 *            自定义项9
+	 * @param vdef9 自定义项9
 	 */
 	public void setVdef9(String vdef9) {
 		this.vdef9 = vdef9;
@@ -671,5 +650,19 @@ public class WaBaUnitBVO extends SuperVO {
 
 	public void setDr(Integer dr) {
 		this.dr = dr;
+	}
+
+	/**
+	 * @return pk_psnjob
+	 */
+	public String getPk_psnjob() {
+		return pk_psnjob;
+	}
+
+	/**
+	 * @param pk_psnjob 要设置的 pk_psnjob
+	 */
+	public void setPk_psnjob(String pk_psnjob) {
+		this.pk_psnjob = pk_psnjob;
 	}
 }

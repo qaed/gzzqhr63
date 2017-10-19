@@ -1,6 +1,7 @@
 package nc.ui.hrwa.wa_ba_unit.ace.view;
 
 import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ import nc.ui.pub.bill.table.BillTableBooleanCellRenderer;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.lang.UFBoolean;
 
+@SuppressWarnings("restriction")
 public class SelecttableBillPanel extends BillScrollPane {
 	private static final long serialVersionUID = 8520970036957875238L;
 	private String canNotEditTipMessage;
@@ -188,7 +190,7 @@ public class SelecttableBillPanel extends BillScrollPane {
 	}
 
 	public CircularlyAccessibleValueObject[] getSelectedBodyVOs(Class<? extends CircularlyAccessibleValueObject> bodyVOClass) {
-		List<CircularlyAccessibleValueObject> selectVoList = new ArrayList();
+		List<CircularlyAccessibleValueObject> selectVoList = new ArrayList<CircularlyAccessibleValueObject>();
 		int rowCount = getTable().getRowCount();
 		if (rowCount <= 0) {
 			return null;

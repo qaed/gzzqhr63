@@ -1,23 +1,13 @@
 package nc.ui.hrwa.wa_ba_unit.action;
 
-import nc.ui.pubapp.uif2app.actions.DeleteAction;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 
-import nc.bs.uif2.BusinessExceptionAdapter;
-import nc.bs.uif2.validation.ValidationException;
-import nc.bs.uif2.validation.ValidationFailure;
 import nc.ui.ml.NCLangRes;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIDialog;
-import nc.ui.pubapp.uif2app.actions.SaveAction;
-import nc.ui.pubapp.uif2app.view.BillForm;
-import nc.ui.uif2.ShowStatusBarMsgUtil;
-import nc.ui.uif2.UIState;
-import nc.vo.ml.NCLangRes4VoTransl;
-import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
+import nc.ui.pubapp.uif2app.actions.DeleteAction;
 
+@SuppressWarnings("restriction")
 public class WaBaUnitDeleteAction extends DeleteAction {
 
 	/**

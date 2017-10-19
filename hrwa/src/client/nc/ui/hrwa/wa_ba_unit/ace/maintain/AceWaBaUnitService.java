@@ -1,11 +1,7 @@
 package nc.ui.hrwa.wa_ba_unit.ace.maintain;
 
 import nc.bs.framework.common.NCLocator;
-import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
-import nc.vo.pub.BusinessException;
-import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.ui.pubapp.uif2app.model.IQueryService;
-import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.ui.uif2.model.IAppModelService;
 import nc.vo.uif2.LoginContext;
 
@@ -16,6 +12,7 @@ import nc.vo.uif2.LoginContext;
  * @version 2011-7-6 ÉÏÎç08:31:09
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceWaBaUnitService implements IAppModelService, IQueryService {
 	@Override
 	public Object insert(Object object) throws Exception {

@@ -26,6 +26,7 @@ import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.vo.pub.BusinessException;
 import nc.vo.querytemplate.TemplateInfo;
 
+@SuppressWarnings("restriction")
 public class WaBaUnitSearchPsnWizardStep extends WizardStep implements IWizardStepListener {
 	private QueryConditionEditor queryEditor = null;
 
@@ -136,9 +137,9 @@ public class WaBaUnitSearchPsnWizardStep extends WizardStep implements IWizardSt
 
 		getQueryEditor().validateConditions(false);
 
-//		if ((!this.title.equals(ResHelper.getString("60150bmfile", "060150bmfile0000"))) && (StringUtils.isNotEmpty(sql))) {
-//			sql = " bm_data.PK_BM_DATA in (select pk_bm_data from bm_data where " + sql + ")";
-//		}
+		//		if ((!this.title.equals(ResHelper.getString("60150bmfile", "060150bmfile0000"))) && (StringUtils.isNotEmpty(sql))) {
+		//			sql = " bm_data.PK_BM_DATA in (select pk_bm_data from bm_data where " + sql + ")";
+		//		}
 
 		getModel().putAttr("whereSql", sql);
 	}
