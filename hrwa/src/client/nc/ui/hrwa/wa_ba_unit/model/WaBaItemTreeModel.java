@@ -7,12 +7,13 @@ import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.model.AppEventConst;
 import nc.vo.bd.meta.IBDObject;
 
+@SuppressWarnings("restriction")
 public class WaBaItemTreeModel extends HierachicalDataAppModel {
 	@Override
 	public DefaultMutableTreeNode findParentNodeByBusinessObject(Object object) {
 		DefaultMutableTreeNode parent = null;
 		if ((this.getTreeCreateStrategy() != null) && (this.getTreeCreateStrategy().isCodeTree())) {
-			IBDObject bo = this.getBusinessObjectAdapterFactory().createBDObject(object);
+//			IBDObject bo = this.getBusinessObjectAdapterFactory().createBDObject(object);
 			// parent = findParentNodeByCodeRule(bo);
 		} else {// idÊ÷
 			IBDObject bo = this.getBusinessObjectAdapterFactory().createBDObject(object);

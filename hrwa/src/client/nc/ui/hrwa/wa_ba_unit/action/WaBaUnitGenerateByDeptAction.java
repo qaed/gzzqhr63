@@ -2,29 +2,17 @@ package nc.ui.hrwa.wa_ba_unit.action;
 
 import java.awt.event.ActionEvent;
 
-import org.apache.commons.lang.StringUtils;
-
 import nc.hr.utils.ResHelper;
 import nc.ui.hr.uif2.action.HrAction;
 import nc.ui.hrwa.wa_ba_unit.ace.maintain.AceWaBaUnitDataManager;
 import nc.ui.hrwa.wa_ba_unit.ace.view.FromDeptGenDialog;
-import nc.ui.pub.bill.BillScrollPane;
-import nc.ui.pubapp.uif2app.model.HierachicalDataAppModel;
 import nc.ui.pubapp.uif2app.view.BillForm;
-import nc.ui.uif2.NCAction;
 import nc.ui.uif2.model.IAppModelDataManager;
-import nc.vo.pe.PELoginContext;
-import nc.vo.pubapp.AppContext;
 import nc.vo.uif2.LoginContext;
-import nc.ui.pub.beans.MessageDialog;
-import nc.ui.pub.beans.UIButton;
-import nc.ui.pub.beans.UILabel;
-import nc.ui.pub.beans.UIList;
-import nc.ui.pub.beans.UIPanel;
-import nc.ui.pub.beans.UIScrollPane;
-import nc.ui.pub.beans.UISplitPane;
-import nc.ui.pub.beans.UITree;
 
+import org.apache.commons.lang.StringUtils;
+
+@SuppressWarnings("restriction")
 public class WaBaUnitGenerateByDeptAction extends HrAction {
 
 	private static final long serialVersionUID = -3230767655987180128L;
@@ -53,7 +41,7 @@ public class WaBaUnitGenerateByDeptAction extends HrAction {
 	}
 
 	public void doAction(ActionEvent e) throws Exception {
-		LoginContext context = (LoginContext) getModel().getContext();
+		//		LoginContext context = (LoginContext) getModel().getContext();
 		//		String pk_sch_eva = context.getSchEvaVO().getPk_sch_eva();
 		//		SchEvaVO schEvaVO = ((PELoginContext) getContext()).getSchEvaVO();
 		//		if (schEvaVO.getScheva_status().intValue() >= SchEvaStatusEnum.EVAEND.toIntValue()) {

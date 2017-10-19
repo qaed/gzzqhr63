@@ -93,6 +93,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 				PsnJobVO psnJobVO = psnjobVOs[i];
 				WaBaUnitBVO bvo = new WaBaUnitBVO();
 				bvo.setPk_psndoc(psnJobVO.getPk_psndoc());
+				bvo.setPk_psnjob(psnJobVO.getPk_psnjob());
 				bvos.add(bvo);
 			}
 			aggvo.setChildrenVO(bvos.toArray(new WaBaUnitBVO[0]));

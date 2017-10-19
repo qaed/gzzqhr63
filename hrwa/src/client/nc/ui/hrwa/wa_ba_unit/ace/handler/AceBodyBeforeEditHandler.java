@@ -1,8 +1,6 @@
 package nc.ui.hrwa.wa_ba_unit.ace.handler;
 
-import nc.ui.hi.ref.PsndocRefModel;
 import nc.ui.pub.beans.UIRefPane;
-import nc.ui.pubapp.exchange.CalcExchgCardPanelSetter;
 import nc.ui.pubapp.uif2app.event.IAppEventHandler;
 import nc.ui.pubapp.uif2app.event.card.CardBodyBeforeEditEvent;
 
@@ -13,6 +11,7 @@ import nc.ui.pubapp.uif2app.event.card.CardBodyBeforeEditEvent;
  * @version 2011-7-7 обнГ02:52:57
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceBodyBeforeEditHandler implements IAppEventHandler<CardBodyBeforeEditEvent> {
 	private UIRefPane uiref;
 

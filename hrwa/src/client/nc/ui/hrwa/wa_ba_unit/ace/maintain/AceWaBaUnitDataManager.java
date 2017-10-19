@@ -4,6 +4,7 @@ import nc.ui.pubapp.uif2app.model.BaseBillModelDataManager;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.vo.pubapp.AppContext;
 
+@SuppressWarnings("restriction")
 public class AceWaBaUnitDataManager extends BaseBillModelDataManager {
 	@Override
 	public void initModel() {
@@ -12,20 +13,19 @@ public class AceWaBaUnitDataManager extends BaseBillModelDataManager {
 		String sqlwhere = " pk_group = '" + pk_group + "' and pk_org = '" + pk_org + "' order by code asc";
 		super.initModelBySqlWhere(sqlwhere);
 	}
+
 	public void initModelByQueryScheme(IQueryScheme queryScheme) {
-		// TODO 自动生成的方法存根
-		
-		
+
 		String where = queryScheme.getWhereSQLOnly();
 		String pk_group = AppContext.getInstance().getPkGroup();
 		String pk_org = getModel().getContext().getPk_org();
-		if(where == null){
+		if (where == null) {
 			where = " pk_group = '" + pk_group + "' and pk_org = '" + pk_org + "' order by code asc";
-		}else{
+		} else {
 			where += " and  pk_group = '" + pk_group + "' and pk_org = '" + pk_org + "' order by code asc";
 		}
 
 		super.initModelBySqlWhere(where);
-		
+
 	}
 }

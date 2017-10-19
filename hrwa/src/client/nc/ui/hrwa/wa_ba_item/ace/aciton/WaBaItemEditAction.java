@@ -4,10 +4,10 @@ import java.awt.event.ActionEvent;
 
 import nc.ui.hrwa.wa_ba_item.ace.view.WaBaItemBillFormEditor;
 import nc.ui.pub.bill.BillCardPanel;
-import nc.ui.pubapp.uif2app.view.BillForm;
 import nc.ui.uif2.editor.IEditor;
 import nc.vo.wa.wa_ba.item.ItemsVO;
 
+@SuppressWarnings("restriction")
 public class WaBaItemEditAction extends nc.ui.pubapp.uif2app.actions.EditAction {
 
 	private IEditor editor;
@@ -38,7 +38,6 @@ public class WaBaItemEditAction extends nc.ui.pubapp.uif2app.actions.EditAction 
 
 	@Override
 	protected void beforeDoAction() {
-		// TODO tsy 组织状态下不能删除集团的
 		super.beforeDoAction();
 	}
 

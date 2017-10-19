@@ -8,14 +8,10 @@ import java.util.Map;
 
 import javax.swing.JMenuItem;
 
-import nc.bs.dao.BaseDAO;
-import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.hr.utils.ResHelper;
-import nc.hr.utils.SQLHelper;
 import nc.itf.hrwa.IWaBaUnitMaintain;
-import nc.jdbc.framework.processor.BeanListProcessor;
 import nc.ui.ml.NCLangRes;
 import nc.ui.pub.beans.wizard.IWizardStepListener;
 import nc.ui.pub.beans.wizard.WizardStep;
@@ -26,7 +22,6 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.BillModelCellEditableController;
 import nc.vo.bm.data.BmDataVO;
-import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.uif2.LoginContext;
@@ -41,9 +36,9 @@ public class WaBaUnitSelectPsnWizardStep extends WizardStep implements IWizardSt
 
 	BmDataVO[] vos = null;
 	//
-	Map<String, BmDataVO> vosMap = new HashMap();
+	Map<String, BmDataVO> vosMap = new HashMap<String, BmDataVO>();
 	//
-	Map<String, BmDataVO> selectVosMap = new HashMap();
+	Map<String, BmDataVO> selectVosMap = new HashMap<String, BmDataVO>();
 	//
 	//	BmClassVO[] classVOs = null;
 	//
@@ -137,15 +132,15 @@ public class WaBaUnitSelectPsnWizardStep extends WizardStep implements IWizardSt
 	 * @return
 	 */
 	public BmDataVO[] getSelectedPsndocVOs() {
-		List<BmDataVO> selectVoList = new ArrayList();
+		List<BmDataVO> selectVoList = new ArrayList<BmDataVO>();
 		int rowCount = getPsnBillScrollPane().getTable().getRowCount();
 		if (rowCount <= 0) {
 			return null;
 		}
-		Object obj = null;
+		//		Object obj = null;
 		for (int i = 0; i < rowCount; i++) {
 			if (getPsnBillScrollPane().isSelected(i)) {
-				boolean needadd = false;
+				//				boolean needadd = false;
 				BmDataVO vo = (BmDataVO) getPsnBillScrollPane().getTableModel().getBodyValueRowVO(i, BmDataVO.class.getName());
 
 				//				for (int j = 0; j < this.classVOs.length; j++) {
@@ -187,7 +182,7 @@ public class WaBaUnitSelectPsnWizardStep extends WizardStep implements IWizardSt
 
 		BmDataVO[] selectedVOs = getSelectedPsndocVOs();
 		StringBuffer sbd = new StringBuffer();
-		Map<String, String> map = new HashMap();
+		Map<String, String> map = new HashMap<String, String>();
 		if (!ArrayUtils.isEmpty(selectedVOs)) {
 			for (int i = 0; i < selectedVOs.length; i++) {
 				if (map.containsKey(selectedVOs[i].getPk_psndoc())) {
@@ -209,7 +204,7 @@ public class WaBaUnitSelectPsnWizardStep extends WizardStep implements IWizardSt
 			String[] saBodyColKeyName =
 					{ "selectflag", "clerkcode", "psnName", "orgname", "deptname", "postname", "psnclname", "pk_psndoc", "pk_psnjob", "pk_psnorg", "assgid", "workorg", "workorgvid", "workdept", "workdeptvid" };
 
-			List<BillItem> bodyList = new ArrayList();
+			List<BillItem> bodyList = new ArrayList<BillItem>();
 			BillItem biaBody = null;
 
 			for (int i = 0; i < saBodyColName.length; i++) {
@@ -252,7 +247,7 @@ public class WaBaUnitSelectPsnWizardStep extends WizardStep implements IWizardSt
 			for (int i = 0; (null != comps) && (i < comps.length); i++) {
 				if ((comps[i] instanceof JMenuItem)) {
 					JMenuItem jpm = (JMenuItem) comps[i];
-					if ((null != jpm.getLabel()) && (jpm.getLabel().equals(NCLangRes.getInstance().getStrByID("_Bill", "UPP_Bill-000009")))) {
+					if ((null != jpm.getText()) && (jpm.getText().equals(NCLangRes.getInstance().getStrByID("_Bill", "UPP_Bill-000009")))) {
 
 						getPsnBillScrollPane().getTable().getHeaderPopupMenu().remove(comps[i]);
 					}
@@ -284,10 +279,6 @@ public class WaBaUnitSelectPsnWizardStep extends WizardStep implements IWizardSt
 			this.psnBillScrollPane.setName("psnBillScrollPane");
 		}
 		return this.psnBillScrollPane;
-	}
-
-	private LoginContext getLoginContext() {
-		return this.context;
 	}
 
 }

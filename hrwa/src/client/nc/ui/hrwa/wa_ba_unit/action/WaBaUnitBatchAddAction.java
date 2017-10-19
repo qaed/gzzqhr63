@@ -22,6 +22,7 @@ import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitBVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
+@SuppressWarnings("restriction")
 public class WaBaUnitBatchAddAction extends WaBaUnitWizardAction {
 	private static final long serialVersionUID = 1L;
 
@@ -62,7 +63,7 @@ public class WaBaUnitBatchAddAction extends WaBaUnitWizardAction {
 	}
 
 	protected List<WizardStep> getSteps() {
-		List<WizardStep> list = new ArrayList();
+		List<WizardStep> list = new ArrayList<WizardStep>();
 		list.add(new WaBaUnitSearchPsnWizardStep(getBtnName(), getModel()));
 		list.add(new WaBaUnitSelectPsnWizardStep(getLoginContext()));
 		//		list.add(new SetClassInfoWizardStep(getBmLoginContext(), this.classVOs));
@@ -92,6 +93,8 @@ public class WaBaUnitBatchAddAction extends WaBaUnitWizardAction {
 		for (BmDataVO psndocVO : psndocvos) {
 			WaBaUnitBVO bvo = new WaBaUnitBVO();
 			bvo.setPk_psndoc(psndocVO.getPk_psndoc());
+			//添加pk_psnjob工作主键
+			bvo.setPk_psnjob(psndocVO.getPk_psnjob());
 			bodyvos.add(bvo);
 		}
 		aggvo.setChildrenVO(bodyvos.toArray(new WaBaUnitBVO[0]));

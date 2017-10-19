@@ -15,35 +15,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.commons.lang.StringUtils;
-
-import nc.bs.dao.BaseDAO;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
-import nc.hr.utils.PubEnv;
 import nc.hr.utils.ResHelper;
-import nc.hr.utils.SQLHelper;
 import nc.itf.hrwa.IWaBaUnitMaintain;
 import nc.itf.om.IDeptQueryService;
 import nc.itf.om.IOrgInfoQueryService;
-import nc.jdbc.framework.processor.BeanListProcessor;
+import nc.ui.bd.ref.IRefConst;
+import nc.ui.hr.frame.dialog.ButtonUtils;
+import nc.ui.hr.frame.dialog.HrDialog;
+import nc.ui.hr.frame.util.IconUtils;
 import nc.ui.pe.pub.multichktree.MultiChkTree;
 import nc.ui.pe.pub.multichktree.MultiChkTreeNode;
 import nc.ui.pub.beans.MessageDialog;
@@ -54,12 +48,6 @@ import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIScrollPane;
 import nc.ui.pub.beans.UISplitPane;
 import nc.ui.pub.beans.UITree;
-import nc.ui.bd.ref.IRefConst;
-import nc.ui.hr.frame.dialog.ButtonUtils;
-import nc.ui.hr.frame.dialog.HrDialog;
-import nc.ui.hr.frame.util.IconUtils;
-import nc.vo.hi.psndoc.PsnJobVO;
-import nc.vo.hi.pub.HICommonValue;
 import nc.vo.om.aos.AOSSQLHelper;
 import nc.vo.om.hrdept.AggHRDeptVO;
 import nc.vo.om.hrdept.HRDeptVO;
@@ -67,12 +55,16 @@ import nc.vo.om.orginfo.AggHROrgVO;
 import nc.vo.om.orginfo.HROrgVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.query.ConditionVO;
-import nc.vo.pubapp.AppContext;
 import nc.vo.uif2.LoginContext;
-import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
-import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
+@SuppressWarnings("restriction")
+/**
+ * @see nc.ui.pe.scheme.evaobject.view.FromDeptGenGrpDialog
+ * @author tsheay
+ *
+ */
 public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyListener {
+	private static final long serialVersionUID = 3662678599364046204L;
 	private LoginContext context;
 	private UISplitPane splitPane = null;
 	private UIPanel contentPanel = null;
@@ -93,15 +85,17 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 	//	ArrayList<EvaGroupVO> exaGrps = null;
 
 	HashMap<String, ConditionVO[]> conditionMap = null;
-
-	HashMap<HRDeptVO, String> checkedHRDeptVOMap = new HashMap();
+	/**
+	 * 选择的部门HashMap value为条件过滤字符串
+	 */
+	HashMap<HRDeptVO, String> checkedHRDeptVOMap = new HashMap<HRDeptVO, String>();
 
 	public FromDeptGenDialog(Container parent, LoginContext context) {
 		super(parent);
 		setContext(context);
 		getUITree().setModel(createTreeModel());
 		setName("FromDeptGenGrpDialog");
-		setTitle(ResHelper.getString("60290106", "0602901060136"));
+		setTitle(ResHelper.getString("60290106", "0602901060136"));/*@res "按部门生成对象组"*/
 
 		setSize(650, 420);
 		setContentPane(getContentPane());
@@ -130,22 +124,22 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			BorderLayout fl = new BorderLayout();
 			this.southPanel.setLayout(fl);
 			UILabel labelNote = new UILabel();
-			labelNote.setText(ResHelper.getString("60290106", "0602901060137") + "  ");
+			labelNote.setText(ResHelper.getString("60290106", "0602901060137") + "  ");/*@res "图示说明:"*/
 
 			ImageIcon icon1 = IconUtils.getInstance().getIcon(IconUtils.ICON_TREE_CHECKED);
 			UILabel label1 = new UILabel();
 			label1.setIcon(icon1);
-			label1.setText(ResHelper.getString("60290106", "0602901060047") + "  ");
+			label1.setText(ResHelper.getString("60290106", "0602901060047") + "  ");/*@res "包含下级部门人员"*/
 
 			ImageIcon icon2 = IconUtils.getInstance().getIcon(IconUtils.ICON_TREE_PTCHECKED);
 			UILabel label2 = new UILabel();
 			label2.setIcon(icon2);
-			label2.setText(ResHelper.getString("60290106", "0602901060048") + "  ");
+			label2.setText(ResHelper.getString("60290106", "0602901060048") + "  ");/*@res "不包含下级部门人员"*/
 
 			ImageIcon icon3 = IconUtils.getInstance().getIcon(IconUtils.ICON_TREE_UNCHECKED);
 			UILabel label3 = new UILabel();
 			label3.setIcon(icon3);
-			label3.setText(ResHelper.getString("60290106", "0602901060049") + "  ");
+			label3.setText(ResHelper.getString("60290106", "0602901060049") + "  ");/*@res "不选择"*/
 
 			UIPanel btnPanel = new UIPanel();
 			btnPanel.setName("btnPanel");
@@ -160,13 +154,13 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			LabelPan.setLayout(labelLayout);
 			labelLayout.setAlignment(0);
 
-			LabelPan.add(labelNote, ResHelper.getString("60290106", "0602901060138"));
+			LabelPan.add(labelNote, ResHelper.getString("60290106", "0602901060138"));/*@res "全"*/
 
-			LabelPan.add(label1, ResHelper.getString("60290106", "0602901060138"));
+			LabelPan.add(label1, ResHelper.getString("60290106", "0602901060138"));/*@res "全"*/
 
-			LabelPan.add(label2, ResHelper.getString("60290106", "0602901060139"));
+			LabelPan.add(label2, ResHelper.getString("60290106", "0602901060139"));/*@res "半"*/
 
-			LabelPan.add(label3, ResHelper.getString("60290106", "0602901060140"));
+			LabelPan.add(label3, ResHelper.getString("60290106", "0602901060140"));/*@res "无"*/
 
 			this.southPanel.add(LabelPan, "North");
 			this.southPanel.add(btnPanel, "South");
@@ -178,8 +172,8 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		if (this.rightPanel == null) {
 			this.rightPanel = new UIScrollPane();
 			this.rightPanel.setAutoscrolls(true);
-			this.rightPanel.setVerticalScrollBarPolicy(20);
-			this.rightPanel.setHorizontalScrollBarPolicy(30);
+			this.rightPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+			this.rightPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			this.rightPanel.setMinimumSize(new Dimension(3, 3));
 			this.rightPanel.setViewportView(getGrplist());
 			this.rightPanel.setLayout(new ScrollPaneLayout());
@@ -193,7 +187,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			this.leftPanel = new UIPanel();
 			this.leftPanel.setLayout(new BorderLayout());
 
-			this.leftPanel.add(getTreePanel(), "Center");
+			this.leftPanel.add(getTreePanel(), BorderLayout.CENTER);
 			this.leftPanel.setMinimumSize(new Dimension(3, 3));
 		}
 		return this.leftPanel;
@@ -204,14 +198,14 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			this.levelPanel = new UIPanel();
 			this.levelPanel.setName("levelPanel");
 			this.levelPanel.setPreferredSize(new Dimension(150, 22));
-			this.levelPanel.setLayout(new FlowLayout(0, 3, 2));
-			for (int i = 0; i < 6; i++) {
+			this.levelPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 2));
+			for (int i = 0; i < IRefConst.TREEEXPANDLEVEL; i++) {
 				this.levelPanel.add(getBtnLevel()[i]);
 			}
 
 			this.levelPanel.add(getBtnLevelE());
 			FlowLayout fl = new FlowLayout();
-			fl.setAlignment(0);
+			fl.setAlignment(FlowLayout.LEFT);
 			this.levelPanel.setLayout(fl);
 		}
 		return this.levelPanel;
@@ -221,9 +215,9 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		if (this.btnLevel == null) {
 			this.btnLevel = new UIButton[6];
 			String name = "btnLevel";
-			String toolTipPre = ResHelper.getString("60290106", "0602901060141");
+			String toolTipPre = ResHelper.getString("60290106", "0602901060141");/*@res "展开到"*/
 
-			String toolTipSuf = ResHelper.getString("60290106", "0602901060142");
+			String toolTipSuf = ResHelper.getString("60290106", "0602901060142");/*@res "级"*/
 
 			int index = 1;
 			for (int i = 0; i < this.btnLevel.length; i++) {
@@ -257,7 +251,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		if (this.btnLevelE == null) {
 			String name = "btnLevelE";
 			String text = "E";
-			String toolTip = ResHelper.getString("60290106", "0602901060143");
+			String toolTip = ResHelper.getString("60290106", "0602901060143");/*@res "展开到末级"*/
 
 			this.btnLevelE = getExpandLevelBtn(name, text, toolTip);
 			this.btnLevelE.addActionListener(this);
@@ -281,8 +275,8 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		if (this.treePanel == null) {
 			this.treePanel = new UIScrollPane();
 			this.treePanel.setAutoscrolls(true);
-			this.treePanel.setVerticalScrollBarPolicy(20);
-			this.treePanel.setHorizontalScrollBarPolicy(30);
+			this.treePanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+			this.treePanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			this.treePanel.setMinimumSize(new Dimension(3, 3));
 			this.treePanel.setViewportView(getUITree());
 			this.treePanel.setColumnHeaderView(getLevelPanel());
@@ -290,9 +284,17 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		return this.treePanel;
 	}
 
+	/**
+	 * 创建树
+	 * 
+	 * @return UITree
+	 */
 	public UITree getUITree() {
 		if (this.uiTree == null) {
 			this.uiTree = new MultiChkTree() {
+				private static final long serialVersionUID = 1508843710937303224L;
+
+				@Override
 				protected void mouseLeftClickedSelf() {
 					FromDeptGenDialog.this.buildCheckedHRDeptVOMap();
 				}
@@ -311,20 +313,24 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		return this.uiTree;
 	}
 
+	/**
+	 * 构建勾选部门HashMap
+	 */
+	@SuppressWarnings("unchecked")
 	private void buildCheckedHRDeptVOMap() {
-		this.checkedHRDeptVOMap = new HashMap();
-		List<String> groupListDisplayNames = new ArrayList();
-
+		this.checkedHRDeptVOMap = new HashMap<HRDeptVO, String>();
+		List<String> groupListDisplayNames = new ArrayList<String>();
+		// 首先得到根节点
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) getUITree().getModel().getRoot();
-
+		// 然后得到根遍历，广度优先遍历算法
 		Enumeration<?> e = root.breadthFirstEnumeration();
 		while (e.hasMoreElements()) {
 			MultiChkTreeNode treeNode = (MultiChkTreeNode) e.nextElement();
-
+			//根节点不考虑
 			if ((!treeNode.equals((DefaultMutableTreeNode) getUITree().getModel().getRoot())) &&
 
 			(treeNode.getCheckValue() != MultiChkTreeNode.UNCHECKED)) {
-
+				//根据选择的节点构建HashMap ；如果选项为【包含下级部门人员】的情况 还需遍历子树 添加过滤掉子树选择节对应人员的的过滤条件
 				HRDeptVO deptVO = (HRDeptVO) treeNode.getUserObject();
 				String strCondition = dealDeptCondition(treeNode);
 				if (!this.checkedHRDeptVOMap.containsKey(deptVO)) {
@@ -332,13 +338,14 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 				}
 
 				if (treeNode.getCheckValue() == MultiChkTreeNode.ABSCHECKED) {
-					groupListDisplayNames.add(treeNode.getNodeName() + ResHelper.getString("60290106", "0602901060144"));
+					groupListDisplayNames.add(treeNode.getNodeName() + ResHelper.getString("60290106", "0602901060144"));/*@res "[包含下级部门人员]"*/
 				} else {
 					groupListDisplayNames.add(treeNode.getNodeName());
 				}
 			}
 		}
 		getGrplist().setListData(groupListDisplayNames.toArray(new String[0]));
+		/*@res "按部门生成人员组(共生成"XXXXX"个对象组)"*/
 		setTitle(ResHelper.getString("60290106", "0602901060145") + groupListDisplayNames.size() + ResHelper.getString("60290106", "0602901060146"));
 	}
 
@@ -373,7 +380,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		HRDeptVO deptVO = (HRDeptVO) treeNode.getUserObject();
 		StringBuilder strCondition = new StringBuilder();
 		if (treeNode.getCheckValue() == MultiChkTreeNode.ABSCHECKED) {
-
+			//包含下级部门人员
 			strCondition.append(" (");
 			strCondition.append(" hi_psnjob.pk_dept in (select pk_dept from org_dept where org_dept.innercode like '").append(deptVO.getInnercode()).append("%') ");
 			Enumeration<?> e = treeNode.breadthFirstEnumeration();
@@ -398,8 +405,9 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 	}
 
 	protected DefaultTreeModel createTreeModel() {
+		// 默认登录公司下的部门
 		HRDeptVO[] data = null;
-		List<HRDeptVO> deptVOList = new ArrayList();
+		List<HRDeptVO> deptVOList = new ArrayList<HRDeptVO>();
 
 		try {
 			String adminOrgInSql = AOSSQLHelper.getChildrenBUInSQLByHROrgPK(getContext().getPk_org());
@@ -412,16 +420,16 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 				}
 			}
 
-			data = (HRDeptVO[]) deptVOList.toArray(new HRDeptVO[0]);
+			data = deptVOList.toArray(new HRDeptVO[0]);
 		} catch (BusinessException e) {
-			MessageDialog.showErrorDlg(this, ResHelper.getString("60290106", "0602901060149"), ResHelper.getString("60290106", "0602901060150"));
+			MessageDialog.showErrorDlg(this, ResHelper.getString("60290106", "0602901060149"), ResHelper.getString("60290106", "0602901060150"));/*@res "警告"*//*@res "获得部门信息时错误"*/
 		}
 
 		MultiChkTreeNode chkNode = new MultiChkTreeNode();
 		chkNode.setNodeCode("");
-		chkNode.setNodeName(ResHelper.getString("common", "UC000-0004064"));
-
-		HashSet<String> set = new HashSet();
+		chkNode.setNodeName(ResHelper.getString("common", "UC000-0004064"));/*@res "部门"*/
+		//通过部门主键查询出所有的组织来
+		HashSet<String> set = new HashSet<String>();
 		if (data != null) {
 			for (HRDeptVO d : data) {
 				set.add(d.getPk_org());
@@ -435,16 +443,16 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		if ((nodes == null) || (nodes.length == 0)) {
 			return new DefaultTreeModel(root);
 		}
-
-		HashMap<Object, Object> treeNodeMap = new HashMap();
+		// 将树节点的数组转换成hashmap
+		HashMap<Object, Object> treeNodeMap = new HashMap<Object, Object>();
 		for (int i = 0; i < nodes.length; i++) {
 			treeNodeMap.put(nodes[i].getNodeId(), nodes[i]);
 		}
-
+		// 形成父子关系
 		for (int i = 0; i < nodes.length; i++) {
 			Object parentId = nodes[i].getParentId();
 			MultiChkTreeNode parentNode = parentId == null ? root : (MultiChkTreeNode) treeNodeMap.get(parentId);
-
+			// 再次判空是因为treeNodeMap中可能没有对应值
 			if (parentNode != null) {
 				parentNode.add(nodes[i]);
 			} else {
@@ -456,12 +464,12 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 	}
 
 	public MultiChkTreeNode[] convertDeptToNode(HRDeptVO[] data, List<HROrgVO> list) {
-		ArrayList<MultiChkTreeNode> nodes = new ArrayList();
-
+		ArrayList<MultiChkTreeNode> nodes = new ArrayList<MultiChkTreeNode>();
+		//将组织作为后缀添加到相应部门中去
 		for (HROrgVO hrOrgVO : list) {
 			for (int i = 0; i < data.length; i++) {
 				if (data[i].getPk_org().equals(hrOrgVO.getPk_org())) {
-
+					// 将部门VO转换成实节点
 					MultiChkTreeNode deptNode = new MultiChkTreeNode();
 					deptNode.setParentId(data[i].getPk_fatherorg());
 					deptNode.setNodeId(data[i].getPk_dept());
@@ -473,7 +481,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			}
 		}
 
-		return (MultiChkTreeNode[]) nodes.toArray(new MultiChkTreeNode[0]);
+		return nodes.toArray(new MultiChkTreeNode[0]);
 	}
 
 	protected UISplitPane getSplitPane() {
@@ -481,7 +489,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			this.splitPane = new UISplitPane(1, getLeftPanel(), getRightPanel());
 
 			this.splitPane.setDividerLocation(240);
-
+			// 增加了条柄的大小，方便拖拽
 			this.splitPane.setDividerSize(5);
 		}
 
@@ -491,7 +499,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 	public UIButton getBtn_close() {
 		if (this.btn_close == null) {
 			this.btn_close =
-					ButtonUtils.createButton(ResHelper.getString("common", "UC001-0000008"), 'C', ResHelper.getString("common", "UC001-0000008"));
+					ButtonUtils.createButton(ResHelper.getString("common", "UC001-0000008"), 'C', ResHelper.getString("common", "UC001-0000008")); /* @res "取消" */
 
 			this.btn_close.addActionListener(this);
 		}
@@ -502,7 +510,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 	public UIButton getBtn_ok() {
 		if (this.btn_ok == null) {
 			this.btn_ok =
-					ButtonUtils.createButton(ResHelper.getString("common", "UC001-0000044"), 'Y', ResHelper.getString("common", "UC001-0000044"));
+					ButtonUtils.createButton(ResHelper.getString("common", "UC001-0000044"), 'Y', ResHelper.getString("common", "UC001-0000044")); /* @res "确定" */
 
 			this.btn_ok.addActionListener(this);
 		}
@@ -563,9 +571,9 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 			return null;
 		}
 
-		List<DefaultMutableTreeNode> list = new ArrayList();
+		List<DefaultMutableTreeNode> list = new ArrayList<DefaultMutableTreeNode>();
 		for (int i = 0; i < selectedTreeNodes.length; i++) {
-			Enumeration enumeration = selectedTreeNodes[i].breadthFirstEnumeration();
+			Enumeration<?> enumeration = selectedTreeNodes[i].breadthFirstEnumeration();
 
 			while (enumeration.hasMoreElements()) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeration.nextElement();
@@ -579,33 +587,40 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 				}
 			}
 		}
-		return (DefaultMutableTreeNode[]) list.toArray((DefaultMutableTreeNode[]) Array.newInstance(DefaultMutableTreeNode.class, 0));
+		return list.toArray((DefaultMutableTreeNode[]) Array.newInstance(DefaultMutableTreeNode.class, 0));
 	}
 
 	private DefaultMutableTreeNode[] getAllTreeNode() {
-		List<DefaultMutableTreeNode> list = new ArrayList();
+		List<DefaultMutableTreeNode> list = new ArrayList<DefaultMutableTreeNode>();
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) getUITree().getModel().getRoot();
-		Enumeration enumeration = root.breadthFirstEnumeration();
+		Enumeration<?> enumeration = root.breadthFirstEnumeration();
 		while (enumeration.hasMoreElements()) {
 			list.add((DefaultMutableTreeNode) enumeration.nextElement());
 		}
 
-		return (DefaultMutableTreeNode[]) list.toArray((DefaultMutableTreeNode[]) Array.newInstance(DefaultMutableTreeNode.class, 0));
+		return list.toArray((DefaultMutableTreeNode[]) Array.newInstance(DefaultMutableTreeNode.class, 0));
 	}
 
 	private void makeVisible(DefaultMutableTreeNode[] nodes) {
 		for (int i = 0; i < nodes.length; i++) {
+			// 展开
 			getUITree().makeVisible(new TreePath(nodes[i].getPath()));
 		}
 	}
 
+	/**
+	 * 区分同一集团下所有部门所属组织，所以得到集团下组织
+	 * 
+	 * @param set
+	 * @return
+	 */
 	public List<HROrgVO> getHrOrg(HashSet<String> set) {
-		List<HROrgVO> list = new ArrayList();
-		IOrgInfoQueryService orgInfoQueryService = (IOrgInfoQueryService) NCLocator.getInstance().lookup(IOrgInfoQueryService.class);
+		List<HROrgVO> list = new ArrayList<HROrgVO>();
+		IOrgInfoQueryService orgInfoQueryService = NCLocator.getInstance().lookup(IOrgInfoQueryService.class);
 		String[] pk_orgs = new String[set.size()];
 		int index = 0;
-		for (Iterator iterator = set.iterator(); iterator.hasNext();) {
-			pk_orgs[index] = ((String) iterator.next());
+		for (Iterator<String> iterator = set.iterator(); iterator.hasNext();) {
+			pk_orgs[index] = iterator.next();
 			index++;
 		}
 
@@ -646,16 +661,19 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 	}
 
 	public static IDeptQueryService getDeptQryService() {
-		return (IDeptQueryService) NCLocator.getInstance().lookup(IDeptQueryService.class);
+		return NCLocator.getInstance().lookup(IDeptQueryService.class);
 	}
 
+	@Override
 	protected JComponent createCenterPanel() {
 		return null;
 	}
 
+	@Override
 	public void initUI() {
 	}
 
+	@Override
 	public void transferFocusToFirstEditor() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
