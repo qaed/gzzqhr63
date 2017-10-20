@@ -17,7 +17,7 @@ import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
  * 
  * @author tsheay
  */
-public class WaUnitDataIsNotUsedRule implements IRule<AggWaBaUnitHVO> {
+public class WaUnitDataIsNotUsedDelRule implements IRule<AggWaBaUnitHVO> {
 	@Override
 	public void process(AggWaBaUnitHVO[] aggvo) {
 		Logger.debug("校验奖金单元是否已被使用:" + this.getClass().getName());
@@ -51,17 +51,12 @@ public class WaUnitDataIsNotUsedRule implements IRule<AggWaBaUnitHVO> {
 	 */
 	private String getCheckSql(WaBaUnitHVO vo) {
 		StringBuffer sql = new StringBuffer();
-		Calendar cal = Calendar.getInstance();
-		String month = cal.get(Calendar.MONTH) + 1 + "";
 
 		sql.append("select b.code,b.name ");
 		sql.append("  from wa_ba_sch_unit a");
 		sql.append("  left join wa_ba_unit b on a.ba_unit_code=b.pk_wa_ba_unit");
-		sql.append("  left join wa_ba_sch_h c on a.pk_ba_sch_h=c.pk_ba_sch_h");
 		sql.append("  where isnull(a.dr,0)=0 ");
 		sql.append("  and (a.ba_unit_code ='" + vo.getPk_wa_ba_unit() + "'); ");
-		sql.append("  and (c.cperiod ='" + (month.length() == 1 ? "0" + month : month) + "'); ");
-		sql.append("  and (c.cyear ='" + cal.get(Calendar.YEAR) + "" + "'); ");
 		return sql.toString();
 	}
 }
