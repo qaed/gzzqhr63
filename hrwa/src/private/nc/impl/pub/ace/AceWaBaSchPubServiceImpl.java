@@ -54,7 +54,8 @@ import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 public abstract class AceWaBaSchPubServiceImpl {
 	private IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
 	private IMDPersistenceQueryService query = NCLocator.getInstance().lookup(IMDPersistenceQueryService.class);
-	private BaseDAO dao ;
+	private BaseDAO dao;
+
 	// 新增
 	public AggWaBaSchHVO[] pubinsertBills(IBill[] vos) throws BusinessException {
 
@@ -174,6 +175,42 @@ public abstract class AceWaBaSchPubServiceImpl {
 			processer.before(aggvos);
 			//
 			String[] tableCodes = originBills[0].getTableCodes();
+
+			//start
+			//fullBills和originBills的数据一样，只是数据的状态不同，更新时根据状态判断是否新增，修改，删除
+			Map<String, ISuperVO> map_client = getAggvoBodyMap(fullBills[0]);//用于方便获取子表主键对应的VO
+			Map<String, ISuperVO> map_aggvo = getAggvoBodyMap(aggvos[0]);//用于方便获取子表主键对应的VO
+
+			for (Iterator<String> it = map_client.keySet().iterator(); it.hasNext();) {
+				String bpk = (String) it.next();
+				ISuperVO superVO_aggvo = map_aggvo.get(bpk);
+				ISuperVO superVO_client = map_client.get(bpk);
+				//对旧的vo和前台传过来的vo，如果没有了就是删除了
+				if (superVO_aggvo == null) {
+					superVO_client.setStatus(VOStatus.DELETED);
+				} else {
+					//其他设为和前台vo一样的状态
+					superVO_client.setStatus(superVO_aggvo.getStatus());
+				}
+
+			}
+			//更新子表
+			BillUpdate billupdate = new BillUpdate<AggWaBaSchHVO>();
+			fullBills = (AggWaBaSchHVO[]) billupdate.update(fullBills, originBills);
+
+			map_client = getAggvoBodyMap(fullBills[0]);//重新生成一下，因为新增的保存后才有pk
+
+			for (Iterator<String> it = map_client.keySet().iterator(); it.hasNext();) {
+				String bpk = (String) it.next();
+				WaBaSchBVO superVO_aggvo = (WaBaSchBVO) map_aggvo.get(bpk);
+				WaBaSchBVO superVO_client = (WaBaSchBVO) map_client.get(bpk);
+				if (superVO_aggvo != null) {
+					//Tool生成的fullBills没有孙表，所以把前台的孙表赋值进去
+					superVO_client.setPk_s(superVO_aggvo.getPk_s());
+				}
+			}
+			//end
+
 			Map<IVOMeta, List<ISuperVO>> fullGrandVOs = new HashMap<IVOMeta, List<ISuperVO>>();
 			Map<IVOMeta, List<ISuperVO>> originGrandVOs = new HashMap<IVOMeta, List<ISuperVO>>();
 			for (String tableCode : tableCodes) {
@@ -196,12 +233,12 @@ public abstract class AceWaBaSchPubServiceImpl {
 						}
 					}
 				}
-				BillUpdate billupdate = new BillUpdate<AggWaBaSchHVO>();
-				fullBills = (AggWaBaSchHVO[]) billupdate.update(aggvos, originBills);
-				SuperVO[] currentChildrens = (SuperVO[]) aggvos[0].getTableVO(tableCode);
+
+				SuperVO[] currentChildrens = (SuperVO[]) fullBills[0].getTableVO(tableCode);
 				for (SuperVO childVO : currentChildrens) {
 					if (tableCode.equals("pk_b")) {
-						ISuperVO[] currentGrandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
+
+						ISuperVO[] currentGrandvos = ((WaBaSchBVO) map_client.get(childVO.getPrimaryKey())).getPk_s();
 						for (int i = 0; currentGrandvos != null && i < currentGrandvos.length; i++) {
 							((WaBaSchTVO) currentGrandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
 							((WaBaSchTVO) currentGrandvos[i]).setPk_ba_sch_h(((WaBaSchBVO) childVO).getPk_ba_sch_h());
@@ -219,11 +256,15 @@ public abstract class AceWaBaSchPubServiceImpl {
 					}
 				}
 			}
+
 			fullGrandVOs = this.getFullGrandVOs(fullGrandVOs, originGrandVOs);
 			this.persistent(fullGrandVOs, originGrandVOs);
 			//			AceWaBaSchUpdateBP bp = new AceWaBaSchUpdateBP();
 			//			AggWaBaSchHVO[] retBills = bp.update(fullBills, originBills);
-			return fullBills;
+
+			//return fullBills;
+			return aggvos;
+			//end
 		} catch (Exception e) {
 			ExceptionUtils.marsh(e);
 		}
@@ -261,6 +302,19 @@ public abstract class AceWaBaSchPubServiceImpl {
 			}
 		}
 		return fullGrandVOs;
+	}
+
+	/**
+	 * 用于方便获取子表主键对应的VO
+	 */
+	private Map<String, ISuperVO> getAggvoBodyMap(AggWaBaSchHVO aggvo) {
+		CircularlyAccessibleValueObject[] aggvoChild = aggvo.getChildrenVO();
+		Map<String, ISuperVO> map_aggvo = new HashMap<String, ISuperVO>();
+		for (CircularlyAccessibleValueObject tmpVO : aggvoChild) {
+			ISuperVO superVO = (ISuperVO) tmpVO;
+			map_aggvo.put(superVO.getPrimaryKey(), superVO);
+		}
+		return map_aggvo;
 	}
 
 	// 参考 BillUpdate.persistent方法
@@ -503,7 +557,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		AggWaBaSchHVO[] retvos = bp.unSend(clientFullVOs, originBills);
 		StringBuilder sql = new StringBuilder();
 		for (AggWaBaSchHVO aggWaBaSchHVO : clientFullVOs) {
-			
+
 			for (ISuperVO bodyvo : aggWaBaSchHVO.getChildren(WaBaSchBVO.class)) {
 				WaBaSchBVO bvo = (WaBaSchBVO) bodyvo;
 				//分配单元的名字
@@ -559,7 +613,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	 * @return dao
 	 */
 	private BaseDAO getDao() {
-		if (this.dao==null) {
+		if (this.dao == null) {
 			this.dao = new BaseDAO();
 		}
 		return this.dao;

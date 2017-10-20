@@ -4,7 +4,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- 环境变量 -->
-	<bean id="context" class="nc.vo.uif2.LoginContext" />
+	<bean id="context" class="nc.vo.wa.wa_ba.unit.WaUnitLoginContext" />
 
 	<!-- 应用服务类，负责进行模型操作的处理 -->
 	<bean id="modelService"
@@ -68,7 +68,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="componentValueManager" class="nc.ui.uif2.editor.value.BillCardPanelMetaDataValueAdapter"></bean>
 
 	<!--卡控件 -->
-	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.BillForm"
+	<bean id="billFormEditor" class="nc.ui.hrwa.wa_ba_unit.ace.view.WaBaUnitBillForm"
 	init-method="initUI">
 		<property name="model" ref="appModel" />
 		<property name="templateContainer" ref="templateContainer" />
@@ -177,8 +177,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="deleteAction" />
 				<ref bean="separatorAction" />
 				<ref bean="queryAction" />
-				<!--
 				<ref bean="separatorAction" />
+				<ref bean="WaBaUnitAlterAction" />
+				<!--
 				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="generateByDeptAction" />
@@ -225,16 +226,20 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 			</list>
 		</property>
 	</bean>
+	<!--新增-->
 	<bean id="addAction" class="nc.ui.pubapp.uif2app.actions.AddAction">
 		<property name="model" ref="appModel" />
 	</bean>
+	<!--修改-->
 	<bean id="editAction" class="nc.ui.pubapp.uif2app.actions.EditAction">
 		<property name="model" ref="appModel" />
 	</bean>
+	<!--删除-->
 	<!--<bean id="deleteAction" class="nc.ui.pubapp.uif2app.actions.DeleteAction">-->
 	<bean id="deleteAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitDeleteAction">
 		<property name="model" ref="appModel" />
 	</bean>
+	<!--刷新-->
 	<bean id="refreshAction" class="nc.ui.pubapp.uif2app.actions.RefreshAction">
 		<property name="model" ref="appModel" />
 		<property name="dataManager" ref="modelDataManager" />
@@ -246,6 +251,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<!--保存时校验-->
 		<property name="validationService" ref="validateService" />
 	</bean>
+	<!--取消-->
 	<bean id="cancelAction" class="nc.ui.uif2.actions.CancelAction">
 		<property name="model" ref="appModel" />
 	</bean>
@@ -276,6 +282,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="dataManager" ref="modelDataManager" />
 		<property name="qryCondDLGInitializer" ref="qryCondInitializer" />
 		<property name="templateContainer" ref="queryTemplateContainer" />
+	</bean>
+	<!--变动人员-->
+	<bean id="WaBaUnitAlterAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitAlterAction">
+		<property name="editor" ref="billFormEditor" />
+		<property name="model" ref="appModel" />
+		<property name="dataManager" ref="modelDataManager" />
 	</bean>
 
 </beans>
