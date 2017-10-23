@@ -59,7 +59,6 @@ public abstract class AceWaBaSchPubServiceImpl {
 	// 新增
 	public AggWaBaSchHVO[] pubinsertBills(IBill[] vos) throws BusinessException {
 
-		// TODO 检查逻辑对不对
 		/*
 		try {
 			// 数据库中数据和前台传递过来的差异VO合并后的结果
@@ -121,8 +120,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 			for (ISuperVO childVO : originChildrens) {
 				String originChildPK = ((WaBaSchBVO) childVO).getPrimaryKey();
 				// obtain GrandVO
-				Collection originGVOs = query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
-				WaBaSchTVO[] originGrandvos = (WaBaSchTVO[]) originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
+				Collection<?> originGVOs = query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
+				WaBaSchTVO[] originGrandvos = originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
 				// put GrandVO to ChildVO
 				((WaBaSchBVO) childVO).setPk_s(originGrandvos);
 			}
@@ -182,7 +181,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 			Map<String, ISuperVO> map_aggvo = getAggvoBodyMap(aggvos[0]);//用于方便获取子表主键对应的VO
 
 			for (Iterator<String> it = map_client.keySet().iterator(); it.hasNext();) {
-				String bpk = (String) it.next();
+				String bpk = it.next();
 				ISuperVO superVO_aggvo = map_aggvo.get(bpk);
 				ISuperVO superVO_client = map_client.get(bpk);
 				//对旧的vo和前台传过来的vo，如果没有了就是删除了
@@ -195,13 +194,13 @@ public abstract class AceWaBaSchPubServiceImpl {
 
 			}
 			//更新子表
-			BillUpdate billupdate = new BillUpdate<AggWaBaSchHVO>();
-			fullBills = (AggWaBaSchHVO[]) billupdate.update(fullBills, originBills);
+			BillUpdate<AggWaBaSchHVO> billupdate = new BillUpdate<AggWaBaSchHVO>();
+			fullBills = billupdate.update(fullBills, originBills);
 
 			map_client = getAggvoBodyMap(fullBills[0]);//重新生成一下，因为新增的保存后才有pk
 
 			for (Iterator<String> it = map_client.keySet().iterator(); it.hasNext();) {
-				String bpk = (String) it.next();
+				String bpk = it.next();
 				WaBaSchBVO superVO_aggvo = (WaBaSchBVO) map_aggvo.get(bpk);
 				WaBaSchBVO superVO_client = (WaBaSchBVO) map_client.get(bpk);
 				if (superVO_aggvo != null) {
@@ -214,19 +213,20 @@ public abstract class AceWaBaSchPubServiceImpl {
 			Map<IVOMeta, List<ISuperVO>> fullGrandVOs = new HashMap<IVOMeta, List<ISuperVO>>();
 			Map<IVOMeta, List<ISuperVO>> originGrandVOs = new HashMap<IVOMeta, List<ISuperVO>>();
 			for (String tableCode : tableCodes) {
-				SuperVO[] originChildrens = (SuperVO[]) originBills[0].getTableVO(tableCode);
-				for (SuperVO childVO : originChildrens) {
+				ISuperVO[] originChildrens = (ISuperVO[]) originBills[0].getTableVO(tableCode);
+				for (ISuperVO childVO : originChildrens) {
 					// 将当前页签下的当前子的所有孙都查询出来了,并赋值给originBills中的孙。
 					if (tableCode.equals("pk_b")) {
 						String originChildPK = ((WaBaSchBVO) childVO).getPrimaryKey();
-						Collection originGVOs =
-								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
+						Collection<WaBaSchTVO> originGVOs =
+						//								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + originChildPK + "'", false);
+								query.queryBusiVOByCond(WaBaSchTVO.class, new String[] { "wa_ba_sch_psns" }, "pk_ba_sch_unit = '" + originChildPK + "'", false, false, null);
 						if (originGVOs != null && originGVOs.size() != 0) {
 							WaBaSchTVO[] originGrandvos = (WaBaSchTVO[]) originGVOs.toArray(new WaBaSchTVO[originGVOs.size()]);
 							((WaBaSchBVO) childVO).setPk_s(originGrandvos);
 							IVOMeta meta = ((SuperVO) (originGVOs.iterator().next())).getMetaData();
 							if (originGrandVOs.get(meta) == null) {
-								originGrandVOs.put(meta, (List<ISuperVO>) originGVOs);
+								originGrandVOs.put(meta, new ArrayList<ISuperVO>(originGVOs));
 							} else {
 								originGrandVOs.get(meta).addAll(originGVOs);
 							}
@@ -234,8 +234,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 					}
 				}
 
-				SuperVO[] currentChildrens = (SuperVO[]) fullBills[0].getTableVO(tableCode);
-				for (SuperVO childVO : currentChildrens) {
+				ISuperVO[] currentChildrens = (ISuperVO[]) fullBills[0].getTableVO(tableCode);
+				for (ISuperVO childVO : currentChildrens) {
 					if (tableCode.equals("pk_b")) {
 
 						ISuperVO[] currentGrandvos = ((WaBaSchBVO) map_client.get(childVO.getPrimaryKey())).getPk_s();
@@ -245,8 +245,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 							((WaBaSchTVO) currentGrandvos[i]).setPk_wa_ba_unit(((WaBaSchBVO) childVO).getPk_ba_sch_unit());
 						}
 						if (currentGrandvos != null && currentGrandvos.length != 0) {
-							IVOMeta meta = ((SuperVO) (currentGrandvos[0])).getMetaData();
-							List arrayList = new ArrayList(Arrays.asList(currentGrandvos));
+							IVOMeta meta = ((ISuperVO) (currentGrandvos[0])).getMetaData();
+							List<ISuperVO> arrayList = new ArrayList<ISuperVO>(Arrays.asList(currentGrandvos));
 							if (fullGrandVOs.get(meta) == null) {
 								fullGrandVOs.put(meta, arrayList);
 							} else {
@@ -279,13 +279,13 @@ public abstract class AceWaBaSchPubServiceImpl {
 		// 应该如何获取meta？
 		// 可能会有问题
 		//
-		for (Iterator itmeta = originGrandVOs.keySet().iterator(); itmeta.hasNext();) {
-			IVOMeta meta = (IVOMeta) itmeta.next();
+		for (Iterator<IVOMeta> itmeta = originGrandVOs.keySet().iterator(); itmeta.hasNext();) {
+			IVOMeta meta = itmeta.next();
 			List<ISuperVO> originvos = originGrandVOs.get(meta);
 			if (originvos == null || originvos.size() == 0)
 				continue;
-			for (Iterator itvo = originvos.iterator(); itvo.hasNext();) {
-				ISuperVO originvo = (ISuperVO) itvo.next();
+			for (Iterator<ISuperVO> itvo = originvos.iterator(); itvo.hasNext();) {
+				ISuperVO originvo = itvo.next();
 				String pk = originvo.getPrimaryKey();
 				if (pk != null) {
 					ISuperVO vo = findGrandVOByPk(fullGrandVOs.get(meta), pk);
@@ -385,9 +385,9 @@ public abstract class AceWaBaSchPubServiceImpl {
 	private ISuperVO findGrandVOByPk(List<ISuperVO> originGrandVOs, String key) {
 		if (originGrandVOs == null || originGrandVOs.size() == 0)
 			return null;
-		Iterator it = originGrandVOs.iterator();
+		Iterator<ISuperVO> it = originGrandVOs.iterator();
 		while (it.hasNext()) {
-			SuperVO grandvo = (SuperVO) it.next();
+			ISuperVO grandvo = it.next();
 			if (grandvo.getPrimaryKey() != null && grandvo.getPrimaryKey().equals(key)) {
 				return grandvo;
 			}
@@ -458,15 +458,14 @@ public abstract class AceWaBaSchPubServiceImpl {
 	 * @throws BusinessException
 	 */
 	private void loadGrandData(AggWaBaSchHVO[] bills) throws BusinessException {
-		// TODO 自动生成的方法存根
 		if (bills != null && bills.length > 0) {
 			for (AggWaBaSchHVO aggvo : bills) {
 				WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
 				if (bvos != null && bvos.length > 0) {
 					for (WaBaSchBVO bvo : bvos) {
-						Collection gvos =
+						Collection<?> gvos =
 								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'", false);
-						WaBaSchTVO[] tvos = (WaBaSchTVO[]) gvos.toArray(new WaBaSchTVO[gvos.size()]);
+						WaBaSchTVO[] tvos = gvos.toArray(new WaBaSchTVO[gvos.size()]);
 						bvo.setPk_s(tvos);
 					}
 				}
@@ -572,6 +571,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 				sql.delete(0, sql.length());
 				sql.append("delete from sm_msg_content where  detail like '" + aggWaBaSchHVO.getParentVO().getPk_ba_sch_h() + "@BAAL%' and receiver='" + userid + "' and subject like '%" + unitName + "%' ");
 				getDao().executeUpdate(sql.toString());
+				//清空当前分配人pk
+				getDao().executeUpdate("update wa_ba_sch_unit set vdef1=null where pk_ba_sch_unit='" + bvo.getPk_ba_sch_unit() + "'");
 			}
 		}
 		return retvos;
