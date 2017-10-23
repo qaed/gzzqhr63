@@ -57,9 +57,11 @@ public class ShowChangePsn {
 			}
 		}
 		if (trnType == CommonValue.TRN_ADD) {//新进人员
-			returnSQL = " and psnjob.pk_psnjob  not in (" + insql.toString() + ")";
+//			returnSQL = " and psnjob.pk_psnjob  not in (" + insql.toString() + ")";
+			returnSQL = " and not exists (select 1 from wa_ba_unit_b where wa_ba_unit_b.pk_wa_ba_unit='"+bvos[0].getPk_wa_ba_unit()+"' and wa_ba_unit_b.pk_psnjob=psnjob.pk_psnjob)";
 		} else if (trnType == CommonValue.TRN_SUB || trnType == CommonValue.TRN_POST_MOD) {//离职人员 || 变动人员
-			returnSQL = " and psnjob.pk_psnjob  in (" + insql.toString() + ")";
+//			returnSQL = " and psnjob.pk_psnjob  in (" + insql.toString() + ")";
+			returnSQL = " and exists (select 1 from wa_ba_unit_b where wa_ba_unit_b.pk_wa_ba_unit='"+bvos[0].getPk_wa_ba_unit()+"' and wa_ba_unit_b.pk_psnjob=psnjob.pk_psnjob)";
 		}
 
 		return returnSQL;
