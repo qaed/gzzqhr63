@@ -1,7 +1,6 @@
 package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 
 import javax.swing.ListSelectionModel;
 
@@ -22,18 +21,21 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
+@SuppressWarnings("restriction")
 public class WaBaSchAllotDlg extends UIDialog {
 
 	private static final long serialVersionUID = 6172313611690007636L;
-	private static Font labelFont = new Font("Dialog", java.awt.Font.PLAIN, 12);
+	//	private static Font labelFont = new Font("Dialog", java.awt.Font.PLAIN, 12);
 	private BillModel billModel = null;
+
 	private BillManageModel manageModel = null;
 	private UIPanel mainPanel = null;
 	private UIPanel northPanel = null;
 	private BillScrollPane centerPanel = null;
 
-	private Boolean isChange = false;//是否更新
+	//	private Boolean isChange = false;//是否更新
 
+	@SuppressWarnings("deprecation")
 	public WaBaSchAllotDlg(BillManageModel manageModel) throws BusinessException {
 		this.manageModel = manageModel;
 		init();
@@ -43,7 +45,7 @@ public class WaBaSchAllotDlg extends UIDialog {
 		this.setContentPane(this.getMainPanel());
 
 		this.setSize(1000, 500);
-		isChange = false;
+		//		this.isChange = false;
 
 		//初始化已设置的数据
 		initBillModelData();
@@ -131,9 +133,9 @@ public class WaBaSchAllotDlg extends UIDialog {
 
 	public BillItem[] getBillItems() {
 		BillItem[] billItems = null;
-		String name = "";
+		//		String name = "";
 
-		String names[] = { "奖金分配单元名称", "分配人1", "分配人2", "分配人3", "当期分配人", "进度" };
+		String names[] = { "奖金分配单元名称", "分配人1", "分配人2", "分配人3", "当前分配人", "进度" };
 		String keys[] = { "pk_wa_ba_unit", "pk1", "pk2", "pk3", "currpk", "progress" };
 		billItems = new BillItem[names.length];
 		for (int i = 0; i < names.length; i++) {

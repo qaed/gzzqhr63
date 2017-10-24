@@ -2,13 +2,13 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
-import nc.ui.pubapp.uif2app.actions.AbstractReferenceAction;
 import nc.ui.pubapp.uif2app.model.BillManageModel;
 import nc.ui.uif2.NCAction;
-import nc.ui.uif2.UIState;
-import nc.ui.uif2.model.AbstractAppModel;
 
+@SuppressWarnings("restriction")
 public class WaBaSchShowAllotAction extends NCAction {
+	private static final long serialVersionUID = -9161181519510543166L;
+
 	private BillManageModel model;
 
 	@Override
