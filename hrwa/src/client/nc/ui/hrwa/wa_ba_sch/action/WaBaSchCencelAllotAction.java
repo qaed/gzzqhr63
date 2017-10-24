@@ -2,7 +2,6 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
-import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.ui.pubapp.uif2app.components.grand.ListGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
 import nc.ui.pubapp.uif2app.event.card.BodyRowEditType;
@@ -11,9 +10,7 @@ import nc.ui.trade.business.HYPubBO_Client;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.editor.BillForm;
-import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pubapp.AppContext;
-import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
 
@@ -22,6 +19,7 @@ import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
  * 
  * @author tsheay
  */
+@SuppressWarnings("restriction")
 public class WaBaSchCencelAllotAction extends NCAction {
 	private static final long serialVersionUID = 1L;
 	private MainGrandModel mainGrandModel;
@@ -43,9 +41,9 @@ public class WaBaSchCencelAllotAction extends NCAction {
 			WaBaSchBVO bvo =
 					(WaBaSchBVO) this.getBillform().getBillCardPanel().getBillModel().getBodyValueRowVO(getRow(), WaBaSchBVO.class.getName());
 			//数据库删除
-			bvo.setDr(1);
-			bvo.setVdef1(AppContext.getInstance().getPkUser());
-			HYPubBO_Client.update(bvo);
+			//			bvo.setDr(1);
+			//			bvo.setVdef1(AppContext.getInstance().getPkUser());
+			HYPubBO_Client.delete(bvo);//直接删除，不保留数据
 			HYPubBO_Client.deleteByWhereClause(WaBaSchTVO.class, "pk_ba_sch_unit='" + bvo.getPk_ba_sch_unit() + "' and isnull(dr,0)=0");
 			//界面删除
 			this.getBillform().getBillCardPanel().doLineAction(this.getBillform().getBillCardPanel().getCurrentBodyTableCode(), BodyRowEditType.DELLINE.getType());
