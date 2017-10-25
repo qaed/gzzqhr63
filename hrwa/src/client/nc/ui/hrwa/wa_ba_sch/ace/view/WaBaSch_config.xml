@@ -557,9 +557,10 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="queryAuditFlowAction" />
 				-->
 				<ref bean="separatorAction" />
-				
 				<ref bean="cencelAllotAction" />
 				<ref bean="showAllotAction"/>
+				<ref bean="separatorAction" />
+				<ref bean="forceCompletedAllotAction" />
 			</list>
 		</property>
 	</bean>
@@ -590,6 +591,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="separatorAction" />
 				<ref bean="cencelAllotAction" />
 				<ref bean="showAllotAction"/>
+				<ref bean="separatorAction" />
+				<ref bean="forceCompletedAllotAction" />
+
 			</list>
 		</property>
 
@@ -830,6 +834,16 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="cencelAllotAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchCencelAllotAction">
 		<property name="btnName" value="取消分配"/>
 		<property name="code" value="cencelAllotAction"/>
+		<property name="billform" ref="billFormEditor" />
+		<property name="model" ref="manageAppModel" />
+		<property name="mainGrandModel" ref="mainGrandModel" />
+		<property name="listView" ref="MainGrandlistView" />
+	</bean>
+
+	<!--强制分配-->
+	<bean id="forceCompletedAllotAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchForceCompletedAllotAction">
+		<property name="btnName" value="强制分配"/>
+		<property name="code" value="forceCompletedAllotAction"/>
 		<property name="billform" ref="billFormEditor" />
 		<property name="model" ref="manageAppModel" />
 		<property name="mainGrandModel" ref="mainGrandModel" />
