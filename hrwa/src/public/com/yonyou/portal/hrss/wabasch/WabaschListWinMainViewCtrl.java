@@ -207,6 +207,16 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	}
 
 	/**
+	 * 刷新
+	 * 
+	 * @param scriptEvent
+	 */
+	public void onRefresh(MouseEvent mouseEvent) {
+		this.getCurrentAppCtx().refreshWindow();
+
+	}
+
+	/**
 	 * 编辑-流程业务
 	 * 
 	 * @param pkValue

@@ -520,7 +520,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		List<SuperVO> excelDatas = getExcelDatas(fullPath, exportFields, ds.getCurrentRowCount());
 
 		Row[] rows = ds.getAllRow();
-		
+
 		for (int i = 0; i < rows.length; i++) {
 			Row row = rows[i];
 			//for (int j = 0; j < fields.length; j++) {
@@ -688,7 +688,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 				}
 			}
 			if (planTotalmoney.compareTo(currTotalmoney) < 0) {
-				throw new LfwRuntimeException("当期可分配金额不足，请修改后重试！当前已分配金额：" + currTotalmoney);
+				throw new LfwRuntimeException("当期可分配金额不足，请修改后重试！当前已分配金额：" + currTotalmoney.setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
 			UifSaveCmdRV rv = new UifSaveCmdRV("WaBaSchBVO", new String[] { "WaBaSchTVO" });
 			rv.execute();
