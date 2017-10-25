@@ -3,6 +3,7 @@ package nc.ui.hrwa.wa_ba_item.ace.maintain;
 import nc.ui.pubapp.uif2app.model.BaseBillModelDataManager;
 import nc.vo.pubapp.AppContext;
 
+@SuppressWarnings("restriction")
 public class AceWa_ba_itemDataManager extends BaseBillModelDataManager {
 
 	@Override

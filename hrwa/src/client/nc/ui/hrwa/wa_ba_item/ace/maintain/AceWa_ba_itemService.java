@@ -1,13 +1,10 @@
 package nc.ui.hrwa.wa_ba_item.ace.maintain;
 
 import nc.bs.framework.common.NCLocator;
-import nc.vo.wa.wa_ba.item.ItemsVO;
-import nc.vo.pub.BusinessException;
-import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.ui.pubapp.uif2app.model.IQueryService;
-import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.ui.uif2.model.IAppModelService;
 import nc.vo.uif2.LoginContext;
+import nc.vo.wa.wa_ba.item.ItemsVO;
 
 /**
  * 示例单据的操作代理
@@ -16,6 +13,7 @@ import nc.vo.uif2.LoginContext;
  * @version 2011-7-6 上午08:31:09
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceWa_ba_itemService implements IAppModelService, IQueryService {
 	@Override
 	public Object insert(Object object) throws Exception {

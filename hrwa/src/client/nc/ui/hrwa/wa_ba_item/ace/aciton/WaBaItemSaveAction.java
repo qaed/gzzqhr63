@@ -7,8 +7,8 @@ import nc.ui.pubapp.uif2app.actions.SaveAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
+import nc.vo.wa.item.FromEnumVO;
 import nc.vo.wa.wa_ba.item.ItemsVO;
-import nc.vo.wa.wa_ba.item.WaBaItemDataType;
 
 @SuppressWarnings("restriction")
 public class WaBaItemSaveAction extends SaveAction {
@@ -20,7 +20,7 @@ public class WaBaItemSaveAction extends SaveAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		ItemsVO itemsvo = (ItemsVO) getEditor().getValue();
-		if (itemsvo.getIitemtype() == WaBaItemDataType.FORMULA.getValue() && (itemsvo.getVformula() == null || "".equals(itemsvo.getVformula().trim()))) {
+		if (itemsvo.getIitemtype() == FromEnumVO.FORMULA.value() && (itemsvo.getVformula() == null || "".equals(itemsvo.getVformula().trim()))) {
 			throw new BusinessException("公式校验失败！");
 		}
 

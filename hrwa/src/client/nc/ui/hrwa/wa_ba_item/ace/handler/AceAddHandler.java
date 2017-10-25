@@ -1,22 +1,19 @@
 package nc.ui.hrwa.wa_ba_item.ace.handler;
 
-import nc.desktop.ui.WorkbenchEnvironment;
-import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.bill.BillCardPanel;
-import nc.ui.pub.bill.BillItem;
 import nc.ui.pubapp.uif2app.event.IAppEventHandler;
 import nc.ui.pubapp.uif2app.event.billform.AddEvent;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pubapp.AppContext;
-import nc.vo.wa.wa_ba.item.ItemsVO;
 
+@SuppressWarnings("restriction")
 public class AceAddHandler implements IAppEventHandler<AddEvent> {
 
 	@Override
 	public void handleAppEvent(AddEvent e) {
 		BillCardPanel cardPanel = e.getBillForm().getBillCardPanel();
 		AppContext appcontext = AppContext.getInstance();
-		WorkbenchEnvironment  workbenchEnvironment = WorkbenchEnvironment.getInstance();
+		//		WorkbenchEnvironment  workbenchEnvironment = WorkbenchEnvironment.getInstance();
 		String pk_org = e.getContext().getPk_org();
 		String pk_group = appcontext.getPkGroup();
 		String pk_user = appcontext.getPkUser();
@@ -28,7 +25,7 @@ public class AceAddHandler implements IAppEventHandler<AddEvent> {
 
 		//initParentCode(e);
 	}
-
+	/*
 	private void initParentCode(AddEvent e) {
 		BillItem parentCode = e.getBillForm().getBillCardPanel().getHeadItem("");// ItemsVO.${parentCode}
 		if (e.getBillForm().getModel().getSelectedData() != null) {
@@ -39,4 +36,5 @@ public class AceAddHandler implements IAppEventHandler<AddEvent> {
 			parentCode.setEdit(true);
 		}
 	}
+	*/
 }
