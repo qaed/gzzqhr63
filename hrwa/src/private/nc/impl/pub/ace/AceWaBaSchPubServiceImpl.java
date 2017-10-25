@@ -490,7 +490,8 @@ public abstract class AceWaBaSchPubServiceImpl {
 		IWaBaUnitMaintain UnitMaintain = NCLocator.getInstance().lookup(IWaBaUnitMaintain.class);
 		//添加消息推送
 		for (AggWaBaSchHVO aggWaBaSchHVO : retvos) {
-
+			getDao().executeUpdate("delete from wa_ba_sch_unit where dr=1 and pk_ba_sch_h='" + aggWaBaSchHVO.getParentVO().getPk_ba_sch_h() + "'");
+			getDao().executeUpdate("delete from wa_ba_sch_psns where dr=1 and pk_ba_sch_h='" + aggWaBaSchHVO.getParentVO().getPk_ba_sch_h() + "'");
 			ISuperVO[] vos = aggWaBaSchHVO.getChildren(WaBaSchBVO.class);
 			for (int i = 0; i < vos.length; i++) {
 				WaBaSchBVO bvo = (WaBaSchBVO) vos[i];
