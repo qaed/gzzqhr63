@@ -19,6 +19,7 @@ import nc.bs.ml.NCLangResOnserver;
 import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ColumnProcessor;
+import nc.jdbc.framework.processor.MapProcessor;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.message.util.MessageCenter;
 import nc.message.vo.MessageVO;
@@ -131,8 +132,11 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		comp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
 
 		MenubarComp menucomp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
+		GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
 		menucomp.getItem("approve").setEnabled(false);
 		menucomp.getItem("save").setEnabled(false);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(false);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
 		//可以不改数据，直接完成分配
 		//		menucomp.getItem("allocated").setEnabled(false);
 		menucomp.getItem("add").setEnabled(false);
@@ -253,6 +257,30 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		});
 		*/
 		CmdInvoker.invoke(new WabaschUifDatasetAfterSelectCmd(ds.getId()));
+
+		Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
+		Row[] rows = Bodyds.getAllRow();
+		StringBuilder sql = new StringBuilder();
+		try {
+			//显示字段的值
+			for (Row row : rows) {
+				sql.delete(0, sql.length());
+				sql.append("select doc1.name vdef1,doc2.name name1,doc3.name name2,doc4.name name3 from wa_ba_sch_unit sch");
+				sql.append(" left join wa_ba_unit unit on sch.ba_unit_code=unit.pk_wa_ba_unit");
+				sql.append(" left join bd_psndoc doc1 on doc1.pk_psndoc=sch.vdef1");
+				sql.append(" left join bd_psndoc doc2 on doc2.pk_psndoc=unit.ba_mng_psnpk");
+				sql.append(" left join bd_psndoc doc3 on doc3.pk_psndoc=unit.ba_mng_psnpk2");
+				sql.append(" left join bd_psndoc doc4 on doc4.pk_psndoc=unit.ba_mng_psnpk3");
+				sql.append(" where sch.pk_ba_sch_unit='" + row.getString(Bodyds.nameToIndex("pk_ba_sch_unit")) + "'");
+				Map<String, String> nameMap = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
+				row.setValue(Bodyds.nameToIndex("vdef1_name"), nameMap.get("vdef1"));//当期分配人
+				row.setValue(Bodyds.nameToIndex("ba_mng_name1"), nameMap.get("name1"));//分配人1
+				row.setValue(Bodyds.nameToIndex("ba_mng_name2"), nameMap.get("name2"));//分配人2
+				row.setValue(Bodyds.nameToIndex("ba_mng_name3"), nameMap.get("name3"));//分配人3
+			}
+		} catch (Exception e) {
+			throw new LfwRuntimeException(e);
+		}
 	}
 
 	/**
@@ -404,8 +432,11 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		Dataset ds = this.getCurrentView().getViewModels().getDataset(dsId);
 		ds.setEnabled(true);
 		MenubarComp menucomp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
+		GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
 		menucomp.getItem("allocated").setEnabled(false);
 		menucomp.getItem("save").setEnabled(true);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(true);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(false);
 	}
 
 	/**
@@ -472,7 +503,10 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		this.getCurrentView().getViewModels().getDataset("WaBaSchTVO").setEnabled(true);
 		//配合TVO的可编辑状态
 		MenubarComp menuBar = this.getCurrentView().getViewMenus().getMenuBar("menubar");
+		GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
 		menuBar.getItem("save").setEnabled(true);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(true);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(false);
 		menuBar.getItem("allocated").setEnabled(false);
 
 	}
@@ -706,6 +740,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 			sql.append("  (case when plan_totalmoney-class3<0 then 0 else plan_totalmoney-class3 end)  ");
 			sql.append(" where pk_ba_sch_unit='" + ds.getValue("pk_ba_sch_unit").toString() + "'");
 			getDao().executeUpdate(sql.toString());
+			//			this.getCurrentAppCtx().closeWindow();
 			AppInteractionUtil.showShortMessage(NCLangRes4VoTransl.getNCLangRes().getStrByID("pa", "PaPropertySaveListener-000000"));/*保存成功！*/
 		} catch (Exception e) {
 			throw new LfwRuntimeException(e);
@@ -716,11 +751,14 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		masterDs.setEnabled(false);
 		detailDss.setEnabled(false);
 		MenubarComp comp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
+		GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
 
 		comp.getItem("add").setEnabled(false);
 		comp.getItem("copy").setEnabled(false);
 		comp.getItem("del").setEnabled(false);
 		comp.getItem("save").setEnabled(false);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(false);
+		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
 		comp.getItem("approve").setEnabled(false);
 		comp.getItem("allocated").setEnabled(true);//可以点击“完成分配”
 	}
