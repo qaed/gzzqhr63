@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.hrss.pub.tool.SessionUtil;
 import nc.jdbc.framework.processor.MapProcessor;
 import nc.uap.cpb.org.querycmd.QueryCmd;
 import nc.uap.ctrl.tpl.print.ICpPrintTemplateService;
@@ -70,12 +71,20 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	 */
 	public void onAfterRowSelect(DatasetEvent datasetEvent) {
 		Dataset ds = datasetEvent.getSource();
-		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId()));
+		//		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId());
+		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId()) {
+			@Override
+			protected String postProcessRowSelectVO(SuperVO vo, Dataset ds) {
+				vo.setAttributeValue("vdef1", SessionUtil.getPk_psndoc());//只能看到需要分配的子表
+				return super.postProcessRowSelectVO(vo, ds);
+			}
+		});
 		MenubarComp comp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
 		Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
 		Row[] rows = Bodyds.getAllRow();
 		StringBuilder sql = new StringBuilder();
 		try {
+			//显示字段的值
 			for (Row row : rows) {
 				sql.delete(0, sql.length());
 				sql.append("select doc1.name vdef1,doc2.name name1,doc3.name name2,doc4.name name3 from wa_ba_sch_unit sch");
