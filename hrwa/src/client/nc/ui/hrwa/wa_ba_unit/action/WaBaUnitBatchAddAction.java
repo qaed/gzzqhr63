@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.bs.framework.common.NCLocator;
-import nc.bs.logging.Logger;
 import nc.hr.utils.ResHelper;
 import nc.itf.hrwa.IWaBaUnitMaintain;
 import nc.ui.hrwa.wa_ba_unit.ace.view.WaBaUnitSearchPsnWizardStep;
@@ -100,12 +99,6 @@ public class WaBaUnitBatchAddAction extends WaBaUnitWizardAction {
 		aggvo.setChildrenVO(bodyvos.toArray(new WaBaUnitBVO[0]));
 		//进行保存
 		IWaBaUnitMaintain maintain = NCLocator.getInstance().lookup(IWaBaUnitMaintain.class);
-		try {
-			maintain.insert(aggvo);
-		} catch (BusinessException e) {
-			//			MessageDialog.showWarningDlg(, null, "按部门生成奖金分配单元错误:\r\n" + e.getMessage());
-			Logger.error(e.getMessage());
-			return;
-		}
+		maintain.insert(aggvo);
 	}
 }

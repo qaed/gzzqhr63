@@ -4,6 +4,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedDelRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitPsnUniqueCheckRule;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.vo.VOQuery;
@@ -35,6 +36,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			// 添加BP规则
 			AroundProcesser<AggWaBaUnitHVO> processer = new AroundProcesser<AggWaBaUnitHVO>(null);
 			processer.addBeforeRule(new WaUnitDataUniqueCheckRule());
+			processer.addBeforeRule(new WaUnitPsnUniqueCheckRule());
 			processer.before(aggvo);
 
 			BillInsert<AggWaBaUnitHVO> billinsert = new BillInsert<AggWaBaUnitHVO>();
@@ -86,6 +88,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 					//修改了分配人或表体时，已使用的单元不允许修改
 					processer.addBeforeRule(new WaUnitDataIsNotUsedRule());
 				}
+				processer.addBeforeRule(new WaUnitPsnUniqueCheckRule());
 			}
 			processer.before(aggvo);
 			/*
