@@ -2,15 +2,19 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
+import nc.ui.hr.uif2.action.HrAction;
+import nc.ui.ml.NCLangRes;
+import nc.ui.pub.beans.MessageDialog;
+import nc.ui.pub.beans.UIDialog;
+import nc.ui.pubapp.uif2app.actions.pflow.ApproveStatus;
 import nc.ui.pubapp.uif2app.components.grand.ListGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
 import nc.ui.pubapp.uif2app.event.card.BodyRowEditType;
 import nc.ui.pubapp.uif2app.model.BillManageModel;
 import nc.ui.trade.business.HYPubBO_Client;
-import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.editor.BillForm;
-import nc.vo.pubapp.AppContext;
+import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
 
@@ -20,10 +24,9 @@ import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
  * @author tsheay
  */
 @SuppressWarnings("restriction")
-public class WaBaSchCencelAllotAction extends NCAction {
+public class WaBaSchCencelAllotAction extends HrAction {
 	private static final long serialVersionUID = 1L;
 	private MainGrandModel mainGrandModel;
-	private BillManageModel model;
 	private BillForm billform;
 	private ListGrandPanelComposite listView;
 	/**
@@ -36,6 +39,11 @@ public class WaBaSchCencelAllotAction extends NCAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
+		String title = NCLangRes.getInstance().getStrByID("uif2", "CommonConfirmDialogUtils-000000")/*确认保存*/;
+		String question = "确定删除所选的奖金分配单元?";
+		if (UIDialog.ID_YES != MessageDialog.showYesNoDlg(getModel().getContext().getEntranceUI(), title, question, UIDialog.ID_NO)) {
+			return;
+		}
 		if (getRow() > -1) {//有选择行
 			//			CircularlyAccessibleValueObject[] vos = ((AggWaBaSchHVO) this.getModel().getSelectedData()).getChildrenVO();
 			WaBaSchBVO bvo =
@@ -68,14 +76,6 @@ public class WaBaSchCencelAllotAction extends NCAction {
 		this.mainGrandModel = mainGrandModel;
 	}
 
-	public BillManageModel getModel() {
-		return model;
-	}
-
-	public void setModel(BillManageModel model) {
-		this.model = model;
-	}
-
 	public BillForm getBillform() {
 		return billform;
 	}
@@ -98,5 +98,17 @@ public class WaBaSchCencelAllotAction extends NCAction {
 
 	public static void setRow(int row) {
 		WaBaSchCencelAllotAction.row = row;
+	}
+
+	@Override
+	protected boolean isActionEnable() {
+		AggWaBaSchHVO aggvo = (AggWaBaSchHVO) getModel().getSelectedData();
+		if (aggvo == null || aggvo.getParentVO().getApprovestatus() != ApproveStatus.COMMIT) {
+			return false;
+		}
+		if (getRow() < 0) {
+			return false;
+		}
+		return super.isActionEnable();
 	}
 }

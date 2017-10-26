@@ -3,12 +3,15 @@ package nc.ui.hrwa.wa_ba_sch.action;
 import java.awt.event.ActionEvent;
 
 import nc.message.vo.MessageVO;
+import nc.ui.hr.uif2.action.HrAction;
+import nc.ui.ml.NCLangRes;
+import nc.ui.pub.beans.MessageDialog;
+import nc.ui.pub.beans.UIDialog;
 import nc.ui.pubapp.uif2app.actions.pflow.ApproveStatus;
 import nc.ui.pubapp.uif2app.components.grand.ListGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
 import nc.ui.pubapp.uif2app.model.BillManageModel;
 import nc.ui.trade.business.HYPubBO_Client;
-import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
@@ -20,15 +23,19 @@ import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
  * @author tsheay
  */
 @SuppressWarnings("restriction")
-public class WaBaSchForceCompletedAllotAction extends NCAction {
+public class WaBaSchForceCompletedAllotAction extends HrAction {
 	private static final long serialVersionUID = -8596488248404836181L;
 	private MainGrandModel mainGrandModel;
-	private BillManageModel model;
 	private BillForm billform;
 	private ListGrandPanelComposite listView;
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
+		String title = NCLangRes.getInstance().getStrByID("uif2", "CommonConfirmDialogUtils-000000")/*确认保存*/;
+		String question = "确定终止所有分配单元的分配进度?";
+		if (UIDialog.ID_YES != MessageDialog.showYesNoDlg(getModel().getContext().getEntranceUI(), title, question, UIDialog.ID_NO)) {
+			return;
+		}
 		if (getModel().getSelectedData() != null) {
 			AggWaBaSchHVO aggvo = (AggWaBaSchHVO) getModel().getSelectedData();
 			WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
@@ -61,14 +68,6 @@ public class WaBaSchForceCompletedAllotAction extends NCAction {
 		this.mainGrandModel = mainGrandModel;
 	}
 
-	public BillManageModel getModel() {
-		return model;
-	}
-
-	public void setModel(BillManageModel model) {
-		this.model = model;
-	}
-
 	public BillForm getBillform() {
 		return billform;
 	}
@@ -89,20 +88,11 @@ public class WaBaSchForceCompletedAllotAction extends NCAction {
 	 * @see javax.swing.AbstractAction#isEnabled()
 	 */
 	@Override
-	public boolean isEnabled() {
-		//		AggWaBaSchHVO aggvo = (AggWaBaSchHVO) getModel().getSelectedData();
-		//		if (aggvo.getParentVO().getApprovestatus() == ApproveStatus.COMMIT) {
-		return super.isEnabled();
-		//		}
-		//		return false;
-
-	}
-
-	/* （非 Javadoc）
-	 * @see nc.ui.uif2.NCAction#isActionEnable()
-	 */
-	@Override
 	protected boolean isActionEnable() {
+		AggWaBaSchHVO aggvo = (AggWaBaSchHVO) getModel().getSelectedData();
+		if (aggvo == null || aggvo.getParentVO().getApprovestatus() != ApproveStatus.COMMIT) {
+			return false;
+		}
 		return super.isActionEnable();
 	}
 

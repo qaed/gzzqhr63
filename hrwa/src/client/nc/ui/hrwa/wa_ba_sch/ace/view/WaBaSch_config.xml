@@ -458,6 +458,13 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 		<property name="handlerGroup">
 			<list>
+				<!-- 列表行改变事件 -->
+				<bean class="nc.ui.pubapp.uif2app.event.EventHandlerGroup">
+					<property name="event" value="nc.ui.pubapp.uif2app.event.list.ListBodyRowChangedEvent" />
+					<property name="handler">
+						<bean class="nc.ui.hrwa.wa_ba_sch.ace.handler.AceListBodyRowChangedHandler" />
+					</property>
+				</bean>
 				<!-- 表体字段编辑前事件 -->
 				<bean class="nc.ui.pubapp.uif2app.event.EventHandlerGroup">
 					<property name="event" value="nc.ui.pubapp.uif2app.event.card.CardBodyBeforeEditEvent" />
