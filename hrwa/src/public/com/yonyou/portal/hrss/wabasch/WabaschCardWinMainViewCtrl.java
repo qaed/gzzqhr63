@@ -740,8 +740,11 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 			sql.append("  (case when plan_totalmoney-class3<0 then 0 else plan_totalmoney-class3 end)  ");
 			sql.append(" where pk_ba_sch_unit='" + ds.getValue("pk_ba_sch_unit").toString() + "'");
 			getDao().executeUpdate(sql.toString());
-			//			this.getCurrentAppCtx().closeWindow();
+
 			AppInteractionUtil.showShortMessage(NCLangRes4VoTransl.getNCLangRes().getStrByID("pa", "PaPropertySaveListener-000000"));/*保存成功！*/
+			// 重新加载数据
+			onAfterRowSelect(new DatasetEvent(getMasterDs()));
+
 		} catch (Exception e) {
 			throw new LfwRuntimeException(e);
 		}
