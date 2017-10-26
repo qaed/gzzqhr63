@@ -41,7 +41,8 @@ public class WaBaSchForceCompletedAllotAction extends HrAction {
 			WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
 			for (WaBaSchBVO bvo : bvos) {
 				if (bvo.getClass3() == null) {
-					bvo.setClass3(bvo.getPlan_totalmoney());//当期可分配金额
+					bvo.setClass3(bvo.getClass2());//当期计划分配金额
+					bvo.setClass4(bvo.getClass1());//上月的结余转到本月结余
 				}
 				bvo.setVdef1(null);
 				bvo.setDr(0);//必须重新写，否则会被置为null
