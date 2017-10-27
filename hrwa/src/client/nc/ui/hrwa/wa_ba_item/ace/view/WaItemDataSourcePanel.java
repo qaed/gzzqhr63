@@ -279,7 +279,7 @@ public class WaItemDataSourcePanel extends AbstractBillItemEditor{
 		
 		Integer itemtype = (Integer)vo.getAttributeValue("iitemtype");
 		Integer ifromflag = (Integer)vo.getAttributeValue("ifromflag");
-		
+		//TODO 这里取值有问题，但是一改又出问题了
 		this.currentDataType = MDEnum.valueOf(TypeEnumVO.class, itemtype);
 		FromEnumVO fromType = MDEnum.valueOf(FromEnumVO.class, ifromflag);
 		

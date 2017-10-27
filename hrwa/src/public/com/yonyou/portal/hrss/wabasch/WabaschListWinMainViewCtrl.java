@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.hrss.pub.tool.CommonUtil;
 import nc.bs.hrss.pub.tool.SessionUtil;
 import nc.jdbc.framework.processor.MapProcessor;
 import nc.uap.cpb.org.querycmd.QueryCmd;
@@ -312,6 +313,7 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	 * @throws BusinessException
 	 */
 	public void onAttchFile(MouseEvent<?> mouseEvent) {
+		/*
 		Dataset ds = this.getMasterDs();
 		Row row = ds.getSelectedRow();
 		if (row == null) {
@@ -342,8 +344,9 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		if (wfmParam != null && !wfmParam.isEmpty()) {
 			param.putAll(wfmParam);
 		}
-
 		CmdInvoker.invoke(new UifAttachCmd(title, param));
+		*/
+		CommonUtil.Attachment(this.getMasterDs(), Boolean.valueOf(true));
 	}
 
 	/**
