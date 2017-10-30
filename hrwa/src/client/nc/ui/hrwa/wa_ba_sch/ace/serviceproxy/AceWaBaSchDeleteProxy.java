@@ -1,6 +1,5 @@
 package nc.ui.hrwa.wa_ba_sch.ace.serviceproxy;
 
-import nc.bs.bank_cvp.compile.registry.BussinessMethods;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.ui.pubapp.pub.task.ISingleBillService;
@@ -13,6 +12,7 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
  * @version 2011-7-6 ионГ08:31:09
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceWaBaSchDeleteProxy implements ISingleBillService<AggWaBaSchHVO> {
 	@Override
 	public AggWaBaSchHVO operateBill(AggWaBaSchHVO aggvo) throws Exception {

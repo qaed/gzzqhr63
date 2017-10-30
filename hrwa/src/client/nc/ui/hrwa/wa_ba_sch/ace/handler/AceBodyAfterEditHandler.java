@@ -9,14 +9,11 @@ import nc.itf.hrwa.IWaBaUnitMaintain;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.bill.BillScrollPane;
-import nc.ui.pubapp.uif2app.components.grand.util.MainGrandUtil;
 import nc.ui.pubapp.uif2app.event.IAppEventHandler;
 import nc.ui.pubapp.uif2app.event.card.CardBodyAfterEditEvent;
 import nc.ui.pubapp.uif2app.view.BillForm;
 import nc.ui.trade.business.HYPubBO_Client;
 import nc.uif.pub.exception.UifException;
-import nc.vo.bd.psn.PsndocVO;
-import nc.vo.hi.psndoc.PsnJobVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
@@ -30,6 +27,7 @@ import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
  * @version 2011-7-12 ÏÂÎç08:17:33
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEditEvent> {
 	IWaBaUnitMaintain waBaUnitMaintain = NCLocator.getInstance().lookup(IWaBaUnitMaintain.class);
 	private BillForm billForm;

@@ -19,6 +19,7 @@ import nc.vo.pub.ISuperVO;
 import nc.vo.pub.SuperVO;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
+import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 
 @SuppressWarnings("restriction")
@@ -92,7 +93,9 @@ public class WaBaSchAllotDlg extends UIDialog {
 	public void initBillModelData() throws BusinessException {
 		getBillModel().clearBodyData();
 		//初始化现有数据
-		AggWaBaSchHVO aggvo = ((AggWaBaSchHVO) this.manageModel.getSelectedData());
+		AggWaBaSchHVO saggvo = ((AggWaBaSchHVO) this.manageModel.getSelectedData());
+		AggWaBaSchHVO aggvo =
+				(AggWaBaSchHVO) HYPubBO_Client.queryBillVOByPrimaryKey(new String[] { AggWaBaSchHVO.class.getName(), WaBaSchHVO.class.getName(), WaBaSchBVO.class.getName() }, saggvo.getParentVO().getPk_ba_sch_h());
 		ISuperVO[] childvos = aggvo.getChildren(WaBaSchBVO.class);
 		//		WaBaSchBVO[] bvos = (WaBaSchBVO[]) HYPubBO_Client.queryByCondition(WaBaSchBVO.class, "");
 		int row = 0;

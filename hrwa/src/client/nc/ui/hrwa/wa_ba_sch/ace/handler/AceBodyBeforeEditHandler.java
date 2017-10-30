@@ -1,10 +1,8 @@
 package nc.ui.hrwa.wa_ba_sch.ace.handler;
 
 import nc.ui.pub.beans.UIRefPane;
-import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pubapp.uif2app.event.IAppEventHandler;
 import nc.ui.pubapp.uif2app.event.card.CardBodyBeforeEditEvent;
-import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 
 /**
  * 表体字段编辑前事件处理类
@@ -13,6 +11,7 @@ import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
  * @version 2011-7-7 下午02:52:57
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceBodyBeforeEditHandler implements IAppEventHandler<CardBodyBeforeEditEvent> {
 	private UIRefPane uiref;
 

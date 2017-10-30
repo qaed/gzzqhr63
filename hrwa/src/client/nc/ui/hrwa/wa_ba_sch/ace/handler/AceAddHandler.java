@@ -3,22 +3,19 @@ package nc.ui.hrwa.wa_ba_sch.ace.handler;
 import java.util.Calendar;
 
 import nc.bs.framework.common.NCLocator;
-import nc.desktop.ui.WorkbenchEnvironment;
+import nc.itf.hr.frame.IHrBillCode;
 import nc.itf.org.IOrgVersionQryService;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pubapp.uif2app.event.IAppEventHandler;
 import nc.ui.pubapp.uif2app.event.billform.AddEvent;
-import nc.vo.vorg.OrgVersionVO;
-import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.pf.BillStatusEnum;
-import nc.vo.pub.lang.UFDate;
 import nc.vo.pubapp.AppContext;
+import nc.vo.vorg.OrgVersionVO;
 
 @SuppressWarnings("restriction")
 public class AceAddHandler implements IAppEventHandler<AddEvent> {
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void handleAppEvent(AddEvent e) {
 		BillCardPanel panel = e.getBillForm().getBillCardPanel();
@@ -30,6 +27,9 @@ public class AceAddHandler implements IAppEventHandler<AddEvent> {
 		try {
 			OrgVersionVO orgVersion = orgService.getOrgUnitLastVersionByOrgID(e.getContext().getPk_org());
 			panel.setHeadItem("pk_org_v", orgVersion.getPk_vid());
+			//自动生成编码
+			panel.setHeadItem("sch_code", ((IHrBillCode) NCLocator.getInstance().lookup(IHrBillCode.class)).getBillCode("BAAL", e.getContext().getPk_group(), e.getContext().getPk_org()));
+
 		} catch (BusinessException e1) {
 			e1.printStackTrace();
 		}

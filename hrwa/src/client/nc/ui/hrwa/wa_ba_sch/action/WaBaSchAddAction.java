@@ -6,34 +6,35 @@ import nc.ui.pubapp.uif2app.actions.AbstractReferenceAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.model.AbstractAppModel;
 
+@SuppressWarnings("restriction")
 public class WaBaSchAddAction extends AbstractReferenceAction {
 
-  private static final long serialVersionUID = 1L;
-  
-  private AbstractAppModel model;
+	private static final long serialVersionUID = 1L;
 
-  @Override
-  public void doAction(ActionEvent e) throws Exception {
-    this.model.setUiState(UIState.ADD);    
-  }
-  
-  public AbstractAppModel getModel() {
-    return this.model;
-  }
+	private AbstractAppModel model;
 
-  public void setModel(AbstractAppModel model) {
-    this.model = model;
-    this.model.addAppEventListener(this);
-  }
-  
-  @Override
-  protected boolean isActionEnable() {
-    return this.model.getUiState() == UIState.NOT_EDIT;
-  }
-  
-  @Override
-  protected boolean isManual() {
-    return true;
-  }
+	@Override
+	public void doAction(ActionEvent e) throws Exception {
+		this.model.setUiState(UIState.ADD);
+	}
+
+	public AbstractAppModel getModel() {
+		return this.model;
+	}
+
+	public void setModel(AbstractAppModel model) {
+		this.model = model;
+		this.model.addAppEventListener(this);
+	}
+
+	@Override
+	protected boolean isActionEnable() {
+		return this.model.getUiState() == UIState.NOT_EDIT;
+	}
+
+	@Override
+	protected boolean isManual() {
+		return true;
+	}
 
 }

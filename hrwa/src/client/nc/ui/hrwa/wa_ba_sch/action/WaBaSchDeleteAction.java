@@ -13,6 +13,7 @@ import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.components.CommonConfirmDialogUtils;
 
+@SuppressWarnings("restriction")
 public class WaBaSchDeleteAction extends DeleteScriptAction {
 	private static final long serialVersionUID = 1L;
 	private String billCodeName;
@@ -27,7 +28,7 @@ public class WaBaSchDeleteAction extends DeleteScriptAction {
 			//		Object value = this.getModel().getSelectedData();
 			//		this.getModel().directlyDelete(value);
 			this.getModel().delete();
-			Object object = this.getSingleBillService().operateBill(value);
+			this.getSingleBillService().operateBill(value);
 			this.getMainGrandModel().directlyDelete(null);
 			this.showSuccessInfo();
 		}

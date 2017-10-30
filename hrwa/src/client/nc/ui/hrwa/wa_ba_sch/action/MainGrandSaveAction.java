@@ -2,14 +2,10 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
-import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.BusinessExceptionAdapter;
 import nc.bs.uif2.IActionCode;
 import nc.bs.uif2.validation.IValidationService;
 import nc.bs.uif2.validation.ValidationException;
-import nc.impl.pubapp.pattern.data.bill.BillQuery;
-import nc.itf.hrwa.IWaBaSchMaintain;
-import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.ui.pubapp.uif2app.actions.IDataOperationService;
 import nc.ui.pubapp.uif2app.components.grand.CardGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
@@ -26,6 +22,7 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 
+@SuppressWarnings("restriction")
 public class MainGrandSaveAction extends NCAction {
 	/**
 	 * SaveAction DifferentVOSaveAction
@@ -65,7 +62,7 @@ public class MainGrandSaveAction extends NCAction {
 		// 执行计算
 		WaBaSchCaculateAction caculateAction = new WaBaSchCaculateAction(((AggWaBaSchHVO) value));
 		caculateAction.doAction(e);
-		
+
 		AggregatedValueObject vo =
 				HYPubBO_Client.queryBillVOByPrimaryKey(new String[] { AggWaBaSchHVO.class.getName(), WaBaSchHVO.class.getName(), WaBaSchBVO.class.getName() }, ((AggWaBaSchHVO) value).getParentVO().getPk_ba_sch_h());
 		this.getModel().directlyUpdate(vo);
@@ -97,8 +94,7 @@ public class MainGrandSaveAction extends NCAction {
 	}
 
 	/**
-	 * 此方法在调用模型的add或update调用。
-	 * 用来对从编辑器中取出的value对象进行校验。
+	 * 此方法在调用模型的add或update调用。 用来对从编辑器中取出的value对象进行校验。
 	 * 
 	 * @param value
 	 */

@@ -4,12 +4,8 @@ import java.awt.event.ActionEvent;
 import java.util.Vector;
 
 import nc.bs.framework.common.NCLocator;
-import nc.itf.hr.frame.IPersistenceRetrieve;
 import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.ui.uif2.NCAction;
-import nc.vo.pub.BusinessException;
-import nc.vo.trade.pub.IBillStatus;
-import nc.vo.wa.wa_ba.item.ItemsVO;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 
@@ -20,9 +16,6 @@ public class WaBaSchCaculateAction extends NCAction {
 	String period;
 
 	Vector<WaBaSchBVO> v = null;
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1292796453304461013L;
 
 	public WaBaSchCaculateAction(AggWaBaSchHVO aggvo) {

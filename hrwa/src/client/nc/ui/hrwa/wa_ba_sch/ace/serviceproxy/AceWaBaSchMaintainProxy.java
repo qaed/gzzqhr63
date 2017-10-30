@@ -16,6 +16,7 @@ import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
  * @version 2011-7-6 ионГ08:31:09
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceWaBaSchMaintainProxy implements IDataOperationService, IQueryService {
 	@Override
 	public Object[] queryByQueryScheme(IQueryScheme queryScheme) throws Exception {

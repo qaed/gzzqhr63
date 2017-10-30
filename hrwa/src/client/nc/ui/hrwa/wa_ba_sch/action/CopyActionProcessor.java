@@ -2,13 +2,13 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import nc.desktop.ui.ServerTimeProxy;
 import nc.ui.pubapp.uif2app.actions.intf.ICopyActionProcessor;
-import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
-import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
-import nc.vo.pub.pf.BillStatusEnum;
 import nc.vo.pub.ISuperVO;
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.lang.UFDateTime;
+import nc.vo.pub.pf.BillStatusEnum;
 import nc.vo.uif2.LoginContext;
+import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
+import nc.vo.wa.wa_ba.sch.WaBaSchHVO;
 
 /**
  * 单据复制时表头表体处理
@@ -17,6 +17,7 @@ import nc.vo.uif2.LoginContext;
  * @version 2011-7-7 下午02:31:23
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class CopyActionProcessor implements ICopyActionProcessor<AggWaBaSchHVO> {
 	@Override
 	public void processVOAfterCopy(AggWaBaSchHVO billVO, LoginContext context) {

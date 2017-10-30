@@ -12,6 +12,7 @@ import nc.ui.pubapp.uif2app.view.BillForm;
  * @version 2011-7-12 下午08:17:33
  * @author duy
  */
+@SuppressWarnings("restriction")
 public class AceBodyRowChangedHandler implements IAppEventHandler<CardBodyRowChangedEvent> {
 	private BillForm billForm;
 
@@ -19,7 +20,7 @@ public class AceBodyRowChangedHandler implements IAppEventHandler<CardBodyRowCha
 	public void handleAppEvent(CardBodyRowChangedEvent e) {
 		//保存选中行
 		WaBaSchCencelAllotAction.setRow(e.getRow());
-	}	
+	}
 
 	public BillForm getBillForm() {
 		return billForm;

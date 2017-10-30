@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import nc.ui.hr.uif2.action.HrAction;
 import nc.ui.pubapp.uif2app.actions.pflow.ApproveStatus;
 import nc.ui.pubapp.uif2app.model.BillManageModel;
-import nc.ui.uif2.NCAction;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 
 @SuppressWarnings("restriction")

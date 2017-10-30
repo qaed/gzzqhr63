@@ -10,7 +10,6 @@ import nc.ui.pub.beans.UIDialog;
 import nc.ui.pubapp.uif2app.actions.pflow.ApproveStatus;
 import nc.ui.pubapp.uif2app.components.grand.ListGrandPanelComposite;
 import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
-import nc.ui.pubapp.uif2app.model.BillManageModel;
 import nc.ui.trade.business.HYPubBO_Client;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.editor.BillForm;
