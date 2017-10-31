@@ -60,8 +60,9 @@ public class WaUnitDataIsNotUsedRule implements IRule<AggWaBaUnitHVO> {
 		sql.append("  left join wa_ba_sch_h c on a.pk_ba_sch_h=c.pk_ba_sch_h");
 		sql.append("  where isnull(a.dr,0)=0 ");
 		sql.append("  and (a.ba_unit_code ='" + vo.getPk_wa_ba_unit() + "'); ");
-		sql.append("  and (c.cperiod ='" + (month.length() == 1 ? "0" + month : month) + "'); ");
-		sql.append("  and (c.cyear ='" + cal.get(Calendar.YEAR) + "" + "'); ");
+//		sql.append("  and (c.cperiod ='" + (month.length() == 1 ? "0" + month : month) + "'); ");
+//		sql.append("  and (c.cyear ='" + cal.get(Calendar.YEAR) + "" + "'); ");
+		sql.append("  and c.approvestatus='3'");//�ύ״̬
 		return sql.toString();
 	}
 }

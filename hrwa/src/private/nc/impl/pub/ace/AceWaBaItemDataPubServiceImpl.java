@@ -388,7 +388,8 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 		cal.set(Calendar.YEAR, Integer.parseInt(this.year));
 		cal.set(Calendar.MONTH, Integer.parseInt(this.period));
 		cal.add(Calendar.MONTH, -1);
-		return new String[] { cal.get(Calendar.YEAR) + "", cal.get(Calendar.MONTH) + "" };
+		int month = cal.get(Calendar.MONTH) - 1;
+		return new String[] { cal.get(Calendar.YEAR) + "", month < 10 ? "0" + month : month + "" };
 	}
 
 }
