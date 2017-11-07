@@ -22,9 +22,7 @@ public class Test {
 	private int getUserDetailErrorTimes = 0;
 	private int getUserDetailErrorTimesMax = 20;//123
 
-	
-	
-	
+
 	@org.junit.Test
 	public void deletedept() {
 		long[] ids1 =
