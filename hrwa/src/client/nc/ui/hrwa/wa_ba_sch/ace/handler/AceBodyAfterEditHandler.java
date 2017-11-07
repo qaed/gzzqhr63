@@ -94,6 +94,7 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 							WaBaUnitBVO waBaUnitbvo = bvos[index];
 							TVObsp.addLine();
 							billForm.getBillCardPanel().setBodyValueAt(waBaUnitbvo.getPk_psndoc(), index, "pk_psndoc", "pk_s");// 人员
+							billForm.getBillCardPanel().setBodyValueAt(waBaUnitbvo.getPk_psnjob(), index, "pk_psnjob", "pk_s");// 工作记录
 						}
 						e.getBillCardPanel().addLine();
 					}
