@@ -20,6 +20,7 @@ import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchDataUniqueCheckRule;
 import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
+import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.bill.BillUpdate;
 import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
@@ -442,7 +443,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 			this.preQuery(queryScheme);
 			BillLazyQuery<AggWaBaSchHVO> query = new BillLazyQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
 			//			query.setOrderAttribute(WaBaSchHVO.class, new String[] { "cyear", "cperiod" });
-			bills = query.query(queryScheme, null);
+			bills = query.query(queryScheme, "order by cyear,cperiod asc");
 			loadGrandData(bills);
 		} catch (Exception e) {
 			Logger.error(e);

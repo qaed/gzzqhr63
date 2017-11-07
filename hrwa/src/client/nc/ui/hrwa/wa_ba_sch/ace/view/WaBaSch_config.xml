@@ -195,8 +195,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 
 	</bean>
 
-	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
-	<bean id="modelDataManager" class="nc.ui.pubapp.uif2app.query2.model.ModelDataManager">
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 nc.ui.pubapp.uif2app.query2.model.ModelDataManager-->
+	<bean id="modelDataManager" class="nc.ui.hrwa.wa_ba_sch.ace.handler.SchModelDataManager">
 		<property name="model" ref="manageAppModel"></property>
 		<property name="service" ref="maintainProxy"></property>
 	</bean>
@@ -260,7 +260,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	<bean id="billFormEditor" class="nc.ui.pubapp.uif2app.view.ShowUpableBillForm" init-method="initUI">
 		<property name="model" ref="manageAppModel"></property>
 		<property name="templateContainer" ref="templateContainer" />
-		<property name="showOrgPanel" value="true" />
+		<property name="showOrgPanel" value="false" />
 		<!--节点-->
 		<property name="nodekey" value="bt"></property>
 		<!-- 是否自动增行 -->
@@ -375,7 +375,76 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 	</bean>
 
-	<!-- 界面布局总装 -->
+	<!-- 界面布局总装 /nc/ui/wa/adjust/adjust_config_apply.xml -->
+	<!--
+	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+	<property name="model" ref="manageAppModel" />
+	<property name="tangramLayoutRoot">
+	<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+	<property name="showMode" value="CardLayout" />
+	<property name="tabs">
+	<list>
+	<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+	<property name="left">
+	<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+	<property name="component" ref="queryArea" />
+	</bean>
+	</property>
+	<property name="right">
+	<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+	<property name="up">
+	<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+	<property name="component" ref="queryInfo" />
+	</bean>
+	</property>
+	<property name="down">
+	<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+	<property name="name">
+	<bean class="nc.ui.uif2.I18nFB">
+	<property name="resDir" value="common"></property>
+	<property name="resId" value="UC001-0000107"></property>
+	<property name="defaultValue" value="列表"></property>
+	</bean>
+	</property>
+	<property name="component" ref="MainGrandlistView" />
+	</bean>
+	</property>
+	<property name="dividerLocation" value="25f" />
+	</bean>
+	</property>
+	<property name="dividerLocation" value="210f" />
+	</bean>
+	<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+	<property name="up">
+	<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+	<property name="component" ref="cardInfoPnl" />
+	</bean>
+	</property>
+	<property name="down">
+	<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+	<property name="name">
+	<bean class="nc.ui.uif2.I18nFB">
+	<property name="resDir" value="common"></property>
+	<property name="resId" value="UC001-0000106"></property>
+	<property name="defaultValue" value="卡片"></property>
+	</bean>
+	</property>
+	<property name="component" ref="MainGrandbillFormEditor" />
+	</bean>
+	</property>
+	<property name="dividerLocation" value="30f" />
+	</bean>
+	</list>
+	</property>
+	</bean>
+	</property>
+	</bean>
+	-->
+	<bean id="orgPanel" class="nc.ui.hr.uif2.view.PrimaryOrgPanel" init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="pk_orgtype" value="HRORGTYPE00000000000" />
+	</bean>
 	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
 		<property name="model" ref="manageAppModel" />
 		<property name="tangramLayoutRoot">
@@ -383,40 +452,52 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<property name="showMode" value="CardLayout" />
 				<property name="tabs">
 					<list>
-						<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
-							<property name="left">
+						<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+							<property name="showMode" value="NoDivider" />
+							<property name="up">
 								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-									<property name="component" ref="queryArea" />
+									<property name="component" ref="orgPanel" />
 								</bean>
 							</property>
-							<property name="right">
-								<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
-									<property name="up">
+							<property name="down">
+								<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+									<property name="left">
 										<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-											<property name="component" ref="queryInfo" />
+											<property name="component" ref="queryArea" />
 										</bean>
 									</property>
-									<property name="down">
-										<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-											<property name="name">
-												<bean class="nc.ui.uif2.I18nFB">
-													<property name="resDir" value="common"></property>
-													<property name="resId" value="UC001-0000107"></property>
-													<property name="defaultValue" value="列表"></property>
+									<property name="right">
+										<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+											<property name="up">
+												<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+													<property name="component" ref="queryInfo" />
 												</bean>
 											</property>
-											<!--
-											<property name="component" ref="listView" />
-											-->
-											<property name="component" ref="MainGrandlistView" />
+											<property name="down">
+												<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+													<property name="name">
+														<bean class="nc.ui.uif2.I18nFB">
+															<property name="resDir" value="common"></property>
+															<property name="resId" value="UC001-0000107"></property>
+															<property name="defaultValue" value="列表"></property>
+														</bean>
+													</property>
+													<!--
+													<property name="component" ref="listView" />
+													-->
+													<property name="component" ref="MainGrandlistView" />
+												</bean>
+											</property>
+											<property name="dividerLocation" value="25f" />
 										</bean>
 									</property>
-									<property name="dividerLocation" value="25f" />
+									<property name="dividerLocation" value="210f" />
 								</bean>
 							</property>
-							<property name="dividerLocation" value="210f" />
+							<property name="dividerLocation" value="30f" />
 						</bean>
 						<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+							<property name="showMode" value="NoDivider" />
 							<property name="up">
 								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
 									<property name="component" ref="cardInfoPnl" />
@@ -424,20 +505,10 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 							</property>
 							<property name="down">
 								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-									<property name="name">
-										<bean class="nc.ui.uif2.I18nFB">
-											<property name="resDir" value="common"></property>
-											<property name="resId" value="UC001-0000106"></property>
-											<property name="defaultValue" value="卡片"></property>
-										</bean>
-									</property>
-									<!--
-									<property name="component" ref="billFormEditor" />
-									-->
 									<property name="component" ref="MainGrandbillFormEditor" />
 								</bean>
 							</property>
-							<property name="dividerLocation" value="30f" />
+							<property name="dividerLocation" value="26f" />
 						</bean>
 					</list>
 				</property>
@@ -564,6 +635,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="queryAuditFlowAction" />
 				-->
 				<ref bean="separatorAction" />
+				<ref bean="caculateAction" />
+				<ref bean="separatorAction" />
 				<ref bean="cencelAllotAction" />
 				<ref bean="showAllotAction"/>
 				<ref bean="separatorAction" />
@@ -595,6 +668,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="separatorAction" />
 				<ref bean="queryAuditFlowAction" />
 				-->
+				<ref bean="separatorAction" />
+				<ref bean="caculateAction" />
 				<ref bean="separatorAction" />
 				<ref bean="cencelAllotAction" />
 				<ref bean="showAllotAction"/>
@@ -710,8 +785,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 	</bean>
 
-	<!-- 提交 -->
-	<bean id="commitAction" class="nc.ui.pubapp.uif2app.actions.pflow.CommitScriptAction">
+	<!-- 提交 nc.ui.pubapp.uif2app.actions.pflow.CommitScriptAction-->
+	<bean id="commitAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchCommitAction">
 		<property name="model" ref="manageAppModel" />
 		<property name="editor" ref="billFormEditor" />
 		<property name="billType" value="BAAL" />
@@ -862,6 +937,14 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="btnName" value="查看分配进度"/>
 		<property name="code" value="showAllotAction"/>
 		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!--重新计算-->
+	<bean id="caculateAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchCaculateAction">
+		<property name="btnName" value="计算"/>
+		<property name="code" value="caculateAction"/>
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
 	</bean>
 
 	<!-- 懒加载 -->

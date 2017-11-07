@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/public"/>
+	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/client"/>
+	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/private"/>
+	<classpathentry kind="src" output="hrpub/classes" path="hrpub/resources"/>
+	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/test"/>
 	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/public"/>
 	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/client"/>
 	<classpathentry kind="src" output="uapbd/classes" path="uapbd/src/private"/>

@@ -9,6 +9,7 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 public class WaBaSchTVO extends SuperVO {
+	private static final long serialVersionUID = 4993065203561925513L;
 	/**
 	 * class1
 	 */
@@ -295,6 +296,11 @@ public class WaBaSchTVO extends SuperVO {
 	public Integer dr;
 
 	/**
+	 * 人员工作记录
+	 */
+	private String pk_psnjob;
+
+	/**
 	 * 获取class1
 	 * 
 	 * @return class1
@@ -306,8 +312,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置class1
 	 * 
-	 * @param class1
-	 *            class1
+	 * @param class1 class1
 	 */
 	public void setClass1(String class1) {
 		this.class1 = class1;
@@ -325,8 +330,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置class2
 	 * 
-	 * @param class2
-	 *            class2
+	 * @param class2 class2
 	 */
 	public void setClass2(String class2) {
 		this.class2 = class2;
@@ -344,8 +348,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置class3
 	 * 
-	 * @param class3
-	 *            class3
+	 * @param class3 class3
 	 */
 	public void setClass3(String class3) {
 		this.class3 = class3;
@@ -363,8 +366,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置class4
 	 * 
-	 * @param class4
-	 *            class4
+	 * @param class4 class4
 	 */
 	public void setClass4(String class4) {
 		this.class4 = class4;
@@ -382,8 +384,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置class5
 	 * 
-	 * @param class5
-	 *            class5
+	 * @param class5 class5
 	 */
 	public void setClass5(String class5) {
 		this.class5 = class5;
@@ -401,8 +402,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置考核系数
 	 * 
-	 * @param comput_factor
-	 *            考核系数
+	 * @param comput_factor 考核系数
 	 */
 	public void setComput_factor(UFDouble comput_factor) {
 		this.comput_factor = comput_factor;
@@ -420,8 +420,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置计划绩效工资总额
 	 * 
-	 * @param comput_totalmoney
-	 *            计划绩效工资总额
+	 * @param comput_totalmoney 计划绩效工资总额
 	 */
 	public void setComput_totalmoney(UFDouble comput_totalmoney) {
 		this.comput_totalmoney = comput_totalmoney;
@@ -439,8 +438,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置期间1
 	 * 
-	 * @param cperiod1
-	 *            期间1
+	 * @param cperiod1 期间1
 	 */
 	public void setCperiod1(String cperiod1) {
 		this.cperiod1 = cperiod1;
@@ -458,8 +456,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置期间2
 	 * 
-	 * @param cperiod2
-	 *            期间2
+	 * @param cperiod2 期间2
 	 */
 	public void setCperiod2(String cperiod2) {
 		this.cperiod2 = cperiod2;
@@ -477,8 +474,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置期间3
 	 * 
-	 * @param cperiod3
-	 *            期间3
+	 * @param cperiod3 期间3
 	 */
 	public void setCperiod3(String cperiod3) {
 		this.cperiod3 = cperiod3;
@@ -496,8 +492,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置期间4
 	 * 
-	 * @param cperiod4
-	 *            期间4
+	 * @param cperiod4 期间4
 	 */
 	public void setCperiod4(String cperiod4) {
 		this.cperiod4 = cperiod4;
@@ -515,8 +510,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置期间5
 	 * 
-	 * @param cperiod5
-	 *            期间5
+	 * @param cperiod5 期间5
 	 */
 	public void setCperiod5(String cperiod5) {
 		this.cperiod5 = cperiod5;
@@ -534,8 +528,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置年度1
 	 * 
-	 * @param cyear1
-	 *            年度1
+	 * @param cyear1 年度1
 	 */
 	public void setCyear1(String cyear1) {
 		this.cyear1 = cyear1;
@@ -553,8 +546,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置年度2
 	 * 
-	 * @param cyear2
-	 *            年度2
+	 * @param cyear2 年度2
 	 */
 	public void setCyear2(String cyear2) {
 		this.cyear2 = cyear2;
@@ -572,8 +564,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置年度3
 	 * 
-	 * @param cyear3
-	 *            年度3
+	 * @param cyear3 年度3
 	 */
 	public void setCyear3(String cyear3) {
 		this.cyear3 = cyear3;
@@ -591,8 +582,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置年度4
 	 * 
-	 * @param cyear4
-	 *            年度4
+	 * @param cyear4 年度4
 	 */
 	public void setCyear4(String cyear4) {
 		this.cyear4 = cyear4;
@@ -610,8 +600,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置年度5
 	 * 
-	 * @param cyear5
-	 *            年度5
+	 * @param cyear5 年度5
 	 */
 	public void setCyear5(String cyear5) {
 		this.cyear5 = cyear5;
@@ -629,8 +618,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置绩效系数
 	 * 
-	 * @param f_1
-	 *            绩效系数
+	 * @param f_1 绩效系数
 	 */
 	public void setF_1(UFDouble f_1) {
 		this.f_1 = f_1;
@@ -648,8 +636,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置标准绩效工资
 	 * 
-	 * @param f_10
-	 *            标准绩效工资
+	 * @param f_10 标准绩效工资
 	 */
 	public void setF_10(UFDouble f_10) {
 		this.f_10 = f_10;
@@ -667,8 +654,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置标准职位薪酬
 	 * 
-	 * @param f_2
-	 *            标准职位薪酬
+	 * @param f_2 标准职位薪酬
 	 */
 	public void setF_2(UFDouble f_2) {
 		this.f_2 = f_2;
@@ -686,8 +672,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_3
 	 * 
-	 * @param f_3
-	 *            f_3
+	 * @param f_3 f_3
 	 */
 	public void setF_3(UFDouble f_3) {
 		this.f_3 = f_3;
@@ -705,8 +690,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_4
 	 * 
-	 * @param f_4
-	 *            f_4
+	 * @param f_4 f_4
 	 */
 	public void setF_4(UFDouble f_4) {
 		this.f_4 = f_4;
@@ -724,8 +708,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_5
 	 * 
-	 * @param f_5
-	 *            f_5
+	 * @param f_5 f_5
 	 */
 	public void setF_5(UFDouble f_5) {
 		this.f_5 = f_5;
@@ -743,8 +726,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_6
 	 * 
-	 * @param f_6
-	 *            f_6
+	 * @param f_6 f_6
 	 */
 	public void setF_6(UFDouble f_6) {
 		this.f_6 = f_6;
@@ -762,8 +744,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_7
 	 * 
-	 * @param f_7
-	 *            f_7
+	 * @param f_7 f_7
 	 */
 	public void setF_7(UFDouble f_7) {
 		this.f_7 = f_7;
@@ -781,8 +762,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_8
 	 * 
-	 * @param f_8
-	 *            f_8
+	 * @param f_8 f_8
 	 */
 	public void setF_8(UFDouble f_8) {
 		this.f_8 = f_8;
@@ -800,8 +780,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置f_9
 	 * 
-	 * @param f_9
-	 *            f_9
+	 * @param f_9 f_9
 	 */
 	public void setF_9(UFDouble f_9) {
 		this.f_9 = f_9;
@@ -819,8 +798,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置item1
 	 * 
-	 * @param item1
-	 *            item1
+	 * @param item1 item1
 	 */
 	public void setItem1(String item1) {
 		this.item1 = item1;
@@ -838,8 +816,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置item2
 	 * 
-	 * @param item2
-	 *            item2
+	 * @param item2 item2
 	 */
 	public void setItem2(String item2) {
 		this.item2 = item2;
@@ -857,8 +834,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置item3
 	 * 
-	 * @param item3
-	 *            item3
+	 * @param item3 item3
 	 */
 	public void setItem3(String item3) {
 		this.item3 = item3;
@@ -876,8 +852,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置item4
 	 * 
-	 * @param item4
-	 *            item4
+	 * @param item4 item4
 	 */
 	public void setItem4(String item4) {
 		this.item4 = item4;
@@ -895,8 +870,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置item5
 	 * 
-	 * @param item5
-	 *            item5
+	 * @param item5 item5
 	 */
 	public void setItem5(String item5) {
 		this.item5 = item5;
@@ -914,8 +888,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置备注1
 	 * 
-	 * @param memo1
-	 *            备注1
+	 * @param memo1 备注1
 	 */
 	public void setMemo1(String memo1) {
 		this.memo1 = memo1;
@@ -933,8 +906,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置备注2
 	 * 
-	 * @param memo2
-	 *            备注2
+	 * @param memo2 备注2
 	 */
 	public void setMemo2(String memo2) {
 		this.memo2 = memo2;
@@ -952,8 +924,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置备注3
 	 * 
-	 * @param memo3
-	 *            备注3
+	 * @param memo3 备注3
 	 */
 	public void setMemo3(String memo3) {
 		this.memo3 = memo3;
@@ -971,8 +942,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置备注4
 	 * 
-	 * @param memo4
-	 *            备注4
+	 * @param memo4 备注4
 	 */
 	public void setMemo4(String memo4) {
 		this.memo4 = memo4;
@@ -990,8 +960,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置备注5
 	 * 
-	 * @param memo5
-	 *            备注5
+	 * @param memo5 备注5
 	 */
 	public void setMemo5(String memo5) {
 		this.memo5 = memo5;
@@ -1009,8 +978,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置奖金分配单据pk
 	 * 
-	 * @param pk_ba_allocbill
-	 *            奖金分配单据pk
+	 * @param pk_ba_allocbill 奖金分配单据pk
 	 */
 	public void setPk_ba_allocbill(String pk_ba_allocbill) {
 		this.pk_ba_allocbill = pk_ba_allocbill;
@@ -1028,8 +996,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置主表主键
 	 * 
-	 * @param pk_ba_sch_h
-	 *            主表主键
+	 * @param pk_ba_sch_h 主表主键
 	 */
 	public void setPk_ba_sch_h(String pk_ba_sch_h) {
 		this.pk_ba_sch_h = pk_ba_sch_h;
@@ -1047,8 +1014,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置主键
 	 * 
-	 * @param pk_ba_sch_psn
-	 *            主键
+	 * @param pk_ba_sch_psn 主键
 	 */
 	public void setPk_ba_sch_psn(String pk_ba_sch_psn) {
 		this.pk_ba_sch_psn = pk_ba_sch_psn;
@@ -1066,8 +1032,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置上层单据主键
 	 * 
-	 * @param pk_ba_sch_unit
-	 *            上层单据主键
+	 * @param pk_ba_sch_unit 上层单据主键
 	 */
 	public void setPk_ba_sch_unit(String pk_ba_sch_unit) {
 		this.pk_ba_sch_unit = pk_ba_sch_unit;
@@ -1085,8 +1050,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置部门
 	 * 
-	 * @param pk_deptdoc
-	 *            部门
+	 * @param pk_deptdoc 部门
 	 */
 	public void setPk_deptdoc(String pk_deptdoc) {
 		this.pk_deptdoc = pk_deptdoc;
@@ -1104,8 +1068,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置pk_dutyrank
 	 * 
-	 * @param pk_dutyrank
-	 *            pk_dutyrank
+	 * @param pk_dutyrank pk_dutyrank
 	 */
 	public void setPk_dutyrank(String pk_dutyrank) {
 		this.pk_dutyrank = pk_dutyrank;
@@ -1123,8 +1086,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置pk_jobrank
 	 * 
-	 * @param pk_jobrank
-	 *            pk_jobrank
+	 * @param pk_jobrank pk_jobrank
 	 */
 	public void setPk_jobrank(String pk_jobrank) {
 		this.pk_jobrank = pk_jobrank;
@@ -1142,8 +1104,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置pk_jobserial
 	 * 
-	 * @param pk_jobserial
-	 *            pk_jobserial
+	 * @param pk_jobserial pk_jobserial
 	 */
 	public void setPk_jobserial(String pk_jobserial) {
 		this.pk_jobserial = pk_jobserial;
@@ -1161,8 +1122,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置职务
 	 * 
-	 * @param pk_om_duty
-	 *            职务
+	 * @param pk_om_duty 职务
 	 */
 	public void setPk_om_duty(String pk_om_duty) {
 		this.pk_om_duty = pk_om_duty;
@@ -1180,8 +1140,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置岗位
 	 * 
-	 * @param pk_om_job
-	 *            岗位
+	 * @param pk_om_job 岗位
 	 */
 	public void setPk_om_job(String pk_om_job) {
 		this.pk_om_job = pk_om_job;
@@ -1199,8 +1158,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置pk_psnbasdoc
 	 * 
-	 * @param pk_psnbasdoc
-	 *            pk_psnbasdoc
+	 * @param pk_psnbasdoc pk_psnbasdoc
 	 */
 	public void setPk_psnbasdoc(String pk_psnbasdoc) {
 		this.pk_psnbasdoc = pk_psnbasdoc;
@@ -1218,8 +1176,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置人员
 	 * 
-	 * @param pk_psndoc
-	 *            人员
+	 * @param pk_psndoc 人员
 	 */
 	public void setPk_psndoc(String pk_psndoc) {
 		this.pk_psndoc = pk_psndoc;
@@ -1237,8 +1194,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置分配单元子表PK
 	 * 
-	 * @param pk_wa_ba_unit
-	 *            分配单元子表PK
+	 * @param pk_wa_ba_unit 分配单元子表PK
 	 */
 	public void setPk_wa_ba_unit(String pk_wa_ba_unit) {
 		this.pk_wa_ba_unit = pk_wa_ba_unit;
@@ -1256,8 +1212,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置psn_attkey
 	 * 
-	 * @param psn_attkey
-	 *            psn_attkey
+	 * @param psn_attkey psn_attkey
 	 */
 	public void setPsn_attkey(String psn_attkey) {
 		this.psn_attkey = psn_attkey;
@@ -1275,8 +1230,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置psn_attval
 	 * 
-	 * @param psn_attval
-	 *            psn_attval
+	 * @param psn_attval psn_attval
 	 */
 	public void setPsn_attval(String psn_attval) {
 		this.psn_attval = psn_attval;
@@ -1294,8 +1248,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置计划金额1
 	 * 
-	 * @param pvalue1
-	 *            计划金额1
+	 * @param pvalue1 计划金额1
 	 */
 	public void setPvalue1(UFDouble pvalue1) {
 		this.pvalue1 = pvalue1;
@@ -1313,8 +1266,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置计划金额2
 	 * 
-	 * @param pvalue2
-	 *            计划金额2
+	 * @param pvalue2 计划金额2
 	 */
 	public void setPvalue2(UFDouble pvalue2) {
 		this.pvalue2 = pvalue2;
@@ -1332,8 +1284,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置计划金额3
 	 * 
-	 * @param pvalue3
-	 *            计划金额3
+	 * @param pvalue3 计划金额3
 	 */
 	public void setPvalue3(UFDouble pvalue3) {
 		this.pvalue3 = pvalue3;
@@ -1351,8 +1302,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置计划金额4
 	 * 
-	 * @param pvalue4
-	 *            计划金额4
+	 * @param pvalue4 计划金额4
 	 */
 	public void setPvalue4(UFDouble pvalue4) {
 		this.pvalue4 = pvalue4;
@@ -1370,8 +1320,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置计划金额5
 	 * 
-	 * @param pvalue5
-	 *            计划金额5
+	 * @param pvalue5 计划金额5
 	 */
 	public void setPvalue5(UFDouble pvalue5) {
 		this.pvalue5 = pvalue5;
@@ -1389,8 +1338,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置修订后考核系数
 	 * 
-	 * @param revise_factor
-	 *            修订后考核系数
+	 * @param revise_factor 修订后考核系数
 	 */
 	public void setRevise_factor(UFDouble revise_factor) {
 		this.revise_factor = revise_factor;
@@ -1408,8 +1356,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置修订后绩效工资总额
 	 * 
-	 * @param revise_totalmoney
-	 *            修订后绩效工资总额
+	 * @param revise_totalmoney 修订后绩效工资总额
 	 */
 	public void setRevise_totalmoney(UFDouble revise_totalmoney) {
 		this.revise_totalmoney = revise_totalmoney;
@@ -1427,8 +1374,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置时间戳
 	 * 
-	 * @param ts
-	 *            时间戳
+	 * @param ts 时间戳
 	 */
 	public void setTs(UFDateTime ts) {
 		this.ts = ts;
@@ -1446,8 +1392,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置value1
 	 * 
-	 * @param value1
-	 *            value1
+	 * @param value1 value1
 	 */
 	public void setValue1(UFDouble value1) {
 		this.value1 = value1;
@@ -1465,8 +1410,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置value2
 	 * 
-	 * @param value2
-	 *            value2
+	 * @param value2 value2
 	 */
 	public void setValue2(UFDouble value2) {
 		this.value2 = value2;
@@ -1484,8 +1428,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置value3
 	 * 
-	 * @param value3
-	 *            value3
+	 * @param value3 value3
 	 */
 	public void setValue3(UFDouble value3) {
 		this.value3 = value3;
@@ -1503,8 +1446,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置value4
 	 * 
-	 * @param value4
-	 *            value4
+	 * @param value4 value4
 	 */
 	public void setValue4(UFDouble value4) {
 		this.value4 = value4;
@@ -1522,8 +1464,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置value5
 	 * 
-	 * @param value5
-	 *            value5
+	 * @param value5 value5
 	 */
 	public void setValue5(UFDouble value5) {
 		this.value5 = value5;
@@ -1541,8 +1482,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置奖金项目1
 	 * 
-	 * @param waitem1
-	 *            奖金项目1
+	 * @param waitem1 奖金项目1
 	 */
 	public void setWaitem1(String waitem1) {
 		this.waitem1 = waitem1;
@@ -1560,8 +1500,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置奖金项目2
 	 * 
-	 * @param waitem2
-	 *            奖金项目2
+	 * @param waitem2 奖金项目2
 	 */
 	public void setWaitem2(String waitem2) {
 		this.waitem2 = waitem2;
@@ -1579,8 +1518,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置奖金项目3
 	 * 
-	 * @param waitem3
-	 *            奖金项目3
+	 * @param waitem3 奖金项目3
 	 */
 	public void setWaitem3(String waitem3) {
 		this.waitem3 = waitem3;
@@ -1598,8 +1536,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置奖金项目4
 	 * 
-	 * @param waitem4
-	 *            奖金项目4
+	 * @param waitem4 奖金项目4
 	 */
 	public void setWaitem4(String waitem4) {
 		this.waitem4 = waitem4;
@@ -1617,8 +1554,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 设置奖金项目5
 	 * 
-	 * @param waitem5
-	 *            奖金项目5
+	 * @param waitem5 奖金项目5
 	 */
 	public void setWaitem5(String waitem5) {
 		this.waitem5 = waitem5;
@@ -1630,6 +1566,20 @@ public class WaBaSchTVO extends SuperVO {
 
 	public void setDr(Integer dr) {
 		this.dr = dr;
+	}
+
+	/**
+	 * @return pk_psnjob
+	 */
+	public String getPk_psnjob() {
+		return pk_psnjob;
+	}
+
+	/**
+	 * @param pk_psnjob 要设置的 pk_psnjob
+	 */
+	public void setPk_psnjob(String pk_psnjob) {
+		this.pk_psnjob = pk_psnjob;
 	}
 
 	@Override

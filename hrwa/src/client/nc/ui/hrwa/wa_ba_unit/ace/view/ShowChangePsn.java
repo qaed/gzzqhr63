@@ -45,23 +45,25 @@ public class ShowChangePsn {
 	 * @throws BusinessException
 	 */
 	public static String getAddWhere(WaUnitLoginContext context, int trnType) {
-//		StringBuilder insql = new StringBuilder();
+		//		StringBuilder insql = new StringBuilder();
 		String returnSQL = null;
 		WaBaUnitBVO[] bvos = (WaBaUnitBVO[]) context.getSelectedVO().getChildren(WaBaUnitBVO.class);
-//		for (int i = 0; i < bvos.length; i++) {
-//			WaBaUnitBVO bvo = bvos[i];
-//			if (i == 0) {
-//				insql.append("'" + bvo.getPk_psnjob() + "'");
-//			} else {
-//				insql.append(",'" + bvo.getPk_psnjob() + "'");
-//			}
-//		}
+		//		for (int i = 0; i < bvos.length; i++) {
+		//			WaBaUnitBVO bvo = bvos[i];
+		//			if (i == 0) {
+		//				insql.append("'" + bvo.getPk_psnjob() + "'");
+		//			} else {
+		//				insql.append(",'" + bvo.getPk_psnjob() + "'");
+		//			}
+		//		}
 		if (trnType == CommonValue.TRN_ADD) {//新进人员
-//			returnSQL = " and psnjob.pk_psnjob  not in (" + insql.toString() + ")";
-			returnSQL = " and not exists (select 1 from wa_ba_unit_b where wa_ba_unit_b.pk_wa_ba_unit='"+bvos[0].getPk_wa_ba_unit()+"' and wa_ba_unit_b.pk_psnjob=psnjob.pk_psnjob)";
+		//			returnSQL = " and psnjob.pk_psnjob  not in (" + insql.toString() + ")";
+			returnSQL =
+					" and not exists (select 1 from wa_ba_unit_b where wa_ba_unit_b.pk_wa_ba_unit='" + bvos[0].getPk_wa_ba_unit() + "' and wa_ba_unit_b.pk_psnjob=psnjob.pk_psnjob) and isnull(trial.endflag,'Y')='Y'";
 		} else if (trnType == CommonValue.TRN_SUB || trnType == CommonValue.TRN_POST_MOD) {//离职人员 || 变动人员
-//			returnSQL = " and psnjob.pk_psnjob  in (" + insql.toString() + ")";
-			returnSQL = " and exists (select 1 from wa_ba_unit_b where wa_ba_unit_b.pk_wa_ba_unit='"+bvos[0].getPk_wa_ba_unit()+"' and wa_ba_unit_b.pk_psnjob=psnjob.pk_psnjob)";
+		//			returnSQL = " and psnjob.pk_psnjob  in (" + insql.toString() + ")";
+			returnSQL =
+					" and exists (select 1 from wa_ba_unit_b where wa_ba_unit_b.pk_wa_ba_unit='" + bvos[0].getPk_wa_ba_unit() + "' and wa_ba_unit_b.pk_psnjob=psnjob.pk_psnjob)";
 		}
 
 		return returnSQL;
