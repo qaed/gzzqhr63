@@ -810,9 +810,13 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 				ds.setValue("revise_totalmoney", null);
 			} else {//修改为正常的值
 				//标准职位薪酬
-				UFDouble f_2 = ds.getSelectedRow().getUFDobule(fs.nameToIndex("f_2"));
+				//20171103 mod by ljw 修改为修订后绩效工资总额=标准绩效工资*修订后考核系数
+//				UFDouble f_2 = ds.getSelectedRow().getUFDobule(fs.nameToIndex("f_2"));
+				UFDouble f_10 = ds.getSelectedRow().getUFDobule(fs.nameToIndex("f_10"));
 				//修订后绩效工资总额=标准职位薪酬*修订后考核系数
-				ds.setValue("revise_totalmoney", revise_factor.multiply(f_2).toString());
+				//20171103 mod by ljw 修改为修订后绩效工资总额=标准绩效工资*修订后考核系数
+//				ds.setValue("revise_totalmoney", revise_factor.multiply(f_2).toString());
+				ds.setValue("revise_totalmoney", revise_factor.multiply(f_10).toString());
 			}
 		}
 	}
