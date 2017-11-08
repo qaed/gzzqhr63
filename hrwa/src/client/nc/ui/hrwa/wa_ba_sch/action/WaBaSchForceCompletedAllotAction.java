@@ -2,6 +2,9 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.framework.common.NCLocator;
+import nc.bs.integration.workitem.util.SyncWorkitemUtil;
+import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.message.vo.MessageVO;
 import nc.ui.hr.uif2.action.HrAction;
 import nc.ui.ml.NCLangRes;
@@ -13,6 +16,7 @@ import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
 import nc.ui.trade.business.HYPubBO_Client;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.editor.BillForm;
+import nc.vo.sm.UserVO;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 
@@ -35,23 +39,11 @@ public class WaBaSchForceCompletedAllotAction extends HrAction {
 		if (UIDialog.ID_YES != MessageDialog.showYesNoDlg(getModel().getContext().getEntranceUI(), title, question, UIDialog.ID_NO)) {
 			return;
 		}
+		IWaBaSchMaintain maintain = NCLocator.getInstance().lookup(IWaBaSchMaintain.class);
 		if (getModel().getSelectedData() != null) {
 			AggWaBaSchHVO aggvo = (AggWaBaSchHVO) getModel().getSelectedData();
-			WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
-			for (WaBaSchBVO bvo : bvos) {
-				if (bvo.getClass3() == null) {
-					bvo.setClass3(bvo.getClass2());//当期计划分配金额
-					bvo.setClass4(bvo.getClass1());//上月的结余转到本月结余
-				}
-				bvo.setVdef1(null);
-				bvo.setDr(0);//必须重新写，否则会被置为null
-			}
-			HYPubBO_Client.updateAry(bvos);
-			//			this.getModel().directlyUpdate(aggvo);
-			//			this.getModel().update(aggvo);
+			aggvo = maintain.forceComplete(aggvo);
 			this.getMainGrandModel().directlyUpdate(aggvo);
-			HYPubBO_Client.deleteByWhereClause(MessageVO.class, "detail like '%" + aggvo.getParentVO().getPk_ba_sch_h() + "@" + aggvo.getParentVO().getBilltype() + "%'");
-
 			this.showMsgInfo("「强制分配」完成");
 		}
 	}

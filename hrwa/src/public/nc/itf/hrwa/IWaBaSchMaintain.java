@@ -22,6 +22,8 @@ public interface IWaBaSchMaintain {
 	public AggWaBaSchHVO[] approve(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException;
 
 	public AggWaBaSchHVO[] unapprove(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException;
-	
+
 	public AggWaBaSchHVO[] doCaculate(IBill[] vos) throws BusinessException;
+
+	public AggWaBaSchHVO forceComplete(AggWaBaSchHVO aggvo) throws BusinessException;
 }

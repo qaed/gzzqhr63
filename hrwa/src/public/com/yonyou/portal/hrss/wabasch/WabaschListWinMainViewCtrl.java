@@ -106,6 +106,9 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		}
 		comp.getItem("add").setEnabled(false);
 		comp.getItem("del").setEnabled(false);
+
+		onEdit(null);
+
 	}
 
 	/**

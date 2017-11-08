@@ -15,6 +15,7 @@ import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.hrss.pub.tool.SessionUtil;
+import nc.bs.integration.workitem.util.SyncWorkitemUtil;
 import nc.bs.ml.NCLangResOnserver;
 import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.jdbc.framework.SQLParameter;
@@ -811,11 +812,11 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 			} else {//修改为正常的值
 				//标准职位薪酬
 				//20171103 mod by ljw 修改为修订后绩效工资总额=标准绩效工资*修订后考核系数
-//				UFDouble f_2 = ds.getSelectedRow().getUFDobule(fs.nameToIndex("f_2"));
+				//				UFDouble f_2 = ds.getSelectedRow().getUFDobule(fs.nameToIndex("f_2"));
 				UFDouble f_10 = ds.getSelectedRow().getUFDobule(fs.nameToIndex("f_10"));
 				//修订后绩效工资总额=标准职位薪酬*修订后考核系数
 				//20171103 mod by ljw 修改为修订后绩效工资总额=标准绩效工资*修订后考核系数
-//				ds.setValue("revise_totalmoney", revise_factor.multiply(f_2).toString());
+				//				ds.setValue("revise_totalmoney", revise_factor.multiply(f_2).toString());
 				ds.setValue("revise_totalmoney", revise_factor.multiply(f_10).toString());
 			}
 		}
@@ -827,8 +828,35 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		}
 		Dataset ds = getCurrentView().getViewModels().getDataset("WaBaSchBVO");
 		try {
-			//查询该分配单元的所有分配人
+
 			StringBuilder sql = new StringBuilder();
+
+			//			this.getCurrentAppCtx();
+			//主表SCHHVO主键
+			String pk_h = getMasterDs().getValue(this.getMasterDs().getPrimaryKeyField()).toString();
+			//子表主键pk_ba_sch_unit
+			String pk_ba_sch_unit = ds.getValue("pk_ba_sch_unit").toString();
+			//分配单元UnitHVO主键
+			String pk_unit_h = getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("ba_unit_code").toString();
+			sql.delete(0, sql.length());
+			sql.append("select name from wa_ba_unit where pk_wa_ba_unit='" + pk_unit_h + "'");
+			//分配单元的名字
+			String unitName = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
+			//当期分配人pk
+			String currentMngpsnpk = getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("vdef1").toString();
+			sql.delete(0, sql.length());
+			sql.append("select cuserid,user_code from sm_user where pk_psndoc='" + currentMngpsnpk + "'");
+			//当期分配人的cuserid
+			Map<String, String> userMap = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
+			sql.delete(0, sql.length());
+			sql.append("update sm_msg_content set isread='Y',ishandled='Y' where  detail like '" + pk_h + "@BAAL%' and receiver='" + userMap.get("cuserid") + "' and subject like '%" + unitName + "%' ");
+			getDao().executeUpdate(sql.toString());
+			//先把OA代办置为已办
+			SyncWorkitemUtil.getExternalWorkitemManager().endWorkitem("NC63HR", null, pk_ba_sch_unit, "HRWA", null, null, "{\"LoginName\":\"" + userMap.get("user_code") + "\"}", Integer.valueOf(1), Integer.valueOf(1));
+
+			//再推送消息
+			//查询该分配单元的所有分配人
+			sql.delete(0, sql.length());
 			sql.append("select ba_mng_psnpk||','||ba_mng_psnpk2||','||ba_mng_psnpk3 from wa_ba_unit where pk_wa_ba_unit='" + ds.getValue("ba_unit_code").toString() + "'");
 			String psnpks = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
 			//转为list
@@ -844,24 +872,6 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 				//把分配人置为空
 				getDao().executeUpdate("update wa_ba_sch_unit set vdef1=null where pk_ba_sch_unit='" + (String) getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("pk_ba_sch_unit") + "'");
 			}
-			this.getCurrentAppCtx();
-			//主表SCHHVO主键
-			String pk_h = getMasterDs().getValue(this.getMasterDs().getPrimaryKeyField()).toString();
-			//分配单元UnitHVO主键
-			String pk_unit_h = getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("ba_unit_code").toString();
-			sql.delete(0, sql.length());
-			sql.append("select name from wa_ba_unit where pk_wa_ba_unit='" + pk_unit_h + "'");
-			//分配单元的名字
-			String unitName = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
-			//当期分配人pk
-			String currentMngpsnpk = getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("vdef1").toString();
-			sql.delete(0, sql.length());
-			sql.append("select cuserid from sm_user where pk_psndoc='" + currentMngpsnpk + "'");
-			//当期分配人的cuserid
-			String userid = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
-			sql.delete(0, sql.length());
-			sql.append("update sm_msg_content set isread='Y',ishandled='Y' where  detail like '" + pk_h + "@BAAL%' and receiver='" + userid + "' and subject like '%" + unitName + "%' ");
-			getDao().executeUpdate(sql.toString());
 			AppInteractionUtil.showShortMessage("分配成功");
 			this.getCurrentAppCtx().closeWinDialog();
 		} catch (Exception e) {
@@ -902,25 +912,27 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		SQLParameter parameter = new SQLParameter();
 		parameter.clearParams();
 		parameter.addParam(receiverpsnpk);
-		String receiver =
-				(String) getDao().executeQuery("select sm_user.cuserid from sm_user where pk_psndoc=?", parameter, new ColumnProcessor());
+		Map<String, String> receiverMap =
+				(Map<String, String>) getDao().executeQuery("select sm_user.cuserid,user_code from sm_user where pk_psndoc=?", parameter, new MapProcessor());
 		//查创建人姓名
 		parameter.clearParams();
 		parameter.addParam((String) getMasterDs().getValue("creator"));
-		String creatorName =
-				(String) getDao().executeQuery("select user_name from sm_user where sm_user.cuserid=?", parameter, new ColumnProcessor());
+		Map<String, String> creatorMap =
+				(Map<String, String>) getDao().executeQuery("select user_name,user_code from sm_user where sm_user.cuserid=?", parameter, new MapProcessor());
 		//查奖金分配单元的名字
 		parameter.clearParams();
-		parameter.addParam((String) getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("pk_ba_sch_unit"));
+		String pk_ba_sch_unit = (String) getCurrentView().getViewModels().getDataset("WaBaSchBVO").getValue("pk_ba_sch_unit");
+		parameter.addParam(pk_ba_sch_unit);
 		String unitName =
 				(String) getDao().executeQuery("select name from wa_ba_unit left join wa_ba_sch_unit on wa_ba_unit.pk_wa_ba_unit=wa_ba_sch_unit.ba_unit_code where pk_ba_sch_unit=?", parameter, new ColumnProcessor());
 		//构造消息
 		msg.setSender((String) getMasterDs().getValue("creator"));//发送人
-		msg.setReceiver(receiver);//接受人
+		msg.setReceiver(receiverMap.get("cuserid"));//接受人
 		msg.setMsgsourcetype("worklist");//消息来源类型
 		msg.setPriority(5);//优先级
 		msg.setSendtime(new UFDateTime());//发送信息时间
-		msg.setSubject("请审批 " + creatorName + " 发起的 " + unitName + "_" + getMasterDs().getValue("sch_name").toString());//标题
+		String title = "请审批 " + creatorMap.get("user_name") + " 发起的 " + unitName + "_" + getMasterDs().getValue("sch_name").toString();
+		msg.setSubject(title);//标题
 		msg.setPk_group((String) getMasterDs().getValue("pk_group"));
 		msg.setPk_detail(workflownoteVO.getPrimaryKey());
 		msg.setPk_org((String) getMasterDs().getValue("pk_org"));
@@ -932,6 +944,20 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		ncmsg[0].setMessage(msg);
 
 		MessageCenter.sendMessage(ncmsg);
+		//发送OA代办
+		//OA打开的链接
+		StringBuilder link = new StringBuilder();
+		//			link.append("/portal?returnUrl=");
+		link.append("/portal/");
+		link.append("app/hrss_wabasch");
+		link.append("?nodecode=").append("E60135010");
+		link.append("&model=").append("nc.bs.hrss.pub.pf.WebBillApprovePageMode");
+		link.append("&NC=Y&pf_bill_editable=Y");
+		link.append("&billType=").append("BAAL");
+		link.append("&billTypeCode=").append("BAAL");
+		link.append("&openBillId=").append((String) getMasterDs().getValue("pk_ba_sch_h"));
+		link.append("&state=State_Run");
+		SyncWorkitemUtil.getExternalWorkitemManager().beginWorkitem("NC63HR", new UFDateTime().toStdString(), "{\"LoginName\":\"" + creatorMap.get("user_code") + "\"}", null, null, null, link.toString(), pk_ba_sch_unit, "HRWA", null, null, null, title, "{\"LoginName\":\"" + receiverMap.get("user_code") + "\"}", Integer.valueOf(1));
 	}
 
 	/**
