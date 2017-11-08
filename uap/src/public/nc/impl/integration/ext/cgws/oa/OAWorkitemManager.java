@@ -197,7 +197,7 @@ public class OAWorkitemManager implements IExternalWorkitemManager {
 				context.setParam1(param1);
 				context.setParam2(param2);
 				context.setTargets(targets);
-				context.setType(type);
+//				context.setType(type);
 				context.setOptType(optType);
 				NotifyTodoAppResult rs = getUnityTodoService().deleteTodo(context);
 				rsMap.put("sendxml", context.toString());
