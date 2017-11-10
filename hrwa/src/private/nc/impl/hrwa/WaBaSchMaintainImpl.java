@@ -1,19 +1,10 @@
 package nc.impl.hrwa;
 
 import nc.impl.pub.ace.AceWaBaSchPubServiceImpl;
-import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
-import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
-import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.vo.pub.BusinessException;
-import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
-import nc.vo.pubapp.query2.sql.process.QuerySchemeProcessor;
-import nc.impl.pubapp.pattern.database.DataAccessUtils;
-import nc.vo.pubapp.pattern.data.IRowSet;
-import nc.vo.pubapp.bill.pagination.PaginationTransferObject;
-import nc.vo.pubapp.bill.pagination.util.PaginationUtils;
-import nc.impl.pubapp.pattern.data.bill.BillQuery;
+import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 
 public class WaBaSchMaintainImpl extends AceWaBaSchPubServiceImpl implements nc.itf.hrwa.IWaBaSchMaintain {
 	@Override
@@ -64,5 +55,10 @@ public class WaBaSchMaintainImpl extends AceWaBaSchPubServiceImpl implements nc.
 	@Override
 	public AggWaBaSchHVO forceComplete(AggWaBaSchHVO aggvo) throws BusinessException {
 		return super.forceComplete(aggvo);
+	}
+
+	@Override
+	public void deleteWorkitem(AggWaBaSchHVO aggvo) throws BusinessException {
+		super.deleteWorkitem(aggvo);
 	}
 }

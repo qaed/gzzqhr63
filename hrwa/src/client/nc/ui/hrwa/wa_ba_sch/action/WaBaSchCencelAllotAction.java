@@ -2,6 +2,8 @@ package nc.ui.hrwa.wa_ba_sch.action;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.framework.common.NCLocator;
+import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.ui.hr.uif2.action.HrAction;
 import nc.ui.ml.NCLangRes;
 import nc.ui.pub.beans.MessageDialog;
@@ -58,7 +60,11 @@ public class WaBaSchCencelAllotAction extends HrAction {
 			//				this.getModel().directlyDelete(bvo.getPk_s());
 			//				this.getMainGrandModel().directlyDelete(bvo);
 			//				this.getMainGrandModel().directlyDelete(bvo.getPk_s());
-
+			//删除代办
+			IWaBaSchMaintain maintain = NCLocator.getInstance().lookup(IWaBaSchMaintain.class);
+			AggWaBaSchHVO aggvo = (AggWaBaSchHVO) getMainGrandModel().getSelectedData();
+			aggvo.setChildrenVO(new WaBaSchBVO[] { bvo });
+			maintain.deleteWorkitem(aggvo);
 			this.showMsgInfo("「执行取消分配」成功");
 		}
 	}

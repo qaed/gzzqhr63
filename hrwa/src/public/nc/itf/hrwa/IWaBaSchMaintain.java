@@ -26,4 +26,6 @@ public interface IWaBaSchMaintain {
 	public AggWaBaSchHVO[] doCaculate(IBill[] vos) throws BusinessException;
 
 	public AggWaBaSchHVO forceComplete(AggWaBaSchHVO aggvo) throws BusinessException;
+	
+	public void deleteWorkitem(AggWaBaSchHVO aggvo) throws BusinessException;
 }
