@@ -947,7 +947,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		//发送OA代办
 		//OA打开的链接
 		StringBuilder link = new StringBuilder();
-		//			link.append("/portal?returnUrl=");
+		link.append("/portal?returnUrl=");
 		link.append("/portal/");
 		link.append("app/hrss_wabasch");
 		link.append("?nodecode=").append("E60135010");

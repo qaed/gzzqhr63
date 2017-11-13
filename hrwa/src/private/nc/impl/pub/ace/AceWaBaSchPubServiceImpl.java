@@ -1,10 +1,7 @@
 package nc.impl.pub.ace;
 
-import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,11 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-
 import nc.bs.dao.BaseDAO;
-import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchDeleteBP;
@@ -26,10 +19,8 @@ import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchDataUniqueCheckRule;
 import nc.bs.integration.workitem.util.SyncWorkitemUtil;
 import nc.bs.logging.Logger;
-import nc.desktop.ui.WorkbenchEnvironment;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
-import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.bill.BillUpdate;
 import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
@@ -45,10 +36,7 @@ import nc.md.persist.framework.IMDPersistenceService;
 import nc.message.util.MessageCenter;
 import nc.message.vo.MessageVO;
 import nc.message.vo.NCMessage;
-import nc.uap.cpb.org.vos.CpAppsNodeVO;
 import nc.ui.querytemplate.querytree.IQueryScheme;
-import nc.ui.trade.business.HYPubBO_Client;
-import nc.vo.integration.workitem.WorkitemVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.ISuperVO;
@@ -60,11 +48,13 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.workflownote.WorkflownoteVO;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.model.entity.bill.IBill;
-import nc.vo.sm.UserVO;
 import nc.vo.wa.wa_ba.sch.AggWaBaSchHVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchTVO;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 public abstract class AceWaBaSchPubServiceImpl {
 	private IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
@@ -456,7 +446,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		try {
 			this.preQuery(queryScheme);
 			BillLazyQuery<AggWaBaSchHVO> query = new BillLazyQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
-			//			query.setOrderAttribute(WaBaSchHVO.class, new String[] { "cyear", "cperiod" });
+			//query.setOrderAttribute(WaBaSchBHVO.class, new String[] { "cyear", "cperiod" });//这个是loadChild时调用的，需要排序子表时用
 			bills = query.query(queryScheme, "order by cyear,cperiod asc");
 			loadGrandData(bills);
 		} catch (Exception e) {
@@ -499,6 +489,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	}
 
 	// 提交
+	@SuppressWarnings("unchecked")
 	public AggWaBaSchHVO[] pubsendapprovebills(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
 		AceWaBaSchSendApproveBP bp = new AceWaBaSchSendApproveBP();
 		AggWaBaSchHVO[] retvos = bp.sendApprove(clientFullVOs, originBills);
@@ -517,7 +508,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	public AggWaBaSchHVO[] pubunsendapprovebills(AggWaBaSchHVO[] clientFullVOs, AggWaBaSchHVO[] originBills) throws BusinessException {
 		AceWaBaSchUnSendApproveBP bp = new AceWaBaSchUnSendApproveBP();
 		AggWaBaSchHVO[] retvos = bp.unSend(clientFullVOs, originBills);
-		StringBuilder sql = new StringBuilder();
+		//		StringBuilder sql = new StringBuilder();
 		deleteWorkitem(clientFullVOs);//删除代办
 		for (AggWaBaSchHVO aggWaBaSchHVO : clientFullVOs) {
 			for (ISuperVO bodyvo : aggWaBaSchHVO.getChildren(WaBaSchBVO.class)) {
@@ -583,7 +574,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	 */
 	public AggWaBaSchHVO forceComplete(AggWaBaSchHVO aggvo) throws BusinessException {
 		deleteWorkitem(aggvo);
-		VOUpdate<WaBaSchBVO> voupdate = new VOUpdate<WaBaSchBVO>();
+		//		VOUpdate<WaBaSchBVO> voupdate = new VOUpdate<WaBaSchBVO>();
 		WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
 
 		for (WaBaSchBVO bvo : bvos) {
@@ -623,7 +614,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	 * @param aggvo
 	 * @throws BusinessException
 	 */
-	private void deleteWorkitem(AggWaBaSchHVO aggvo) throws BusinessException {
+	public void deleteWorkitem(AggWaBaSchHVO aggvo) throws BusinessException {
 		if (aggvo != null) {
 			WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
 			if (!ArrayUtils.isEmpty(bvos)) {
@@ -654,9 +645,13 @@ public abstract class AceWaBaSchPubServiceImpl {
 				if (userMap != null) {
 					//删除OA代办
 					SyncWorkitemUtil.getExternalWorkitemManager().deleteWorkitem("NC63HR", null, bvo.getPk_ba_sch_unit(), "HRWA", null, null, "{\"LoginName\":\"" + userMap.get("user_code") + "\"}", null, Integer.valueOf(1));
+					//查询对应的奖金单元
+					sql.delete(0, sql.length());
+					sql.append("select name from wa_ba_unit where pk_wa_ba_unit='" + bvo.getBa_unit_code() + "'");
+					String unitName = (String) getDao().executeQuery(sql.toString(), new ColumnProcessor());
 					//删除NC代办
 					sql.delete(0, sql.length());
-					sql.append("delete from sm_msg_content where  detail like '" + bvo.getPk_ba_sch_h() + "@BAAL%' and receiver='" + userMap.get("cuserid") + "' ");
+					sql.append("delete from sm_msg_content where  detail like '" + bvo.getPk_ba_sch_h() + "@BAAL%' and receiver='" + userMap.get("cuserid") + "' and subject like '%" + unitName + "%'");
 					getDao().executeUpdate(sql.toString());
 				}
 
@@ -685,6 +680,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 	 * @param aggvo
 	 * @throws BusinessException
 	 */
+	@SuppressWarnings("unchecked")
 	private void sendWorkitem(AggWaBaSchHVO aggvo) throws BusinessException {
 		IWaBaUnitMaintain UnitMaintain = NCLocator.getInstance().lookup(IWaBaUnitMaintain.class);
 
@@ -714,6 +710,9 @@ public abstract class AceWaBaSchPubServiceImpl {
 			parameter.addParam(((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getBa_mng_psnpk());
 			Map<String, String> receiverMap =
 					(Map<String, String>) getDao().executeQuery("select sm_user.cuserid,sm_user.user_code from sm_user where pk_psndoc=?", parameter, new MapProcessor());
+			if (receiverMap == null) {
+				throw new BusinessException("当前分配人用户不存在，请检查。");
+			}
 			//查创建人姓名
 			parameter.clearParams();
 			parameter.addParam(aggvo.getParentVO().getCreator());
@@ -741,16 +740,16 @@ public abstract class AceWaBaSchPubServiceImpl {
 			getDao().executeUpdate("update wa_ba_sch_unit set vdef1='" + ((AggWaBaUnitHVO) aggunitvos[0]).getParentVO().getBa_mng_psnpk() + "',class3=null,class4=null where pk_ba_sch_unit='" + bvo.getPk_ba_sch_unit() + "'");
 			//OA打开的链接
 			StringBuilder link = new StringBuilder();
-			//			link.append("/portal?returnUrl=");
+			link.append("/portal?returnUrl=");
 			link.append("/portal/");
 			link.append("app/hrss_wabasch");
 			link.append("?nodecode=").append("E60135010");
-			link.append("&model=").append("nc.bs.hrss.pub.pf.WebBillApprovePageMode");
-			link.append("&NC=Y&pf_bill_editable=Y");
-			link.append("&billType=").append("BAAL");
-			link.append("&billTypeCode=").append("BAAL");
-			link.append("&openBillId=").append(aggvo.getPrimaryKey());
-			link.append("&state=State_Run");
+			link.append("%26model=").append("nc.bs.hrss.pub.pf.WebBillApprovePageMode");
+			link.append("%26NC=Y%26pf_bill_editable=Y");
+			link.append("%26billType=").append("BAAL");
+			link.append("%26billTypeCode=").append("BAAL");
+			link.append("%26openBillId=").append(aggvo.getPrimaryKey());
+			link.append("%26state=State_Run");
 			//发送OA代办
 			SyncWorkitemUtil.getExternalWorkitemManager().beginWorkitem("NC63HR", new UFDateTime().toStdString(), "{\"LoginName\":\"" + creatorNameMap.get("user_code") + "\"}", null, null, null, link.toString(), bvo.getPk_ba_sch_unit(), "HRWA", null, null, null, title, "{\"LoginName\":\"" + receiverMap.get("user_code") + "\"}", Integer.valueOf(1));
 			try {

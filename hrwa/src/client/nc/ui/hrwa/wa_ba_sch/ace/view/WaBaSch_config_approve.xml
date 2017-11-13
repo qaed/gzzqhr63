@@ -924,6 +924,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="btnName" value="¼ÆËã"/>
 		<property name="code" value="caculateAction"/>
 		<property name="model" ref="manageAppModel" />
+		<property name="mainGrandModel" ref="mainGrandModel" />
 		<property name="dataManager" ref="modelDataManager" />
 	</bean>
 

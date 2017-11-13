@@ -6,7 +6,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.itf.hrwa.IWaBaSchMaintain;
 import nc.itf.pubapp.pub.smart.IBillQueryService;
 import nc.ui.hr.uif2.action.HrAction;
-import nc.ui.pubapp.uif2app.model.BillManageModel;
+import nc.ui.pubapp.uif2app.components.grand.model.MainGrandModel;
 import nc.ui.pubapp.uif2app.query2.model.IModelDataManager;
 import nc.ui.trade.business.HYPubBO_Client;
 import nc.uif.pub.exception.UifException;
@@ -22,6 +22,7 @@ public class WaBaSchCaculateAction extends HrAction {
 	//	private Vector<WaBaSchBVO> v = null;
 	private IModelDataManager dataManager = null;
 	private static final long serialVersionUID = 1292796453304461013L;
+	private MainGrandModel mainGrandModel;
 
 	public WaBaSchCaculateAction() {
 	}
@@ -32,8 +33,12 @@ public class WaBaSchCaculateAction extends HrAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		if (this.aggvo == null) {
-			this.aggvo = ((AggWaBaSchHVO) getModel().getSelectedData());
+		//有2个操作会调用：
+		//1:保存时,传入aggvo，此时getMainGrandModel()为null
+		//2:点击计算时，aggvo需要改为当前选择的aggvo
+		if (getMainGrandModel() != null && getMainGrandModel().getSelectedData() != null) {
+
+			this.aggvo = (AggWaBaSchHVO) getMainGrandModel().getSelectedData();
 		}
 		// NCLocator.getInstance().lookup(IPersistenceRetrieve.class);
 		IWaBaSchMaintain maintain = NCLocator.getInstance().lookup(IWaBaSchMaintain.class);
@@ -41,10 +46,11 @@ public class WaBaSchCaculateAction extends HrAction {
 		IBillQueryService billQuery = (IBillQueryService) NCLocator.getInstance().lookup(IBillQueryService.class);
 
 		AggWaBaSchHVO newVO = billQuery.querySingleBillByPk(this.aggvo.getClass(), this.aggvo.getParentVO().getPk_ba_sch_h());
-		if (getModel()!=null) {
-			((BillManageModel) getModel()).directlyUpdate(newVO);
+
+		if (getModel() != null) {
+			getMainGrandModel().directlyUpdate(newVO);
 		}
-		
+
 	}
 
 	@Override
@@ -76,6 +82,20 @@ public class WaBaSchCaculateAction extends HrAction {
 	 */
 	public void setDataManager(IModelDataManager dataManager) {
 		this.dataManager = dataManager;
+	}
+
+	/**
+	 * @return mainGrandModel
+	 */
+	public MainGrandModel getMainGrandModel() {
+		return mainGrandModel;
+	}
+
+	/**
+	 * @param mainGrandModel 要设置的 mainGrandModel
+	 */
+	public void setMainGrandModel(MainGrandModel mainGrandModel) {
+		this.mainGrandModel = mainGrandModel;
 	}
 
 }
