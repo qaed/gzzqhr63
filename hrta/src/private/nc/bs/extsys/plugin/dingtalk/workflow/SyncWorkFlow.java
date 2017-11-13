@@ -1,6 +1,5 @@
 package nc.bs.extsys.plugin.dingtalk.workflow;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -92,8 +91,12 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 			returnmsg.append("发现自定义dayBefore(同步审批时间范围)为: " + dayBefore + "\n");
 		}
 		returnmsg.append("本次导入 " + new UFLiteralDate().getDateBefore(dayBefore).toStdString() + " 23:30:00" + "--至今 出差、外出审批通过的数据\n");
-		doSyncBusinessTrip(null, dayBefore, longleave);
-		doSyncStepOut(null, dayBefore, shortleave);
+		for (String processCode : Env.BUSINESS_TRIP_PROCESS_CODE) {
+			doSyncBusinessTrip(processCode, null, dayBefore, longleave);
+		}
+		for (String processCode : Env.STEP_OUT_PROCESS_CODE) {
+			doSyncStepOut(processCode, null, dayBefore, shortleave);
+		}
 		//过滤时长为0的单据
 		IPsndocQueryService psnQueryService = NCLocator.getInstance().lookup(IPsndocQueryService.class);
 		Iterator<AwayRegVO> iterator = insertvos.iterator();
@@ -124,15 +127,16 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 	 * @param cursor
 	 * @throws BusinessException
 	 */
-	private void doSyncBusinessTrip(Long cursor, Integer dayBefore, String pk_timeitem) throws BusinessException {
+	private void doSyncBusinessTrip(String businessTripProcessCode, Long cursor, Integer dayBefore, String pk_timeitem)
+			throws BusinessException {
 		DingTalkClient client = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
 		SmartworkBpmsProcessinstanceListRequest req = new SmartworkBpmsProcessinstanceListRequest();
-		req.setProcessCode(Env.BUSINESS_TRIP_PROCESS_CODE);
+		req.setProcessCode(businessTripProcessCode);
 		Calendar calendar = Calendar.getInstance();
 		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(dayBefore).toStdString() + " 23:30:00");
 		//		calendar.add(Calendar.MINUTE, -5);
 		//		req.setEndTime(calendar.getTimeInMillis());
-		calendar.add(Calendar.DATE, -40);
+		calendar.add(Calendar.DATE, -80);
 		req.setStartTime(calendar.getTimeInMillis());
 		req.setSize(10L);
 		req.setCursor(cursor == null ? 0L : cursor);//初次调用不用传值
@@ -160,63 +164,80 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				if (psndetail == null) {
 					continue;
 				}
-				List<FormComponentValueVo> details = dingtalkvo.getFormComponentValues();//1条出差单中的数据:分别为行程明细、出差事由、图片
+				List<FormComponentValueVo> details = dingtalkvo.getFormComponentValues();
+				String reason = null;//出差事由
+				String pictures = null;//图片
+				for (FormComponentValueVo componentValueVo : details) {//先存好事由和图片
+					String name = componentValueVo.getName();
+					if (name.contains("出差事由")) {
+						reason = componentValueVo.getValue();
+					} else if (name.contains("图片")) {
+						pictures = componentValueVo.getValue();
+					}
+				}
+				for (FormComponentValueVo componentValueVo : details) {
+					String name = componentValueVo.getName();
+					if (name.contains("行程明细")) {
+						JSONArray jsonobject = JSON.parseArray((componentValueVo.getValue()));
+						for (int k = 0; k < jsonobject.size(); k++) {//每一条出差明细，生成一条单据
+							AwayRegVO vo = new AwayRegVO();
+							vo.setBillsource(2);//单据来源，2=登记表
+							vo.setIsawayoff(UFBoolean.FALSE);//是否已销差 
+							vo.setPk_awaytype(psndetail.get("pk_timeitem"));//出差
+							vo.setPk_awaytypecopy(psndetail.get("pk_timeitemcopy"));//出差类型copy
+							vo.setAwayremark(reason);//原因
+							vo.setPk_psndoc(psndetail.get("pk_psndoc"));//人员
+							vo.setPk_psnjob(psndetail.get("pk_psnjob"));//工作
+							vo.setPk_psnorg(psndetail.get("pk_psnorg"));//组织关系
+							vo.setCreator(psndetail.get("pk_psndoc"));//创建者
+							vo.setPk_group(psndetail.get("pk_group"));
+							vo.setPk_org(psndetail.get("pk_org"));
+							vo.setCreationtime(new UFDateTime(dingtalkvo.getCreateTime()));//创建时间
+							JSONArray innerDetail = jsonobject.getJSONArray(k);//innerDetail下一共2条，分别为：1个出差地点和相关详细内容extendValue
+							for (int l = 0; l < innerDetail.size(); l++) {
+								JSONObject value = innerDetail.getJSONObject(l);
+								if ("出差地点".equals(value.get("key"))) {
+									vo.setAwayaddress(value.get("value").toString());
+								} else {//相关详细内容extendValue
+									JSONArray detailList = JSON.parseObject(value.get("extendValue").toString()).getJSONArray("detailList");
+									/* 
+									 * detailList（如果多天出差，会分成多条记录，取第一天的开始时间，和最后一条的结束时间）
+									 *	index	value
+									 *	0		开始时间信息
+									 *	size-1	结束时间信息
+									 */
+									Date begindate = detailList.getJSONObject(0).getJSONObject("approveInfo").getDate("fromTime");
+									vo.setAwaybegindate(new UFLiteralDate(begindate));
+									vo.setAwaybegintime(new UFDateTime(begindate));
+									Date enddate =
+											detailList.getJSONObject(detailList.size() - 1).getJSONObject("approveInfo").getDate("toTime");
+									vo.setAwayenddate(new UFLiteralDate(enddate));
+									vo.setAwayendtime(new UFDateTime(enddate));
+								}
+							}
+							sql.delete(0, sql.length());
+							int count =
+									(Integer) getDao().executeQuery("select count(*) from tbm_awayreg where pk_psndoc='" + vo.getPk_psndoc() + "' and awaybegintime ='" + vo.getAwaybegintime().toStdString() + "'", new ColumnProcessor());
+							if (count < 1) {
+								vo = appAutoDisplayer.calculate(vo, TimeZone.getDefault());
+								insertvos.add(vo);
+							}
+						}
+					}
+				}
+				//				审批表单变量组
+				//1条出差单中的数据:分别为行程明细、出差事由、图片
 				/* 
 				 *	index	value
 				 *	0		行程明细
 				 *	1		出差事由
 				 *	2		图片
 				 */
-				String reason = details.get(1).getValue();
-				String pictures = details.get(2).getValue();
 				//这条审批单的行程明细(多条出差明细--包含多个出差地点、详细内容)
-				JSONArray jsonobject = JSON.parseArray((details.get(0).getValue()));
-				for (int k = 0; k < jsonobject.size(); k++) {
-					AwayRegVO vo = new AwayRegVO();
-					vo.setBillsource(2);//单据来源，2=登记表
-					vo.setIsawayoff(UFBoolean.FALSE);//是否已销差 
-					vo.setPk_awaytype(psndetail.get("pk_timeitem"));//出差
-					vo.setPk_awaytypecopy(psndetail.get("pk_timeitemcopy"));//出差类型copy
-					vo.setAwayremark(reason);//原因
-					vo.setPk_psndoc(psndetail.get("pk_psndoc"));//人员
-					vo.setPk_psnjob(psndetail.get("pk_psnjob"));//工作
-					vo.setPk_psnorg(psndetail.get("pk_psnorg"));//组织关系
-					vo.setCreator(psndetail.get("pk_psndoc"));//创建者
-					vo.setPk_group(psndetail.get("pk_group"));
-					vo.setPk_org(psndetail.get("pk_org"));
-					vo.setCreationtime(new UFDateTime(dingtalkvo.getCreateTime()));//创建时间
-					JSONArray innerDetail = jsonobject.getJSONArray(k);//innerDetail下一共2条，分别为：1个出差地点和相关详细内容extendValue
-					for (int l = 0; l < innerDetail.size(); l++) {
-						JSONObject value = innerDetail.getJSONObject(l);
-						if ("出差地点".equals(value.get("key"))) {
-							vo.setAwayaddress(value.get("value").toString());
-						} else {//相关详细内容extendValue
-							JSONArray detailList = JSON.parseObject(value.get("extendValue").toString()).getJSONArray("detailList");
-							/* 
-							 * detailList（如果多天出差，会分成多条记录，取第一天的开始时间，和最后一条的结束时间）
-							 *	index	value
-							 *	0		开始时间信息
-							 *	size-1	结束时间信息
-							 */
-							Date begindate = detailList.getJSONObject(0).getJSONObject("approveInfo").getDate("fromTime");
-							vo.setAwaybegindate(new UFLiteralDate(begindate));
-							vo.setAwaybegintime(new UFDateTime(begindate));
-							Date enddate = detailList.getJSONObject(detailList.size() - 1).getJSONObject("approveInfo").getDate("toTime");
-							vo.setAwayenddate(new UFLiteralDate(enddate));
-							vo.setAwayendtime(new UFDateTime(enddate));
-						}
-					}
-					sql.delete(0, sql.length());
-					int count =
-							(Integer) getDao().executeQuery("select count(*) from tbm_awayreg where pk_psndoc='" + vo.getPk_psndoc() + "' and awaybegintime ='" + vo.getAwaybegintime().toStdString() + "'", new ColumnProcessor());
-					if (count < 1) {
-						vo = appAutoDisplayer.calculate(vo, TimeZone.getDefault());
-						insertvos.add(vo);
-					}
-				}
+
 			}
 			if (rsp.getResult().getResult().getNextCursor() != null) {//还有下一页
-				doSyncBusinessTrip(rsp.getResult().getResult().getNextCursor(), dayBefore, pk_timeitem);
+				doSyncBusinessTrip(businessTripProcessCode, rsp.getResult().getResult().getNextCursor(), dayBefore, pk_timeitem);
 			}
 
 		} catch (Exception e) {
@@ -232,16 +253,16 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 	 * @param cursor
 	 * @throws BusinessException
 	 */
-	private void doSyncStepOut(Long cursor, Integer dayBefore, String pk_timeitem) throws BusinessException {
+	private void doSyncStepOut(String stepOutProcessCode, Long cursor, Integer dayBefore, String pk_timeitem) throws BusinessException {
 
 		DingTalkClient client = new DefaultDingTalkClient("https://eco.taobao.com/router/rest");
 		SmartworkBpmsProcessinstanceListRequest req = new SmartworkBpmsProcessinstanceListRequest();
-		req.setProcessCode(Env.STEP_OUT_PROCESS_CODE);
+		req.setProcessCode(stepOutProcessCode);
 		Calendar calendar = Calendar.getInstance();
 		UFDateTime minEndTime = new UFDateTime(new UFLiteralDate().getDateBefore(dayBefore).toStdString() + " 23:30:00");
 		//		calendar.add(Calendar.MINUTE, -5);
 		//		req.setEndTime(calendar.getTimeInMillis());
-		calendar.add(Calendar.DATE, -40);
+		calendar.add(Calendar.DATE, -80);
 		req.setStartTime(calendar.getTimeInMillis());
 		req.setSize(10L);
 		req.setCursor(cursor == null ? 0L : cursor);//初次调用不用传值
@@ -266,26 +287,27 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				if (psndetail == null) {
 					continue;
 				}
-				List<FormComponentValueVo> details = dingtalkvo.getFormComponentValues();//1条出差单中的数据:分别为行程明细、出差事由、图片
-				/* 
-				 *	index	value
-				 *	0		开始时间,结束时间
-				 *	1		外出事由
-				 *	2		图片
-				 */
-				String reason = details.get(1).getValue();
-				//				String pictures = details.get(2).getValue();
+				List<FormComponentValueVo> details = dingtalkvo.getFormComponentValues();//审批表单的变量组
 				AwayRegVO vo = new AwayRegVO();
-				JSONArray jsonobject = JSON.parseArray((details.get(0).getValue()));//这条审批单的开始时间,结束时间
-				vo.setAwaybegindate(new UFLiteralDate(jsonobject.getString(0)));//开始日期
-				vo.setAwaybegintime(new UFDateTime(jsonobject.getString(0) + ":00"));//开始时间
-				vo.setAwayenddate(new UFLiteralDate(jsonobject.getString(1)));//结束日期
-				vo.setAwayendtime(new UFDateTime(jsonobject.getString(1) + ":00"));//结束时间
+				for (FormComponentValueVo componentValueVo : details) {//遍历审批表单的变量组
+					String name = componentValueVo.getName();
+					if (name.contains("\"开始时间\",\"结束时间\"")) {
+						JSONArray time = JSON.parseArray((componentValueVo.getValue()));//这条审批单的开始时间,结束时间
+						vo.setAwaybegindate(new UFLiteralDate(time.getString(0)));//开始日期
+						vo.setAwaybegintime(new UFDateTime(time.getString(0) + ":00"));//开始时间
+						vo.setAwayenddate(new UFLiteralDate(time.getString(1)));//结束日期
+						vo.setAwayendtime(new UFDateTime(time.getString(1) + ":00"));//结束时间
+					} else if (name.contains("外出事由")) {
+						String reason = componentValueVo.getValue();
+						vo.setAwayremark(reason);//原因
+					} else if (name.contains("图片")) {
+
+					}
+				}
 				vo.setBillsource(2);//单据来源，2=登记表
 				vo.setIsawayoff(UFBoolean.FALSE);//是否已销差 
 				vo.setPk_awaytype(psndetail.get("pk_timeitem"));//出差
 				vo.setPk_awaytypecopy(psndetail.get("pk_timeitemcopy"));//出差类型copy
-				vo.setAwayremark(reason);//原因
 				vo.setPk_psndoc(psndetail.get("pk_psndoc"));//人员
 				vo.setPk_psnjob(psndetail.get("pk_psnjob"));//工作
 				vo.setPk_psnorg(psndetail.get("pk_psnorg"));//组织关系
@@ -303,7 +325,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				}
 			}
 			if (rsp.getResult().getResult().getNextCursor() != null) {//还有下一页
-				doSyncStepOut(rsp.getResult().getResult().getNextCursor(), dayBefore, pk_timeitem);
+				doSyncStepOut(stepOutProcessCode, rsp.getResult().getResult().getNextCursor(), dayBefore, pk_timeitem);
 			}
 
 		} catch (Exception e) {

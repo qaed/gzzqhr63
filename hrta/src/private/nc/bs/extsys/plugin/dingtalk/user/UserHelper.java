@@ -1,6 +1,5 @@
 package nc.bs.extsys.plugin.dingtalk.user;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +10,12 @@ import nc.bs.extsys.plugin.dingtalk.util.FileUtils;
 import nc.bs.extsys.plugin.dingtalk.util.HttpHelper;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.open.client.ServiceFactory;
 import com.dingtalk.open.client.api.model.corp.CorpUserBaseInfo;
 import com.dingtalk.open.client.api.model.corp.CorpUserDetail;
 import com.dingtalk.open.client.api.model.corp.CorpUserDetailList;
 import com.dingtalk.open.client.api.model.corp.CorpUserList;
-import com.dingtalk.open.client.api.model.corp.Department;
 import com.dingtalk.open.client.api.service.corp.CorpUserService;
 
 public class UserHelper {
@@ -74,7 +71,7 @@ public class UserHelper {
 			args.put("extattr", userDetail.getExtattr());//扩展属性，可以设置多种属性(但手机上最多只能显示10个扩展属性，具体显示哪些属性，请到OA管理后台->设置->通讯录信息设置和OA管理后台->设置->手机端显示信息设置)
 		}
 
-		JSONObject  response = HttpHelper.httpPost(url, args);
+		JSONObject response = HttpHelper.httpPost(url, args);
 		if (response != null && response.containsKey("userid")) {
 			return response.getString("userid");
 		} else {
@@ -105,7 +102,10 @@ public class UserHelper {
 		JSONObject args = new JSONObject();
 		args.put("userid", userDetail.getUserid());//员工唯一标识ID（不可修改），企业内必须唯一。长度为1~64个字符，如果不传，服务器将自动生成一个userid
 		args.put("name", userDetail.getName());//成员名称。长度为1~64个字符
-		args.put("department", userDetail.getDepartment());//数组类型，数组里面值为整型，成员所属部门id列表
+
+		if (userDetail.getDepartment() != null) {
+			args.put("department", userDetail.getDepartment());//数组类型，数组里面值为整型，成员所属部门id列表
+		}
 		if (orderInDepts != null) {
 			args.put("orderInDepts", orderInDepts);//在对应的部门中的排序, Map结构的json字符串, key是部门的Id, value是人员在这个部门的排序值
 		}

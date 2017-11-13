@@ -118,23 +118,23 @@ public class DingTalkPlugin implements IBackgroundWorkPlugin {
 		//		}
 		if (userAlert != null && userAlert.getReturnObj() != null) {
 			returnmsg.append((String) userAlert.getReturnObj());
-			returnmsg.append("尝试同步人员次数:" + (userErrorTimes + 1) + "\n");
+			returnmsg.append("尝试同步人员次数:" + (userErrorTimes + 1) + "\n\n");
 		} else {
 			returnmsg.append("同步人员失败！\n\n");
 		}
 		if (attendanceAlert != null && attendanceAlert.getReturnObj() != null) {
 			returnmsg.append((String) attendanceAlert.getReturnObj());
-			returnmsg.append("尝试同步考勤次数:" + (attendanceErrorTimes + 1) + "\n");
+			returnmsg.append("尝试同步考勤次数:" + (attendanceErrorTimes + 1) + "\n\n");
 		} else {
 			returnmsg.append("同步考勤失败！\n\n");
 		}
 		if (workFlowAlert != null && workFlowAlert.getReturnObj() != null) {
 			returnmsg.append((String) workFlowAlert.getReturnObj());
-			returnmsg.append("尝试同步出差审批次数:" + (attendanceErrorTimes + 1) + "\n");
+			returnmsg.append("尝试同步出差审批次数:" + (attendanceErrorTimes + 1) + "\n\n");
 		} else {
 			returnmsg.append("同步出差审批失败！\n\n");
 		}
-		returnmsg.append("-----------同步任务完成-------------\n");
+		returnmsg.append("===============同步任务完成===============\n");
 		alert.setReturnObj(returnmsg.toString());
 		alert.setReturnType(PreAlertReturnType.RETURNMESSAGE);
 		return alert;
