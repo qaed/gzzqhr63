@@ -38,6 +38,7 @@ import com.dingtalk.open.client.common.SdkInitException;
 import com.dingtalk.open.client.common.ServiceException;
 import com.dingtalk.open.client.common.ServiceNotExistException;
 
+@SuppressWarnings("restriction")
 public class SyncAttendance implements IBackgroundWorkPlugin {
 	private BaseDAO dao;
 
@@ -144,7 +145,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 			Logger.error(e);
 			throw new BusinessException(e);
 		}
-		returnmsg.append("===============导入考勤及签到数据「完成」===============\n\n");
+		returnmsg.append("===============导入考勤及签到数据「完成」===============\n");
 		alert.setReturnObj(returnmsg.toString());
 		return alert;
 	}
