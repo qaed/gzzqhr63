@@ -9,12 +9,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Array;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.DefaultButtonModel;
 import javax.swing.ImageIcon;
@@ -97,7 +101,7 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 		setName("FromDeptGenGrpDialog");
 		setTitle(ResHelper.getString("60290106", "0602901060136"));/*@res "按部门生成对象组"*/
 
-		setSize(650, 420);
+		setSize(780, 504);
 		setContentPane(getContentPane());
 	}
 
@@ -411,8 +415,16 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 
 		try {
 			String adminOrgInSql = AOSSQLHelper.getChildrenBUInSQLByHROrgPK(getContext().getPk_org());
-
-			String condition = " pk_org in(" + adminOrgInSql + ") and " + "hrcanceled" + "='N' and " + "enablestate" + " = 2 ";
+			String condition = null;
+			//分公司与营业部都委托给总部进行操作
+			if ("0001A410000000000FUF".equals(getContext().getPk_org())) {
+				String sql1 =
+						"select pk_org from org_orgs where pk_fatherorg in (select pk_org from org_orgs where code in('GZZQ01','GZZQ11'))";//分公司和营业部下面的组织
+				condition =
+						" (pk_org in(" + adminOrgInSql + ") or pk_org in (" + sql1 + ")) and " + "hrcanceled" + "='N' and " + "enablestate" + " = 2 ";
+			} else {
+				condition = " pk_org in(" + adminOrgInSql + ") and " + "hrcanceled" + "='N' and " + "enablestate" + " = 2 ";
+			}
 			AggHRDeptVO[] aggVOs = getDeptQryService().queryByCondition(getContext(), condition);
 			if ((aggVOs != null) && (aggVOs.length > 0)) {
 				for (AggHRDeptVO deptVO : aggVOs) {
@@ -480,7 +492,44 @@ public class FromDeptGenDialog extends HrDialog implements ActionListener, KeyLi
 				}
 			}
 		}
+		//排序
+		Collections.sort(nodes, new Comparator<MultiChkTreeNode>() {
 
+			@Override
+			public int compare(MultiChkTreeNode o1, MultiChkTreeNode o2) {
+				//1.营业部按名称排序
+				//2.其他部门按编码排序
+
+				if (o1.getNodeName().contains("营业部")) {
+					if (o2.getNodeName().contains("营业部")) {
+						//两个营业部，按名称排
+						return Collator.getInstance(Locale.CHINESE).compare(o1.getNodeName(), o2.getNodeName());
+					} else {
+						//第一个是营业部，第二个是非营业部,营业部放下面
+						return 1;
+					}
+				} else if (o1.getNodeName().contains("分公司")) {
+					if (o2.getNodeName().contains("营业部")) {
+						//第一个是分公司，第二个是营业部,营业部放下面
+						return -1;
+					} else if (o2.getNodeName().contains("分公司")) {
+						//两个都是分公司,按编码排序
+						return o1.getNodeCode().compareTo(o2.getNodeCode());
+					} else {
+						//第一个是分公司，第二个是总部部门，分公司放下面
+						return 1;
+					}
+				} else {
+					if (o2.getNodeName().contains("分公司") || o2.getNodeName().contains("营业部")) {
+						//第一个是总部部门,第二个是非总部部门，总部部门放前面
+						return -1;
+					} else {
+						//两个都是总部部门，按编码排序
+						return o1.getNodeCode().compareTo(o2.getNodeCode());
+					}
+				}
+			}
+		});
 		return nodes.toArray(new MultiChkTreeNode[0]);
 	}
 

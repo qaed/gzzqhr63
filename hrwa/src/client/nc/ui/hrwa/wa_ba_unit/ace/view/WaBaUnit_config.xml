@@ -177,6 +177,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="deleteAction" />
 				<ref bean="separatorAction" />
 				<ref bean="queryAction" />
+				<ref bean="refreshAction" />
 				<ref bean="separatorAction" />
 				<ref bean="WaBaUnitAlterAction" />
 				<!--
@@ -186,6 +187,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 				<ref bean="separatorAction" />
 				<ref bean="BatchAddAction"/>
 				-->
+				<ref bean="separatorAction" />
+				<ref bean="EasyUpdateAction"/>
 			</list>
 		</property>
 		<property name="editActions">
@@ -285,6 +288,13 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 	</bean>
 	<!--变动人员-->
 	<bean id="WaBaUnitAlterAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitAlterAction">
+		<property name="editor" ref="billFormEditor" />
+		<property name="model" ref="appModel" />
+		<property name="dataManager" ref="modelDataManager" />
+	</bean>
+
+	<!--一键更新-->
+	<bean id="EasyUpdateAction" class="nc.ui.hrwa.wa_ba_unit.action.WaBaUnitEasyUpdateAction">
 		<property name="editor" ref="billFormEditor" />
 		<property name="model" ref="appModel" />
 		<property name="dataManager" ref="modelDataManager" />

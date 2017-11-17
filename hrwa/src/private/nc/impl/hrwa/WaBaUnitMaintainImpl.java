@@ -7,35 +7,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-
 import nc.bs.dao.BaseDAO;
-import nc.bs.framework.common.NCLocator;
-import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
 import nc.hr.utils.PubEnv;
 import nc.hr.utils.SQLHelper;
 import nc.impl.pub.ace.AceWaBaUnitPubServiceImpl;
-import nc.impl.pubapp.pattern.data.bill.BillInsert;
-import nc.impl.pubapp.pattern.data.bill.BillQuery;
-import nc.itf.hrwa.IWaBaUnitMaintain;
 import nc.jdbc.framework.processor.BeanListProcessor;
-import nc.md.persist.framework.IMDPersistenceQueryService;
-import nc.md.persist.framework.IMDPersistenceService;
 import nc.ui.bd.ref.IRefConst;
-import nc.vo.bd.meta.AggVOBDObject;
-import nc.vo.bd.meta.BatchOperateVO;
+import nc.ui.hrwa.wa_ba_unit.ace.view.FromDeptGenDialog;
+import nc.vo.bd.psn.PsndocVO;
 import nc.vo.bm.data.BmDataVO;
 import nc.vo.hi.psndoc.PsnJobVO;
 import nc.vo.hi.pub.HICommonValue;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.om.hrdept.AggHRDeptVO;
 import nc.vo.om.hrdept.HRDeptVO;
+import nc.vo.org.DeptVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.ISuperVO;
 import nc.vo.pub.lang.UFDateTime;
-import nc.vo.pubapp.AppContext;
 import nc.vo.uif2.LoginContext;
 import nc.vo.wa.wa_ba.unit.AggWaBaUnitHVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitBVO;
 import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
+
+import org.apache.commons.lang.StringUtils;
 
 public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements nc.itf.hrwa.IWaBaUnitMaintain {
 	/*
@@ -82,6 +77,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 			hvo.setCode(entry.getKey().getCode());//编码
 			hvo.setName(entry.getKey().getName());//名字
 			hvo.setBa_unit_type("按部门生成");
+			hvo.setSrc_obj_pk(entry.getKey().getPk_dept());//保存部门pk
 			aggvo.setParent(hvo);
 			List<WaBaUnitBVO> bvos = new ArrayList<WaBaUnitBVO>();
 			PsnJobVO[] psnjobVOs = queryPsnJobVO(entry.getValue());
@@ -112,7 +108,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	 */
 	private PsnJobVO[] queryPsnJobVO(String extCond) throws BusinessException {
 		StringBuffer sql =
-				new StringBuffer("").append(" select hi_psnjob.* ").append(" from hi_psnjob ").append(" inner join bd_psndoc on bd_psndoc.pk_psndoc = hi_psnjob.pk_psndoc  ").append(" inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc ");
+				new StringBuffer("").append(" select hi_psnjob.* ").append(" from hi_psnjob ").append(" inner join bd_psndoc on bd_psndoc.pk_psndoc = hi_psnjob.pk_psndoc  ").append(" inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc ").append(" left join hi_psndoc_trial on hi_psndoc_trial.pk_psndoc = hi_psnjob.pk_psndoc ");
 
 		String condition = "(1=1) ";
 		condition += filterPsnjobCondition();
@@ -128,7 +124,6 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		sql.append(" where " + condition);
 
 		sql.append("  order by  hi_psnjob.ismainjob desc");
-		BaseDAO dao = new BaseDAO();
 		List<PsnJobVO> psnjobVOs = (List<PsnJobVO>) new BaseDAO().executeQuery(sql.toString(), new BeanListProcessor(PsnJobVO.class));
 		if (psnjobVOs == null) {
 			return null;
@@ -143,14 +138,31 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	 */
 	private String filterPsnjobCondition() {
 		StringBuffer whereBuf = new StringBuffer();
-		whereBuf.append(" and hi_psnjob.endflag = 'N' ");// 未结束
+		whereBuf.append(" and  (");
+		//在职人员
+		whereBuf.append("  (hi_psnorg.indocflag = 'Y' ");// 已加入人员档案
+		whereBuf.append("   and hi_psnorg.endflag = 'N' ");// 未结束
+		whereBuf.append("   and hi_psnorg.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("   and hi_psnjob.endflag = 'N' ");// 未结束
+		whereBuf.append("   and hi_psnjob.psntype = 0 "); // 人员类型为：人员
+		whereBuf.append("   and hi_psnjob.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("   and hi_psnjob.ismainjob = 'Y' ");//主职
+		whereBuf.append("   and hi_psnjob.jobglbdef7 <> 'Y' ");//非一级部门负责人
+		whereBuf.append("   and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
+		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y'))");//非试用
+		//离职人员
+		whereBuf.append("  or (hi_psnorg.indocflag = 'Y'  ");//主职
+		whereBuf.append("  and hi_psnorg.endflag = 'Y' ");//主职
+		whereBuf.append("  and hi_psnorg.lastflag='Y' ");
+		whereBuf.append("  and to_char(sysdate-30)<hi_psnorg.enddate ");
+		whereBuf.append("  and hi_psnjob.psntype = 0 ");
+		whereBuf.append("  and hi_psnjob.lastflag = 'Y' ");
+		whereBuf.append("  and hi_psnjob.ismainjob='Y' ");//主职
+		whereBuf.append("  and hi_psnjob.jobglbdef7 <> 'Y'");//非一级部门负责人
+		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000003FXX' ");//离职控编员工
+		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y'))");
 
-		whereBuf.append("and hi_psnorg.indocflag = 'Y' "); // 已加入人员档案
-		whereBuf.append(" and hi_psnorg.endflag = 'N' ");// 未结束
-		// whereBuf.append("and hi_psnorg.lastflag = 'Y' "); // 最新记录
-		whereBuf.append("and hi_psnjob.psntype = 0 "); // 人员类型为：人员
-		whereBuf.append("and hi_psnjob.lastflag = 'Y' "); // 最新记录
-		// 需要包含兼职人员whereBuf.append("and hi_psnjob.ismainjob = 'Y' ");
+		whereBuf.append(" ) ");//主职
 		return whereBuf.toString();
 	}
 
@@ -199,4 +211,43 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		return vos.toArray(new BmDataVO[0]);
 
 	}
+
+	@Override
+	public void fastUpdate(LoginContext loginContext, String condition) throws BusinessException {
+		StringBuilder sqlWhere = new StringBuilder();
+		sqlWhere.append(" pk_dept in (select src_obj_pk from wa_ba_unit where pk_org='" + loginContext.getPk_org() + "') ");
+		//奖金分配单元中，当前组织下，可管理的部门（即可见部门）
+		AggHRDeptVO[] aggdepts = FromDeptGenDialog.getDeptQryService().queryByCondition(loginContext, sqlWhere.toString());
+		//当前应管理人员
+		sqlWhere.delete(0, sqlWhere.length());
+		sqlWhere.append(" ( hi_psnjob.pk_dept in (select pk_dept from org_dept where  1=1 and (");
+		for (AggHRDeptVO aggdept : aggdepts) {
+			String pk_dept = (String) aggdept.getParentVO().getAttributeValue(DeptVO.PK_DEPT);
+			sqlWhere.append(" org_dept.pk_dept='" + pk_dept + "' or org_dept.pk_fatherorg='" + pk_dept + "' or ");
+		}
+		sqlWhere.delete(sqlWhere.length() - 3, sqlWhere.length());
+		sqlWhere.append("))) ");
+		Map<String, PsnJobVO> psnjobMap = arrayvoToMap(PsndocVO.PK_PSNDOC, queryPsnJobVO(sqlWhere.toString()));
+
+		//当前管理组织下的类型为「按部门生成」的分配单元
+		Object[] aggunit = (Object[]) query(" pk_org='" + loginContext.getPk_org() + "'");
+		/**
+		 * key：组织 value:对应的奖金单元
+		 */
+		Map<String, String> hashOrgUnit = new HashMap<String, String>();
+		/**
+		 * key:psndoc vaue:对应的unitbvo
+		 */
+		Map<String, ISuperVO> UnitBVOMap = new HashMap<String, ISuperVO>();
+		for (Object aggvo : aggunit) {
+			AggWaBaUnitHVO aggWaBaUnitHVO = (AggWaBaUnitHVO) aggvo;
+			if (aggWaBaUnitHVO.getParentVO().getSrc_obj_pk() == null) {
+				continue;
+			}
+			hashOrgUnit.put(aggWaBaUnitHVO.getParentVO().getSrc_obj_pk(), aggWaBaUnitHVO.getParentVO().getPk_wa_ba_unit());
+			UnitBVOMap.putAll(arrayvoToMap(PsndocVO.PK_PSNDOC, aggWaBaUnitHVO.getChildren(WaBaUnitBVO.class)));
+		}
+		super.syncUnitBVO(hashOrgUnit, UnitBVOMap, psnjobMap);
+	}
+
 }

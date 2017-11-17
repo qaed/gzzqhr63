@@ -138,8 +138,8 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		menucomp.getItem("save").setEnabled(false);
 		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(false);
 		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
-		//可以不改数据，直接完成分配
-		//		menucomp.getItem("allocated").setEnabled(false);
+		//bu可以不改数据，直接完成分配
+		menucomp.getItem("allocated").setEnabled(false);
 		menucomp.getItem("add").setEnabled(false);
 		menucomp.getItem("copy").setEnabled(false);
 		menucomp.getItem("del").setEnabled(false);
@@ -715,6 +715,9 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 			Row[] rows = ds.getAllRow();
 			for (Row row : rows) {
 				//调整后金额
+				if (StringUtils.isEmpty((String) row.getValue(ds.getFieldSet().nameToIndex("WaBaSchTVO_pk_psndoc_code")))) {
+					continue;
+				}
 				UFDouble reviseMoney = row.getUFDobule(ds.nameToIndex("revise_totalmoney"));
 				if (reviseMoney == null) {
 					currTotalmoney = currTotalmoney.add(row.getUFDobule(ds.nameToIndex("f_10")));
