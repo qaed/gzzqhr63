@@ -94,6 +94,7 @@ public class WaBaUnitBatchAddAction extends WaBaUnitWizardAction {
 			bvo.setPk_psndoc(psndocVO.getPk_psndoc());
 			//添加pk_psnjob工作主键
 			bvo.setPk_psnjob(psndocVO.getPk_psnjob());
+			bvo.setDr(0);
 			bodyvos.add(bvo);
 		}
 		aggvo.setChildrenVO(bodyvos.toArray(new WaBaUnitBVO[0]));

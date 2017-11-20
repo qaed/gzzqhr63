@@ -180,6 +180,7 @@ public class ShowChangePsn {
 				psnVO.setPk_wa_ba_unit(this.context.getSelectedVO().getParentVO().getPk_wa_ba_unit());
 				psnVO.setPk_psnjob(trnVO.getPk_psnjob());
 				psnVO.setPk_psndoc(trnVO.getPk_psndoc());
+				psnVO.setDr(0);
 				list.add(psnVO);
 			}
 

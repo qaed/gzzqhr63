@@ -90,6 +90,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 				WaBaUnitBVO bvo = new WaBaUnitBVO();
 				bvo.setPk_psndoc(psnJobVO.getPk_psndoc());
 				bvo.setPk_psnjob(psnJobVO.getPk_psnjob());
+				bvo.setDr(0);
 				bvos.add(bvo);
 			}
 			aggvo.setChildrenVO(bvos.toArray(new WaBaUnitBVO[0]));
@@ -106,6 +107,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	 * @return
 	 * @throws BusinessException
 	 */
+	@SuppressWarnings("unchecked")
 	private PsnJobVO[] queryPsnJobVO(String extCond) throws BusinessException {
 		StringBuffer sql =
 				new StringBuffer("").append(" select hi_psnjob.* ").append(" from hi_psnjob ").append(" inner join bd_psndoc on bd_psndoc.pk_psndoc = hi_psnjob.pk_psndoc  ").append(" inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc ").append(" left join hi_psndoc_trial on hi_psndoc_trial.pk_psndoc = hi_psnjob.pk_psndoc ");
@@ -147,7 +149,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		whereBuf.append("   and hi_psnjob.psntype = 0 "); // 人员类型为：人员
 		whereBuf.append("   and hi_psnjob.lastflag = 'Y' "); // 最新记录
 		whereBuf.append("   and hi_psnjob.ismainjob = 'Y' ");//主职
-		whereBuf.append("   and hi_psnjob.jobglbdef7 <> 'Y' ");//非一级部门负责人
+		whereBuf.append("   and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
 		whereBuf.append("   and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
 		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y'))");//非试用
 		//离职人员
@@ -158,7 +160,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		whereBuf.append("  and hi_psnjob.psntype = 0 ");
 		whereBuf.append("  and hi_psnjob.lastflag = 'Y' ");
 		whereBuf.append("  and hi_psnjob.ismainjob='Y' ");//主职
-		whereBuf.append("  and hi_psnjob.jobglbdef7 <> 'Y'");//非一级部门负责人
+		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
 		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000003FXX' ");//离职控编员工
 		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y'))");
 
@@ -166,6 +168,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		return whereBuf.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * 查询人员

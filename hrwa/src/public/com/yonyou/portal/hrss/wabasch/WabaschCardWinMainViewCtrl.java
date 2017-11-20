@@ -138,8 +138,8 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		menucomp.getItem("save").setEnabled(false);
 		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(false);
 		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
-		//bu可以不改数据，直接完成分配
-		menucomp.getItem("allocated").setEnabled(false);
+		//可以不改数据，直接完成分配
+		menucomp.getItem("allocated").setEnabled(true);
 		menucomp.getItem("add").setEnabled(false);
 		menucomp.getItem("copy").setEnabled(false);
 		menucomp.getItem("del").setEnabled(false);
@@ -831,9 +831,19 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		}
 		Dataset ds = getCurrentView().getViewModels().getDataset("WaBaSchBVO");
 		try {
-
 			StringBuilder sql = new StringBuilder();
-
+			sql.delete(0, sql.length());
+			sql.append("update wa_ba_sch_unit set class3= ");
+			sql.append(" (select sum(case when revise_totalmoney is not null then revise_totalmoney else f_10 end)  ");
+			sql.append("   from wa_ba_sch_psns where wa_ba_sch_psns.pk_ba_sch_unit= wa_ba_sch_unit.pk_ba_sch_unit)  ");
+			sql.append(" where pk_ba_sch_unit='" + ds.getValue("pk_ba_sch_unit").toString() + "'");
+			getDao().executeUpdate(sql.toString());
+			//更新BVO奖金分配单元的"本期结余"
+			sql.delete(0, sql.length());
+			sql.append("update wa_ba_sch_unit set class4= ");
+			sql.append("  (case when plan_totalmoney-class3<0 then 0 else plan_totalmoney-class3 end)  ");
+			sql.append(" where pk_ba_sch_unit='" + ds.getValue("pk_ba_sch_unit").toString() + "'");
+			getDao().executeUpdate(sql.toString());
 			//			this.getCurrentAppCtx();
 			//主表SCHHVO主键
 			String pk_h = getMasterDs().getValue(this.getMasterDs().getPrimaryKeyField()).toString();
