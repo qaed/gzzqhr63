@@ -1,24 +1,18 @@
 package nc.impl.pub.ace;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import nc.bs.dao.DAOException;
-import nc.bs.framework.codesync.client.NCClassLoader;
-import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.hr.frame.persistence.AppendBaseDAO;
 import nc.hr.utils.ResHelper;
 import nc.impl.hr.formula.parser.IFormulaParser;
 import nc.impl.hrwa.func.WaBaCommonProcess;
-import nc.impl.hrwa.func.WaBaWaAdjustDocProcess;
 import nc.jdbc.framework.SQLParameter;
 import nc.vo.hr.func.FunctionVO;
-import nc.vo.hr.itemsource.TypeEnumVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ISuperVO;
 import nc.vo.wa.func.SqlFragment;
@@ -34,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
  * @author tsheay
  * @see nc.impl.wa.paydata.DataCaculateService
  */
+@SuppressWarnings("restriction")
 public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 
 	protected ItemsVO[] itemVOs = null;// 奖金分配项目
@@ -386,9 +381,9 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 	private String[] getPreviousPeriod() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR, Integer.parseInt(this.year));
-		cal.set(Calendar.MONTH, Integer.parseInt(this.period));
+		cal.set(Calendar.MONTH, Integer.parseInt(this.period) - 1);//设置日期时也要-1
 		cal.add(Calendar.MONTH, -1);
-		int month = cal.get(Calendar.MONTH) - 1;
+		int month = cal.get(Calendar.MONTH) + 1;
 		return new String[] { cal.get(Calendar.YEAR) + "", month < 10 ? "0" + month : month + "" };
 	}
 

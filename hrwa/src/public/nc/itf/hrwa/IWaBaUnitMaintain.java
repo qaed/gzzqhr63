@@ -29,4 +29,12 @@ public interface IWaBaUnitMaintain {
 	public void creatByDept(LoginContext loginContext, HashMap<HRDeptVO, String> paramHashMap) throws BusinessException;
 
 	public BmDataVO[] queryPsnForAdd(String condition) throws BusinessException;
+
+	/**
+	 * 一键更新单元内的人员
+	 * @param loginContext
+	 * @param condition
+	 * @throws BusinessException
+	 */
+	public void fastUpdate(LoginContext loginContext, String condition) throws BusinessException;
 }
