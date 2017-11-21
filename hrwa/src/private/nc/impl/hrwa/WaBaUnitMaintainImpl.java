@@ -8,12 +8,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.framework.common.NCLocator;
 import nc.hr.utils.PubEnv;
 import nc.hr.utils.SQLHelper;
 import nc.impl.pub.ace.AceWaBaUnitPubServiceImpl;
+import nc.itf.om.IDeptQueryService;
 import nc.jdbc.framework.processor.BeanListProcessor;
 import nc.ui.bd.ref.IRefConst;
-import nc.ui.hrwa.wa_ba_unit.ace.view.FromDeptGenDialog;
 import nc.vo.bd.psn.PsndocVO;
 import nc.vo.bm.data.BmDataVO;
 import nc.vo.hi.psndoc.PsnJobVO;
@@ -156,7 +157,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		whereBuf.append("  or (hi_psnorg.indocflag = 'Y'  ");//主职
 		whereBuf.append("  and hi_psnorg.endflag = 'Y' ");//主职
 		whereBuf.append("  and hi_psnorg.lastflag='Y' ");
-		whereBuf.append("  and to_char(sysdate-30)<hi_psnorg.enddate ");
+		whereBuf.append("  and to_char(sysdate-30,'yyyy-mm-dd')<hi_psnorg.enddate ");
 		whereBuf.append("  and hi_psnjob.psntype = 0 ");
 		whereBuf.append("  and hi_psnjob.lastflag = 'Y' ");
 		whereBuf.append("  and hi_psnjob.ismainjob='Y' ");//主职
@@ -220,7 +221,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		StringBuilder sqlWhere = new StringBuilder();
 		sqlWhere.append(" pk_dept in (select src_obj_pk from wa_ba_unit where pk_org='" + loginContext.getPk_org() + "') ");
 		//奖金分配单元中，当前组织下，可管理的部门（即可见部门）
-		AggHRDeptVO[] aggdepts = FromDeptGenDialog.getDeptQryService().queryByCondition(loginContext, sqlWhere.toString());
+		AggHRDeptVO[] aggdepts = NCLocator.getInstance().lookup(IDeptQueryService.class).queryByCondition(loginContext, sqlWhere.toString());
 		//当前应管理人员
 		sqlWhere.delete(0, sqlWhere.length());
 		sqlWhere.append(" ( hi_psnjob.pk_dept in (select pk_dept from org_dept where  1=1 and (");
