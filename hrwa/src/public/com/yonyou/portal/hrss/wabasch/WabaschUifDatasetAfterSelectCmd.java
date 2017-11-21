@@ -172,7 +172,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 							}
 						}
 						//此时bvos应该只剩下1个
-						vos = bvos.toArray(vos);
+						vos = bvos.toArray(new WaBaSchBVO[0]);
 					}
 
 					modifyVos(vos);

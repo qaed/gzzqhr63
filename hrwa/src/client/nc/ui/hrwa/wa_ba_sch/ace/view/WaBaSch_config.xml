@@ -754,10 +754,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="model" ref="manageAppModel" />
 	</bean>
 	<!-- ¸´ÖÆ -->
-	<bean id="copyAction" class="nc.ui.pubapp.uif2app.actions.CopyAction">
+	<bean id="copyAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchCopyAction">
 		<property name="model" ref="manageAppModel" />
 		<property name="interceptor" ref="showCardInterceptor" />
 		<property name="editor" ref="billFormEditor" />
+		<property name="mainModel" ref="mainGrandModel" />
+		<property name="mainEditor" ref="MainGrandbillFormEditor" />
 		<property name="copyActionProcessor">
 			<bean class="nc.ui.hrwa.wa_ba_sch.action.CopyActionProcessor"></bean>
 		</property>
