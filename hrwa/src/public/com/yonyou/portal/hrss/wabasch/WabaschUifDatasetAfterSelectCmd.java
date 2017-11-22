@@ -8,6 +8,7 @@ import java.util.List;
 import nc.bs.hrss.pub.tool.SessionUtil;
 import nc.bs.logging.Logger;
 import nc.uap.lfw.core.cmd.UifDatasetAfterSelectCmd;
+import nc.uap.lfw.core.ctx.AppLifeCycleContext;
 import nc.uap.lfw.core.data.Dataset;
 import nc.uap.lfw.core.data.DatasetRelation;
 import nc.uap.lfw.core.data.DatasetRelations;
@@ -93,6 +94,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 				//获取子对应的外键值，并设置到VO条件中
 				DatasetRelation dr = masterRels[i];
 				Dataset detailDs = widget.getViewModels().getDataset(dr.getDetailDataset());
+				detailDs.clear();
 				//获取当前PageIndex
 				int curPageIndex = getPageIndex(detailDs);
 				//				detailDs.clear();
@@ -134,7 +136,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 				if ("nc.vo.wa.wa_ba.sch.WaBaSchTVO".equals(clazz)) {
 					if (sqlin != null && !"".equals(sqlin)) {
 						wherePart = " 1 = 1 and pk_ba_sch_unit in ( " + sqlin.substring(0, sqlin.length() - 1) + ")";
-						LfwSysOutWrapper.println("查询孙表数据where：" + wherePart);
+//						LfwSysOutWrapper.println("查询孙表数据where：" + wherePart);
 
 					} else {
 						//没有需要分配的数据
@@ -151,12 +153,13 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 
 					SuperVO[] vos = queryChildVOs(pinfo, vo, wherePart, isNewMaster, orderPart);//设置了主表主键，所以根据它进行查询
 					if ("nc.vo.wa.wa_ba.sch.WaBaSchBVO".equals(clazz)) {
+//						AppLifeCycleContext.current().getApplicationContext().getAppAttribute("selectedSchUnitKey");
 						/*
 						 * 卡片的BVO只查出一个就好,即一次只分配一个单元的数据
 						 * 因为在卡片页面，修改-保存操作时调用savecmd需要传入BVOdataset「masterDataset」和TVOdataset「detailDataset」
 						 * 由于原始设计，第一个参数masterDataset会默认只拿第一个，如果可能导致TVO和BVO不对应
 						 */
-						LfwSysOutWrapper.println("仅显示当前登录人可分配的数据，当前登录人pk：" + SessionUtil.getPk_psndoc());
+//						LfwSysOutWrapper.println("仅显示当前登录人可分配的数据，当前登录人pk：" + SessionUtil.getPk_psndoc());
 						List<SuperVO> bvos = new ArrayList<SuperVO>(vos.length);
 						Collections.addAll(bvos, vos);
 						boolean hasConstructedSQL = false;//是否已构造sql语句

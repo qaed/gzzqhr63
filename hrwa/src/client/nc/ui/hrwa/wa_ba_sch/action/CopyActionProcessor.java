@@ -72,21 +72,21 @@ public class CopyActionProcessor implements ICopyActionProcessor<AggWaBaSchHVO> 
 	private void processHeadVO(AggWaBaSchHVO vo, LoginContext context) {
 		UFDateTime datetime = ServerTimeProxy.getInstance().getServerTime();
 		WaBaSchHVO hvo = vo.getParentVO();
-//		try {
-//			//自动生成code
-//			hvo.setSch_code(((IHrBillCode) NCLocator.getInstance().lookup(IHrBillCode.class)).getBillCode("BAAL", context.getPk_group(), context.getPk_org()));
-//		} catch (BusinessException e) {
-//			e.printStackTrace();
-//		}
+		//		try {
+		//			//自动生成code
+		//			hvo.setSch_code(((IHrBillCode) NCLocator.getInstance().lookup(IHrBillCode.class)).getBillCode("BAAL", context.getPk_group(), context.getPk_org()));
+		//		} catch (BusinessException e) {
+		//			e.printStackTrace();
+		//		}
 		// 设置空处理
 		hvo.setApprover(null);
 		hvo.setApprovedate(null);
 		hvo.setModifier(null);
 		hvo.setModifiedtime(null);
-		hvo.setCreator(null);
-		hvo.setCreationtime(null);
 		// hvo.setTs(null);
 		// 设置默认值
+		hvo.setCreator(context.getPk_loginUser());
+		hvo.setCreationtime(datetime);
 		hvo.setBilldate(datetime.getDate());
 		hvo.setPk_group(context.getPk_group());
 		hvo.setPk_org(context.getPk_org());

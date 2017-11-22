@@ -17,6 +17,7 @@ import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.bp.AceWaBaSchUnSendApproveBP;
 import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchDataUniqueCheckRule;
+import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchPeriodUnitUniqueRule;
 import nc.bs.integration.workitem.util.SyncWorkitemUtil;
 import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
@@ -83,6 +84,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		// 添加BP规则
 		AroundProcesser<AggWaBaSchHVO> processer = new AroundProcesser<AggWaBaSchHVO>(null);
 		processer.addBeforeRule(new WaSchDataUniqueCheckRule());
+		processer.addBeforeRule(new WaSchPeriodUnitUniqueRule());
 		processer.before(aggvo);
 
 		// 子表的上期结余默认为0，后计算进行覆盖
@@ -102,11 +104,12 @@ public abstract class AceWaBaSchPubServiceImpl {
 				if (bodyTabCode.equals("pk_b")) {
 					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
+						grandvos[i].setStatus(VOStatus.NEW);
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_h(((WaBaSchBVO) childVO).getPk_ba_sch_h());
 						((WaBaSchTVO) grandvos[i]).setPk_wa_ba_unit(((WaBaSchBVO) childVO).getPk_ba_sch_unit());
 
-						persist.saveBill(grandvos[i]);
+						persist.saveBill(grandvos[i]);//persist是以status判断数据是否新增、更新、或删除
 					}
 				}
 			}

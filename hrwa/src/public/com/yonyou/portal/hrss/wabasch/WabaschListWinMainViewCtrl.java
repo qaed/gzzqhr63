@@ -203,7 +203,6 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 
 		Row row = ds.getSelectedRow();
 		String pkValue = (String) row.getValue(ds.nameToIndex(ds.getPrimaryKeyField()));
-
 		OpenProperties props = new OpenProperties(CARD_WIN_ID, CARD_WIN_TITLE);
 		props.setButtonZone(false);
 		Map<String, String> paramMap = new HashMap<String, String>(2);
@@ -217,6 +216,8 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		this.onEdit_wfm(pkValue);
 
 		this.getCurrentAppCtx().navgateTo(props);
+		Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
+		this.getCurrentAppCtx().getAppSession().setAttribute("selectedSchUnitKey", Bodyds.getSelectedRow().getString((Bodyds.nameToIndex("pk_ba_sch_unit"))));
 	}
 
 	/**
