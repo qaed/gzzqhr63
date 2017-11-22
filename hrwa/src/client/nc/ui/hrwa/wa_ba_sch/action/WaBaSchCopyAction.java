@@ -51,9 +51,10 @@ public class WaBaSchCopyAction extends CopyAction {
 			// this.model.setUiState(UIState.ADD);
 			getMainModel().getSelectedData();
 			WaBaSchHVO hvo = ((AggWaBaSchHVO) getMainEditor().getValue()).getParentVO();
-			aggvo.getParentVO().setAttributeValue("sch_code", hvo.getSch_code());
-			aggvo.getParentVO().setAttributeValue("cyear", hvo.getCyear());
-			aggvo.getParentVO().setAttributeValue("cperiod", hvo.getCperiod());
+			WaBaSchHVO currenthvo = (WaBaSchHVO)aggvo.getParentVO();
+			currenthvo.setSch_code(hvo.getSch_code());
+			currenthvo.setCyear(hvo.getCyear());
+			currenthvo.setCperiod(hvo.getCperiod());
 			getMainEditor().setValue(aggvo);
 		} else {
 			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pubapp_0", "0pubapp-0126")/*@res "Êý¾Ý´íÎó"*/);
