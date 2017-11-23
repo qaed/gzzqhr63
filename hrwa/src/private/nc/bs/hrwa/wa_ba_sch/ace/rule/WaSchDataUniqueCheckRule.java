@@ -53,7 +53,7 @@ public class WaSchDataUniqueCheckRule implements IRule<AggWaBaSchHVO> {
 		sql.append("	and ");
 		sql.append("	(sch_code ='" + vo.getSch_code() + "'");
 		sql.append("	or sch_name='" + vo.getSch_name() + "')");
-		sql.append("	and pk_ba_sch_h<>'" + vo.getPk_ba_sch_h() + "';");
+		sql.append("	and pk_ba_sch_h<>'" + vo.getPk_ba_sch_h() + "' and pk_org='" + vo.getPk_org() + "';");
 		return sql.toString();
 	}
 }
