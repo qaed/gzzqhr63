@@ -53,6 +53,8 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 	private static final String MAIN_VIEW_ID = "main";
 	private static final String CARD_WIN_ID = "com.yonyou.portal.hrss.WabaschComps.wabasch_cardwin";
 	private static final String CARD_WIN_TITLE = "编辑";
+	//当前选择的表体key，进入卡片界面时，只看到这个子表的孙表数据,同包下可见
+	static final String SELECTED_SCHUNIT_KEY = "selectedSchUnitKey";
 	private BaseDAO dao = null;
 
 	/**
@@ -76,7 +78,7 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId()) {
 			@Override
 			protected String postProcessRowSelectVO(SuperVO vo, Dataset ds) {
-				vo.setAttributeValue("vdef1", SessionUtil.getPk_psndoc());//只能看到需要分配的子表
+				vo.setAttributeValue("vdef1", SessionUtil.getPk_psndoc());//只能看到需要分配的子表.这里设值，可以直接作为查询条件
 				return super.postProcessRowSelectVO(vo, ds);
 			}
 		});
@@ -106,8 +108,12 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		}
 		comp.getItem("add").setEnabled(false);
 		comp.getItem("del").setEnabled(false);
-
-		onEdit(null);
+		//每次进入列表界面都会清空这个值，点编辑onEdit的时候再赋值
+		this.getCurrentAppCtx().removeAppAttribute(SELECTED_SCHUNIT_KEY);
+		//只有一条子表的时候，加载到列表界面后，直接进入卡片编辑界面
+		if (rows.length == 1) {
+			onEdit(null);
+		}
 
 	}
 
@@ -217,7 +223,7 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 
 		this.getCurrentAppCtx().navgateTo(props);
 		Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
-		this.getCurrentAppCtx().getAppSession().setAttribute("selectedSchUnitKey", Bodyds.getSelectedRow().getString((Bodyds.nameToIndex("pk_ba_sch_unit"))));
+		this.getCurrentAppCtx().getAppSession().setAttribute(SELECTED_SCHUNIT_KEY, Bodyds.getSelectedRow().getString((Bodyds.nameToIndex("pk_ba_sch_unit"))));
 	}
 
 	/**

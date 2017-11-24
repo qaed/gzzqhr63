@@ -9,6 +9,7 @@ import java.util.Map;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
+import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitAllocateUserCheckRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedDelRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataIsNotUsedRule;
 import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
@@ -51,6 +52,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 			AroundProcesser<AggWaBaUnitHVO> processer = new AroundProcesser<AggWaBaUnitHVO>(null);
 			processer.addBeforeRule(new WaUnitDataUniqueCheckRule());
 			processer.addBeforeRule(new WaUnitPsnUniqueCheckRule());
+			processer.addBeforeRule(new WaUnitAllocateUserCheckRule());
 			processer.before(aggvo);
 
 			BillInsert<AggWaBaUnitHVO> billinsert = new BillInsert<AggWaBaUnitHVO>();
@@ -103,6 +105,7 @@ public abstract class AceWaBaUnitPubServiceImpl {
 					processer.addBeforeRule(new WaUnitDataIsNotUsedRule());
 				}
 				processer.addBeforeRule(new WaUnitPsnUniqueCheckRule());
+				processer.addBeforeRule(new WaUnitAllocateUserCheckRule());
 			}
 			processer.before(aggvo);
 			/*
