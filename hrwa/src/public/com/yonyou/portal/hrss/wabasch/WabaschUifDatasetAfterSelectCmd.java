@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import nc.bs.hrss.pub.tool.SessionUtil;
 import nc.bs.logging.Logger;
 import nc.uap.lfw.core.cmd.UifDatasetAfterSelectCmd;
@@ -136,7 +138,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 				if ("nc.vo.wa.wa_ba.sch.WaBaSchTVO".equals(clazz)) {
 					if (sqlin != null && !"".equals(sqlin)) {
 						wherePart = " 1 = 1 and pk_ba_sch_unit in ( " + sqlin.substring(0, sqlin.length() - 1) + ")";
-//						LfwSysOutWrapper.println("查询孙表数据where：" + wherePart);
+						//						LfwSysOutWrapper.println("查询孙表数据where：" + wherePart);
 
 					} else {
 						//没有需要分配的数据
@@ -153,25 +155,38 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 
 					SuperVO[] vos = queryChildVOs(pinfo, vo, wherePart, isNewMaster, orderPart);//设置了主表主键，所以根据它进行查询
 					if ("nc.vo.wa.wa_ba.sch.WaBaSchBVO".equals(clazz)) {
-//						AppLifeCycleContext.current().getApplicationContext().getAppAttribute("selectedSchUnitKey");
+						//						AppLifeCycleContext.current().getApplicationContext().getAppAttribute("selectedSchUnitKey");
 						/*
 						 * 卡片的BVO只查出一个就好,即一次只分配一个单元的数据
 						 * 因为在卡片页面，修改-保存操作时调用savecmd需要传入BVOdataset「masterDataset」和TVOdataset「detailDataset」
 						 * 由于原始设计，第一个参数masterDataset会默认只拿第一个，如果可能导致TVO和BVO不对应
 						 */
-//						LfwSysOutWrapper.println("仅显示当前登录人可分配的数据，当前登录人pk：" + SessionUtil.getPk_psndoc());
+						//						LfwSysOutWrapper.println("仅显示当前登录人可分配的数据，当前登录人pk：" + SessionUtil.getPk_psndoc());
 						List<SuperVO> bvos = new ArrayList<SuperVO>(vos.length);
 						Collections.addAll(bvos, vos);
 						boolean hasConstructedSQL = false;//是否已构造sql语句
 						Iterator<SuperVO> it = bvos.iterator();
+						String selectedSchUnitKey =
+								(String) AppLifeCycleContext.current().getApplicationContext().getAppAttribute(WabaschListWinMainViewCtrl.SELECTED_SCHUNIT_KEY);
 						while (it.hasNext()) {
 							WaBaSchBVO bvo = (WaBaSchBVO) it.next();
-							//仅显示当前登录人可分配的数据
-							if (bvo.getVdef1() == null || !SessionUtil.getPk_psndoc().equals(bvo.getVdef1()) || hasConstructedSQL) {
-								it.remove();
-							} else if (!hasConstructedSQL) {//还未构造sql语句
-								sqlin += "'" + bvo.getPk_ba_sch_unit() + "',";
+							if (selectedSchUnitKey == null || selectedSchUnitKey.trim().length() == 0) {
+								//没有限制当前查看的子表
+								//仅显示当前登录人可分配的数据
+
+								if (bvo.getVdef1() == null || !StringUtils.equals(SessionUtil.getPk_psndoc(), bvo.getVdef1()) || hasConstructedSQL) {
+									it.remove();
+								} else if (!hasConstructedSQL) {//还未构造sql语句
+									sqlin += "'" + bvo.getPk_ba_sch_unit() + "',";
+									hasConstructedSQL = true;
+								}
+							} else {
+								//限制了查看子表的key
 								hasConstructedSQL = true;
+								sqlin += "'" + selectedSchUnitKey + "',";
+								if (bvo.getVdef1() == null || !StringUtils.equals(SessionUtil.getPk_psndoc(), bvo.getVdef1()) || !selectedSchUnitKey.equals(bvo.getPk_ba_sch_unit())) {
+									it.remove();
+								}
 							}
 						}
 						//此时bvos应该只剩下1个

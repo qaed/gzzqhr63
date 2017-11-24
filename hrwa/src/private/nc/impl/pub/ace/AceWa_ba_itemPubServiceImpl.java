@@ -1,24 +1,24 @@
 package nc.impl.pub.ace;
 
-import nc.vo.wa.wa_ba.item.ItemsVO;
-import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.hrwa.wa_ba_item.ace.rule.WaItemDataUniqueCheckRule;
 import nc.bs.hrwa.wa_ba_item.ace.rule.WaItemDeleteCheckRule;
-import nc.bs.hrwa.wa_ba_unit.ace.rule.WaUnitDataUniqueCheckRule;
-import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
 import nc.impl.pubapp.pattern.data.vo.VOQuery;
 import nc.impl.pubapp.pattern.data.vo.VOUpdate;
 import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
 import nc.md.persist.framework.IMDPersistenceQueryService;
+import nc.md.persist.framework.IMDPersistenceService;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pubapp.AppContext;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
+import nc.vo.wa.wa_ba.item.ItemsVO;
 
 public abstract class AceWa_ba_itemPubServiceImpl {
+	private IMDPersistenceService persist = NCLocator.getInstance().lookup(IMDPersistenceService.class);
 	IMDPersistenceQueryService query = NCLocator.getInstance().lookup(IMDPersistenceQueryService.class);
+
 	// 增加方法
 	public ItemsVO inserttreeinfo(ItemsVO vo) throws BusinessException {
 		try {
@@ -42,8 +42,9 @@ public abstract class AceWa_ba_itemPubServiceImpl {
 			AroundProcesser<ItemsVO> processer = new AroundProcesser<ItemsVO>(null);
 			processer.addBeforeRule(new WaItemDeleteCheckRule());
 			processer.before(new ItemsVO[] { vo });
-			VODelete<ItemsVO> voDel = new VODelete<ItemsVO>();
-			voDel.delete(new ItemsVO[] { vo });
+			persist.deleteBillFromDB(vo);
+			//			VODelete<ItemsVO> voDel = new VODelete<ItemsVO>();
+			//			voDel.delete(new ItemsVO[] { vo });
 		} catch (Exception e) {
 			ExceptionUtils.marsh(e);
 		}

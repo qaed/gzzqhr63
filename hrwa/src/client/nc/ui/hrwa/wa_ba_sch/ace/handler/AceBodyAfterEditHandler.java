@@ -75,6 +75,9 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 				MessageDialog.showWarningDlg(e.getBillCardPanel(), "提示", "以下单元存在重复：" + names + "\n系统将自动过滤重复数据，请检查带出数据。");
 			}
 			// 没有重复
+			// 因为表体第一行不会保存孙表数据
+			// 需要先增一行，当前表体有2行，让新增的数据从第二行开始写
+			e.getBillCardPanel().addLine();
 			for (int i = 0; i < refValues.length; i++) {
 
 				if (sourceValues.contains(refValues[i])) {
@@ -85,7 +88,7 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 					Object[] aggvos = waBaUnitMaintain.query("pk_wa_ba_unit ='" + refValues[i] + "'");
 					if (aggvos != null && aggvos.length > 0) {
 						AggWaBaUnitHVO aggvo = (AggWaBaUnitHVO) aggvos[0];
-						e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i, "ba_unit_code");// 主键（编码）
+						e.getBillCardPanel().setBodyValueAt(refValues[i], e.getRow() + i + 1, "ba_unit_code");// 主键（编码）
 						// 孙表面板
 						BillScrollPane TVObsp = billForm.getBillCardPanel().getBodyPanel("pk_s");
 						//
@@ -104,7 +107,12 @@ public class AceBodyAfterEditHandler implements IAppEventHandler<CardBodyAfterEd
 				}
 
 			}
+			// 写入孙表数据完成后，子表的新增的第一行和最后一行是空的
 			e.getBillCardPanel().delLine();
+			// 这第一行不能删，删了导致保存时，删行后的第一行的孙表数据丢失
+			// 这时候出现问题，当数据只有一条的时候，第一行的参照会保留值，要把他去掉
+			// e.getBillCardPanel().getBodyPanel("pk_b").delLine(new int[] { e.getRow() });
+			e.getBillCardPanel().setBodyValueAt(null, e.getRow(), "ba_unit_code");
 		}
 	}
 
