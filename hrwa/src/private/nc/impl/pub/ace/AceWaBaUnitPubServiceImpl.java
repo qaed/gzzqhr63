@@ -19,6 +19,7 @@ import nc.impl.pubapp.pattern.data.bill.BillInsert;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.data.vo.VOQuery;
 import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
+import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.jdbc.framework.processor.MapListProcessor;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
@@ -190,7 +191,13 @@ public abstract class AceWaBaUnitPubServiceImpl {
 				WaBaUnitBVO bvo = (WaBaUnitBVO) unitBVOMap.get(entry.getKey());
 				if (!StringUtils.equals(hashOrgUnit.get(pk_fatherdept), bvo.getPk_wa_ba_unit()) || !StringUtils.equals(psnJobVO.getPk_psnjob(), bvo.getPk_psnjob())) {
 					//放的分配部门不对，或者工作记录有变
-					bvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
+
+					String pk_wa_ba_unit =
+							(String) getDao().executeQuery("select h.pk_wa_ba_unit from wa_ba_unit_b b left join wa_ba_unit h on h.pk_wa_ba_unit=b.pk_wa_ba_unit  where b.pk_psnjob='" + psnJobVO.getPk_psnjob() + "' and src_obj_pk is null", new ColumnProcessor());
+					if (pk_wa_ba_unit == null) {//如果被放在自定义的单元中，位置不变
+						bvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
+					}
+
 					bvo.setPk_psnjob(psnJobVO.getPk_psnjob());
 					bvo.setDr(0);
 					updateList.add(bvo);
@@ -201,9 +208,15 @@ public abstract class AceWaBaUnitPubServiceImpl {
 				//当前应管理的人不在bvo里面
 				deletePsnPks.add(entry.getKey());
 				WaBaUnitBVO insertvo = new WaBaUnitBVO();
+				String pk_wa_ba_unit =
+						(String) getDao().executeQuery("select h.pk_wa_ba_unit from wa_ba_unit_b b left join wa_ba_unit h on h.pk_wa_ba_unit=b.pk_wa_ba_unit  where b.pk_psnjob='" + psnJobVO.getPk_psnjob() + "' and src_obj_pk is null", new ColumnProcessor());
+				if (pk_wa_ba_unit != null) {//如果被放在自定义的单元中，位置不变
+					insertvo.setPk_wa_ba_unit(pk_wa_ba_unit);
+				} else {
+					insertvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
+				}
 				insertvo.setPk_psndoc(entry.getKey());
 				insertvo.setPk_psnjob(psnJobVO.getPk_psnjob());
-				insertvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
 				insertvo.setDr(0);
 				insertList.add(insertvo);
 			}

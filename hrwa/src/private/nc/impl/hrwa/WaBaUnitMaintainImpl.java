@@ -102,7 +102,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	}
 
 	/**
-	 * 根据条件获取psnjobVO
+	 * 根据条件获取psnjobVO(按部门生产专用)
 	 * 
 	 * @param extCond
 	 * @return
@@ -110,8 +110,12 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	 */
 	@SuppressWarnings("unchecked")
 	private PsnJobVO[] queryPsnJobVO(String extCond) throws BusinessException {
-		StringBuffer sql =
-				new StringBuffer("").append(" select hi_psnjob.* ").append(" from hi_psnjob ").append(" inner join bd_psndoc on bd_psndoc.pk_psndoc = hi_psnjob.pk_psndoc  ").append(" inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc ").append(" left join hi_psndoc_trial on hi_psndoc_trial.pk_psndoc = hi_psnjob.pk_psndoc ");
+		StringBuffer sql = new StringBuffer("").append(" select hi_psnjob.* ");
+		sql.append(" from hi_psnjob ");
+		sql.append(" inner join bd_psndoc on bd_psndoc.pk_psndoc = hi_psnjob.pk_psndoc  ");
+		sql.append(" inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc ");
+		sql.append(" left join hi_psndoc_trial on hi_psndoc_trial.pk_psndoc = hi_psnjob.pk_psndoc ");
+		sql.append(" left join org_dept on org_dept.pk_dept = hi_psnjob.pk_dept ");
 
 		String condition = "(1=1) ";
 		condition += filterPsnjobCondition();
@@ -135,7 +139,45 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	}
 
 	/**
-	 * 人员任职记录的固定过滤条件
+	 * 根据条件获取psnjobVO(一键更新专用)
+	 * 
+	 * @param extCond
+	 * @return
+	 * @throws BusinessException
+	 */
+	@SuppressWarnings("unchecked")
+	private PsnJobVO[] queryFastUpadatePsnJobVO(String extCond) throws BusinessException {
+		StringBuffer sql = new StringBuffer("").append(" select hi_psnjob.* ");
+		sql.append(" from hi_psnjob ");
+		sql.append(" inner join bd_psndoc on bd_psndoc.pk_psndoc = hi_psnjob.pk_psndoc  ");
+		sql.append(" inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc ");
+		sql.append(" left join hi_psndoc_trial on hi_psndoc_trial.pk_psndoc = hi_psnjob.pk_psndoc ");
+		sql.append(" left join org_dept on org_dept.pk_dept = hi_psnjob.pk_dept ");
+
+		String condition = "(1=1) ";
+		condition += filterFastUpdatePsnjobCondition();//改为查找一键更新的人
+		//		condition += filterPsnjobCondition();//改为查找一键更新的人
+		if (!StringUtils.isEmpty(extCond)) {
+			condition = condition + " and " + extCond + " ";
+		}
+		// 人员权限过滤
+		String psnPowerSql =
+				SQLHelper.getPowerSql(PubEnv.getPk_group(), HICommonValue.RESOUCECODE_6007PSNJOB, IRefConst.DATAPOWEROPERATION_CODE, "hi_psnjob");
+		if (!StringUtils.isBlank(psnPowerSql)) {
+			condition = condition + " and " + psnPowerSql;
+		}
+		sql.append(" where " + condition);
+
+		sql.append("  order by  hi_psnjob.ismainjob desc");
+		List<PsnJobVO> psnjobVOs = (List<PsnJobVO>) new BaseDAO().executeQuery(sql.toString(), new BeanListProcessor(PsnJobVO.class));
+		if (psnjobVOs == null) {
+			return null;
+		}
+		return psnjobVOs.toArray(new PsnJobVO[0]);
+	}
+
+	/**
+	 * 人员任职记录的固定过滤条件(按部门生产专用)
 	 * 
 	 * @return
 	 */
@@ -164,8 +206,66 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
 		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000003FXX' ");//离职控编员工
 		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y'))");
-
+		//非本部门的部门负责人
+		whereBuf.append("  or (hi_psnorg.indocflag = 'Y' ");// 已加入人员档案
+		whereBuf.append("  and hi_psnorg.endflag = 'N' ");// 未结束
+		whereBuf.append("  and hi_psnorg.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("  and hi_psnjob.endflag = 'N' ");// 未结束
+		whereBuf.append("  and hi_psnjob.psntype = 0 "); // 人员类型为：人员
+		whereBuf.append("  and hi_psnjob.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("  and hi_psnjob.ismainjob = 'Y' ");//主职
+		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') = 'Y' ");//部门负责人
+		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
+		whereBuf.append("  and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y')");
+		whereBuf.append("  and hi_psnjob.pk_psndoc <> org_dept.principal )");//非本部门的部门负责人
 		whereBuf.append(" ) ");//主职
+		return whereBuf.toString();
+	}
+
+	/**
+	 * 人员任职记录的固定过滤条件(一键更新专用)
+	 * 
+	 * @return
+	 */
+	private String filterFastUpdatePsnjobCondition() {
+		StringBuffer whereBuf = new StringBuffer();
+		whereBuf.append(" and  (");
+		//在职人员
+		whereBuf.append("  (hi_psnorg.indocflag = 'Y' ");// 已加入人员档案
+		whereBuf.append("   and hi_psnorg.endflag = 'N' ");// 未结束
+		whereBuf.append("   and hi_psnorg.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("   and hi_psnjob.endflag = 'N' ");// 未结束
+		whereBuf.append("   and hi_psnjob.psntype = 0 "); // 人员类型为：人员
+		whereBuf.append("   and hi_psnjob.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("   and hi_psnjob.ismainjob = 'Y' ");//主职
+		whereBuf.append("   and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
+		whereBuf.append("   and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
+		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')>isnull(hi_psndoc_trial.begindate,'0000-00') ))");//非试用
+		//离职人员
+		whereBuf.append("  or (hi_psnorg.indocflag = 'Y'  ");//主职
+		whereBuf.append("  and hi_psnorg.endflag = 'Y' ");//主职
+		whereBuf.append("  and hi_psnorg.lastflag='Y' ");
+		whereBuf.append("  and to_char(sysdate-30,'yyyy-mm-dd')<hi_psnorg.enddate ");
+		whereBuf.append("  and hi_psnjob.psntype = 0 ");
+		whereBuf.append("  and hi_psnjob.lastflag = 'Y' ");
+		whereBuf.append("  and hi_psnjob.ismainjob='Y' ");//主职
+		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
+		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000003FXX' ");//离职控编员工
+		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')>isnull(hi_psndoc_trial.begindate,'0000-00') ))");
+		//在职人员
+		whereBuf.append("  or (hi_psnorg.indocflag = 'Y' ");// 已加入人员档案
+		whereBuf.append("  and hi_psnorg.endflag = 'N' ");// 未结束
+		whereBuf.append("  and hi_psnorg.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("  and hi_psnjob.endflag = 'N' ");// 未结束
+		whereBuf.append("  and hi_psnjob.psntype = 0 "); // 人员类型为：人员
+		whereBuf.append("  and hi_psnjob.lastflag = 'Y' "); // 最新记录
+		whereBuf.append("  and hi_psnjob.ismainjob = 'Y' ");//主职
+		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') = 'Y' ");//部门负责人
+		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
+		whereBuf.append("  and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')>isnull(hi_psndoc_trial.begindate,'0000-00') )");//非试用
+		whereBuf.append("  and hi_psnjob.pk_psndoc <> org_dept.principal )");//非本部门的部门负责人
+
+		whereBuf.append(" ) ");
 		return whereBuf.toString();
 	}
 
@@ -217,11 +317,15 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 	}
 
 	@Override
+	/**
+	 * 一键更新
+	 */
 	public void fastUpdate(LoginContext loginContext, String condition) throws BusinessException {
 		StringBuilder sqlWhere = new StringBuilder();
 		sqlWhere.append(" pk_dept in (select src_obj_pk from wa_ba_unit where pk_org='" + loginContext.getPk_org() + "') ");
 		//奖金分配单元中，当前组织下，可管理的部门（即可见部门）
-		AggHRDeptVO[] aggdepts = NCLocator.getInstance().lookup(IDeptQueryService.class).queryByCondition(loginContext, sqlWhere.toString());
+		AggHRDeptVO[] aggdepts =
+				NCLocator.getInstance().lookup(IDeptQueryService.class).queryByCondition(loginContext, sqlWhere.toString());
 		//当前应管理人员
 		sqlWhere.delete(0, sqlWhere.length());
 		sqlWhere.append(" ( hi_psnjob.pk_dept in (select pk_dept from org_dept where  1=1 and (");
@@ -231,8 +335,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		}
 		sqlWhere.delete(sqlWhere.length() - 3, sqlWhere.length());
 		sqlWhere.append("))) ");
-		Map<String, PsnJobVO> psnjobMap = arrayvoToMap(PsndocVO.PK_PSNDOC, queryPsnJobVO(sqlWhere.toString()));
-
+		Map<String, PsnJobVO> psnjobMap = arrayvoToMap(PsndocVO.PK_PSNDOC, queryFastUpadatePsnJobVO(sqlWhere.toString()));
 		//当前管理组织下的类型为「按部门生成」的分配单元
 		Object[] aggunit = (Object[]) query(" pk_org='" + loginContext.getPk_org() + "'");
 		/**
