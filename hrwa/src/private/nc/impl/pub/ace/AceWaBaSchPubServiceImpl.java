@@ -647,7 +647,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 				Map<String, String> userMap = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
 				if (userMap != null) {
 					//删除OA代办
-					SyncWorkitemUtil.getExternalWorkitemManager().deleteWorkitem("NC63HR", null, bvo.getPk_ba_sch_unit(), "HRWA", null, null, "{\"LoginName\":\"" + userMap.get("user_code") + "\"}", null, Integer.valueOf(1));
+					SyncWorkitemUtil.deleteExteranlWorkitem("NC63HR", null, bvo.getPk_ba_sch_unit(), "HRWA", null, null, userMap.get("user_code"), null, Integer.valueOf(1), bvo.getPk_ba_sch_unit());
 					//查询对应的奖金单元
 					sql.delete(0, sql.length());
 					sql.append("select name from wa_ba_unit where pk_wa_ba_unit='" + bvo.getBa_unit_code() + "'");
@@ -754,7 +754,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 			link.append("%26openBillId=").append(aggvo.getPrimaryKey());
 			link.append("%26state=State_Run");
 			//发送OA代办
-			SyncWorkitemUtil.getExternalWorkitemManager().beginWorkitem("NC63HR", new UFDateTime().toStdString(), "{\"LoginName\":\"" + creatorNameMap.get("user_code") + "\"}", null, null, null, link.toString(), bvo.getPk_ba_sch_unit(), "HRWA", null, null, null, title, "{\"LoginName\":\"" + receiverMap.get("user_code") + "\"}", Integer.valueOf(1));
+			SyncWorkitemUtil.beginExternalWorkitem("NC63HR", new UFDateTime().toStdString(), creatorNameMap.get("user_code"), null, null, null, link.toString(), bvo.getPk_ba_sch_unit(), "HRWA", null, null, null, title, receiverMap.get("user_code"), Integer.valueOf(1), bvo.getPk_ba_sch_unit());
 			try {
 				MessageCenter.sendMessage(ncmsg);
 			} catch (Exception e) {

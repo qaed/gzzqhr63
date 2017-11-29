@@ -747,26 +747,26 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 
 			AppInteractionUtil.showShortMessage(NCLangRes4VoTransl.getNCLangRes().getStrByID("pa", "PaPropertySaveListener-000000"));/*保存成功！*/
 			// 重新加载数据
-						onAfterRowSelect(new DatasetEvent(getMasterDs()));
-//			Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
-//			CmdInvoker.invoke(new WabaschUifDatasetAfterSelectCmd(getMasterDsId()));
-//			Row[] bodyrows = Bodyds.getAllRow();
-//			//显示字段的值
-//			for (Row row : bodyrows) {
-//				sql.delete(0, sql.length());
-//				sql.append("select doc1.name vdef1,doc2.name name1,doc3.name name2,doc4.name name3 from wa_ba_sch_unit sch");
-//				sql.append(" left join wa_ba_unit unit on sch.ba_unit_code=unit.pk_wa_ba_unit");
-//				sql.append(" left join bd_psndoc doc1 on doc1.pk_psndoc=sch.vdef1");
-//				sql.append(" left join bd_psndoc doc2 on doc2.pk_psndoc=unit.ba_mng_psnpk");
-//				sql.append(" left join bd_psndoc doc3 on doc3.pk_psndoc=unit.ba_mng_psnpk2");
-//				sql.append(" left join bd_psndoc doc4 on doc4.pk_psndoc=unit.ba_mng_psnpk3");
-//				sql.append(" where sch.pk_ba_sch_unit='" + row.getString(Bodyds.nameToIndex("pk_ba_sch_unit")) + "'");
-//				Map<String, String> nameMap = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
-//				row.setValue(Bodyds.nameToIndex("vdef1_name"), nameMap.get("vdef1"));//当期分配人
-//				row.setValue(Bodyds.nameToIndex("ba_mng_name1"), nameMap.get("name1"));//分配人1
-//				row.setValue(Bodyds.nameToIndex("ba_mng_name2"), nameMap.get("name2"));//分配人2
-//				row.setValue(Bodyds.nameToIndex("ba_mng_name3"), nameMap.get("name3"));//分配人3
-//			}
+			onAfterRowSelect(new DatasetEvent(getMasterDs()));
+			//			Dataset Bodyds = this.getCurrentView().getViewModels().getDataset("WaBaSchBVO");
+			//			CmdInvoker.invoke(new WabaschUifDatasetAfterSelectCmd(getMasterDsId()));
+			//			Row[] bodyrows = Bodyds.getAllRow();
+			//			//显示字段的值
+			//			for (Row row : bodyrows) {
+			//				sql.delete(0, sql.length());
+			//				sql.append("select doc1.name vdef1,doc2.name name1,doc3.name name2,doc4.name name3 from wa_ba_sch_unit sch");
+			//				sql.append(" left join wa_ba_unit unit on sch.ba_unit_code=unit.pk_wa_ba_unit");
+			//				sql.append(" left join bd_psndoc doc1 on doc1.pk_psndoc=sch.vdef1");
+			//				sql.append(" left join bd_psndoc doc2 on doc2.pk_psndoc=unit.ba_mng_psnpk");
+			//				sql.append(" left join bd_psndoc doc3 on doc3.pk_psndoc=unit.ba_mng_psnpk2");
+			//				sql.append(" left join bd_psndoc doc4 on doc4.pk_psndoc=unit.ba_mng_psnpk3");
+			//				sql.append(" where sch.pk_ba_sch_unit='" + row.getString(Bodyds.nameToIndex("pk_ba_sch_unit")) + "'");
+			//				Map<String, String> nameMap = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
+			//				row.setValue(Bodyds.nameToIndex("vdef1_name"), nameMap.get("vdef1"));//当期分配人
+			//				row.setValue(Bodyds.nameToIndex("ba_mng_name1"), nameMap.get("name1"));//分配人1
+			//				row.setValue(Bodyds.nameToIndex("ba_mng_name2"), nameMap.get("name2"));//分配人2
+			//				row.setValue(Bodyds.nameToIndex("ba_mng_name3"), nameMap.get("name3"));//分配人3
+			//			}
 		} catch (Exception e) {
 			throw new LfwRuntimeException(e);
 		}
@@ -883,7 +883,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 			sql.append("update sm_msg_content set isread='Y',ishandled='Y' where  detail like '" + pk_h + "@BAAL%' and receiver='" + userMap.get("cuserid") + "' and subject like '%" + unitName + "%' ");
 			getDao().executeUpdate(sql.toString());
 			//先把OA代办置为已办
-			SyncWorkitemUtil.getExternalWorkitemManager().endWorkitem("NC63HR", null, pk_ba_sch_unit, "HRWA", null, null, "{\"LoginName\":\"" + userMap.get("user_code") + "\"}", Integer.valueOf(1), Integer.valueOf(1));
+			SyncWorkitemUtil.endExternalWorkitem("NC63HR", null, pk_ba_sch_unit, "HRWA", null, null, userMap.get("user_code"), Integer.valueOf(1), Integer.valueOf(1), pk_ba_sch_unit);
 
 			//再推送消息
 			//查询该分配单元的所有分配人
@@ -988,7 +988,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		link.append("&billTypeCode=").append("BAAL");
 		link.append("&openBillId=").append((String) getMasterDs().getValue("pk_ba_sch_h"));
 		link.append("&state=State_Run");
-		SyncWorkitemUtil.getExternalWorkitemManager().beginWorkitem("NC63HR", new UFDateTime().toStdString(), "{\"LoginName\":\"" + creatorMap.get("user_code") + "\"}", null, null, null, link.toString(), pk_ba_sch_unit, "HRWA", null, null, null, title, "{\"LoginName\":\"" + receiverMap.get("user_code") + "\"}", Integer.valueOf(1));
+		SyncWorkitemUtil.beginExternalWorkitem("NC63HR", new UFDateTime().toStdString(),creatorMap.get("user_code"), null, null, null, link.toString(), pk_ba_sch_unit, "HRWA", null, null, null, title, receiverMap.get("user_code"), Integer.valueOf(1), pk_ba_sch_unit);
 	}
 
 	/**
