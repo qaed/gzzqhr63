@@ -982,12 +982,12 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		link.append("/portal/");
 		link.append("app/hrss_wabasch");
 		link.append("?nodecode=").append("E60135010");
-		link.append("&model=").append("nc.bs.hrss.pub.pf.WebBillApprovePageMode");
-		link.append("&NC=Y&pf_bill_editable=Y");
-		link.append("&billType=").append("BAAL");
-		link.append("&billTypeCode=").append("BAAL");
-		link.append("&openBillId=").append((String) getMasterDs().getValue("pk_ba_sch_h"));
-		link.append("&state=State_Run");
+		link.append("%26model=").append("nc.bs.hrss.pub.pf.WebBillApprovePageMode");
+		link.append("%26NC=Y%26pf_bill_editable=Y");
+		link.append("%26billType=").append("BAAL");
+		link.append("%26billTypeCode=").append("BAAL");
+		link.append("%26openBillId=").append((String) getMasterDs().getValue("pk_ba_sch_h"));
+		link.append("%26state=State_Run");
 		SyncWorkitemUtil.beginExternalWorkitem("NC63HR", new UFDateTime().toStdString(),creatorMap.get("user_code"), null, null, null, link.toString(), pk_ba_sch_unit, "HRWA", null, null, null, title, receiverMap.get("user_code"), Integer.valueOf(1), pk_ba_sch_unit);
 	}
 
