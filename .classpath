@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/public"/>
+	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/client"/>
+	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/private"/>
+	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/resources"/>
+	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/test"/>
 	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/public"/>
 	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/client"/>
 	<classpathentry kind="src" output="hrpub/classes" path="hrpub/src/private"/>
@@ -40,7 +45,6 @@
 	<classpathentry kind="src" output="hrss/classes" path="hrss/src/private"/>
 	<classpathentry kind="src" output="hrss/classes" path="hrss/resources"/>
 	<classpathentry kind="src" output="hrss/classes" path="hrss/src/test"/>
-	<classpathentry kind="src" output="out/resources" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Ant_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Product_Common_Library"/>
