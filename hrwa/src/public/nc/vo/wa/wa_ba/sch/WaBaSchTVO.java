@@ -289,14 +289,13 @@ public class WaBaSchTVO extends SuperVO {
 	 */
 	public String waitem5;
 	/**
-	 * dr值
-	 */
-	public Integer dr;
-
-	/**
 	 * 人员工作记录
 	 */
 	public String pk_psnjob;
+	/**
+	 * dr值
+	 */
+	public Integer dr;
 
 	/**
 	 * 获取class1

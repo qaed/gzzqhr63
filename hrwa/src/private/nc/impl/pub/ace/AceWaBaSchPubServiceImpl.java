@@ -77,7 +77,6 @@ public abstract class AceWaBaSchPubServiceImpl {
 		} catch (Exception e) {
 			ExceptionUtils.marsh(e);
 		}*/
-
 		BillInsert<AggWaBaSchHVO> billinsert = new BillInsert<AggWaBaSchHVO>();
 		AggWaBaSchHVO[] aggvo = (AggWaBaSchHVO[]) vos;
 
@@ -96,6 +95,7 @@ public abstract class AceWaBaSchPubServiceImpl {
 		// 主子数据插入
 		AggWaBaSchHVO[] aftervo = billinsert.insert(aggvo);
 		String[] bodyTableCodes = aftervo[0].getTableCodes();
+		List<ISuperVO> inserttvos = new ArrayList<ISuperVO>();
 		for (String bodyTabCode : bodyTableCodes) {
 			// 当前页签下的多条子数据
 			CircularlyAccessibleValueObject[] afterChildVOS = (aftervo[0]).getTableVO(bodyTabCode);
@@ -104,16 +104,17 @@ public abstract class AceWaBaSchPubServiceImpl {
 				if (bodyTabCode.equals("pk_b")) {
 					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
-						grandvos[i].setStatus(VOStatus.NEW);
+//						grandvos[i].setStatus(VOStatus.NEW);
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_h(((WaBaSchBVO) childVO).getPk_ba_sch_h());
 						((WaBaSchTVO) grandvos[i]).setPk_wa_ba_unit(((WaBaSchBVO) childVO).getPk_ba_sch_unit());
-
-						persist.saveBill(grandvos[i]);//persist是以status判断数据是否新增、更新、或删除
+						inserttvos.add(grandvos[i]);
+//						persist.saveBillWithRealDelete(grandvos[i]);//persist是以status判断数据是否新增、更新、或删除
 					}
 				}
 			}
 		}
+		insertVO(inserttvos);
 		return aftervo;
 	}
 
