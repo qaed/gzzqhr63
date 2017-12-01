@@ -2,8 +2,6 @@ package nc.vo.wa.wa_ba.sch;
 
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.lang.UFBoolean;
-import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
@@ -298,7 +296,7 @@ public class WaBaSchTVO extends SuperVO {
 	/**
 	 * 人员工作记录
 	 */
-	private String pk_psnjob;
+	public String pk_psnjob;
 
 	/**
 	 * 获取class1
