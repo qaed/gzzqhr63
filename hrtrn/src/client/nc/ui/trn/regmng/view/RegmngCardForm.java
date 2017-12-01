@@ -359,12 +359,15 @@ public class RegmngCardForm extends HrBillFormEditor implements BillCardBeforeEd
 			postModel.setPk_org(pk_org);
 			postModel.setPkdept(pk_dept);
 			String cond = " and ( " + SQLHelper.getNullSql("om_post.hrcanceled") + " or " + "om_post" + ".hrcanceled = 'N' ) ";
-
+			// 20171201 1/1 tsy 取消岗位的权限控制
+			/*
 			String powerSql = HiSQLHelper.getPsnPowerSql(PubEnv.getPk_group(), "60050deptinfo", "default", "org_dept");
 
 			if (!StringUtils.isBlank(powerSql)) {
 				cond = cond + " and om_post.pk_dept in ( select pk_dept from org_dept where  " + powerSql + " ) ";
 			}
+			*/
+			// 20171201 1/1 end
 			postModel.addWherePart(cond);
 		} else if ("newpk_job".equals(e.getItem().getKey())) {
 

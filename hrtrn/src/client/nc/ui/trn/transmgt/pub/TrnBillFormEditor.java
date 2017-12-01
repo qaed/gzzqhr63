@@ -330,7 +330,8 @@ public class TrnBillFormEditor extends HrBillFormEditor implements BillCardBefor
 			postModel.setPkdept(pk_dept);
 			String cond =
 					new StringBuilder().append(" and ( ").append(SQLHelper.getNullSql("om_post.hrcanceled")).append(" or ").append("om_post").append(".hrcanceled = 'N' ) ").toString();
-
+			// 20171201 1/1 tsy 取消岗位的权限控制
+			/*
 			String powerSql = "";
 			if ((getModel().getStapply_mode().intValue() == 2) && ("6113".equals(getModel().getBillType()))) {
 				powerSql = HiSQLHelper.getPsnPowerSql(PubEnv.getPk_group(), "60050deptinfo", "tansdefault", "org_dept");
@@ -342,6 +343,8 @@ public class TrnBillFormEditor extends HrBillFormEditor implements BillCardBefor
 				cond =
 						new StringBuilder().append(cond).append(" and om_post.pk_dept in ( select pk_dept from org_dept where  ").append(powerSql).append(" ) ").toString();
 			}
+			*/
+			// 20171201 1/1 end
 			postModel.addWherePart(cond);
 		} else if ("newpk_job".equals(e.getItem().getKey())) {
 			String pk_org = (String) getBillCardPanel().getHeadItem("newpk_org").getValueObject();
