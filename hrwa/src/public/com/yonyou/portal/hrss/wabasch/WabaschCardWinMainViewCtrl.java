@@ -838,7 +838,7 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 				//修订后绩效工资总额=标准职位薪酬*修订后考核系数
 				//20171103 mod by ljw 修改为修订后绩效工资总额=标准绩效工资*修订后考核系数
 				//				ds.setValue("revise_totalmoney", revise_factor.multiply(f_2).toString());
-				ds.setValue("revise_totalmoney", revise_factor.multiply(f_10).toString());
+				ds.setValue("revise_totalmoney", revise_factor.multiply(f_10,0).toString());//四舍五入为0位小数
 			}
 		}
 	}
