@@ -178,49 +178,51 @@ public abstract class AceWaBaUnitPubServiceImpl {
 		// 1.如果该人员已存在在当前组织的bvo中：检查对应的组织是否正确，pk_psnjob是否正确
 		// 2.如果该人员不存在当前组织管理部门中,但不确定是否在非当前管理部门中：先在bvo中删除该人员，再插入人员
 		Map<String, String> hashDeptFather = new HashMap<String, String>();
-		Iterator<Map.Entry<String, PsnJobVO>> it = psnjobMap.entrySet().iterator();
 		List<WaBaUnitBVO> updateList = new ArrayList<WaBaUnitBVO>();
 		List<String> deletePsnPks = new ArrayList<String>();
 		List<WaBaUnitBVO> insertList = new ArrayList<WaBaUnitBVO>();
-		while (it.hasNext()) {
-			Map.Entry<String, PsnJobVO> entry = (Map.Entry<String, PsnJobVO>) it.next();
-			PsnJobVO psnJobVO = entry.getValue();
-			String pk_fatherdept = getFatherDept(psnJobVO.getPk_dept(), hashDeptFather);
-			if (unitBVOMap.containsKey(entry.getKey())) {
-				//人员一一对应
-				WaBaUnitBVO bvo = (WaBaUnitBVO) unitBVOMap.get(entry.getKey());
-				if (!StringUtils.equals(hashOrgUnit.get(pk_fatherdept), bvo.getPk_wa_ba_unit()) || !StringUtils.equals(psnJobVO.getPk_psnjob(), bvo.getPk_psnjob())) {
-					//放的分配部门不对，或者工作记录有变
-
+		if (psnjobMap != null) {
+			Iterator<Map.Entry<String, PsnJobVO>> it = psnjobMap.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, PsnJobVO> entry = (Map.Entry<String, PsnJobVO>) it.next();
+				PsnJobVO psnJobVO = entry.getValue();
+				String pk_fatherdept = getFatherDept(psnJobVO.getPk_dept(), hashDeptFather);
+				if (unitBVOMap.containsKey(entry.getKey())) {
+					//人员一一对应
+					WaBaUnitBVO bvo = (WaBaUnitBVO) unitBVOMap.get(entry.getKey());
+					if (!StringUtils.equals(hashOrgUnit.get(pk_fatherdept), bvo.getPk_wa_ba_unit()) || !StringUtils.equals(psnJobVO.getPk_psnjob(), bvo.getPk_psnjob())) {
+						//放的分配部门不对，或者工作记录有变
+						
+						String pk_wa_ba_unit =
+								(String) getDao().executeQuery("select h.pk_wa_ba_unit from wa_ba_unit_b b left join wa_ba_unit h on h.pk_wa_ba_unit=b.pk_wa_ba_unit  where b.pk_psnjob='" + psnJobVO.getPk_psnjob() + "' and src_obj_pk is null", new ColumnProcessor());
+						if (pk_wa_ba_unit == null) {//如果被放在自定义的单元中，位置不变
+							bvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
+						}
+						
+						bvo.setPk_psnjob(psnJobVO.getPk_psnjob());
+						bvo.setDr(0);
+						updateList.add(bvo);
+					}
+					unitBVOMap.remove(entry.getKey());
+					
+				} else {
+					//当前应管理的人不在bvo里面
+					deletePsnPks.add(entry.getKey());
+					WaBaUnitBVO insertvo = new WaBaUnitBVO();
 					String pk_wa_ba_unit =
 							(String) getDao().executeQuery("select h.pk_wa_ba_unit from wa_ba_unit_b b left join wa_ba_unit h on h.pk_wa_ba_unit=b.pk_wa_ba_unit  where b.pk_psnjob='" + psnJobVO.getPk_psnjob() + "' and src_obj_pk is null", new ColumnProcessor());
-					if (pk_wa_ba_unit == null) {//如果被放在自定义的单元中，位置不变
-						bvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
+					if (pk_wa_ba_unit != null) {//如果被放在自定义的单元中，位置不变
+						insertvo.setPk_wa_ba_unit(pk_wa_ba_unit);
+					} else {
+						insertvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
 					}
-
-					bvo.setPk_psnjob(psnJobVO.getPk_psnjob());
-					bvo.setDr(0);
-					updateList.add(bvo);
+					insertvo.setPk_psndoc(entry.getKey());
+					insertvo.setPk_psnjob(psnJobVO.getPk_psnjob());
+					insertvo.setDr(0);
+					insertList.add(insertvo);
 				}
-				unitBVOMap.remove(entry.getKey());
-
-			} else {
-				//当前应管理的人不在bvo里面
-				deletePsnPks.add(entry.getKey());
-				WaBaUnitBVO insertvo = new WaBaUnitBVO();
-				String pk_wa_ba_unit =
-						(String) getDao().executeQuery("select h.pk_wa_ba_unit from wa_ba_unit_b b left join wa_ba_unit h on h.pk_wa_ba_unit=b.pk_wa_ba_unit  where b.pk_psnjob='" + psnJobVO.getPk_psnjob() + "' and src_obj_pk is null", new ColumnProcessor());
-				if (pk_wa_ba_unit != null) {//如果被放在自定义的单元中，位置不变
-					insertvo.setPk_wa_ba_unit(pk_wa_ba_unit);
-				} else {
-					insertvo.setPk_wa_ba_unit(hashOrgUnit.get(pk_fatherdept));
-				}
-				insertvo.setPk_psndoc(entry.getKey());
-				insertvo.setPk_psnjob(psnJobVO.getPk_psnjob());
-				insertvo.setDr(0);
-				insertList.add(insertvo);
+				it.remove();
 			}
-			it.remove();
 		}
 		deletePsnPks.addAll(unitBVOMap.keySet());
 		String insql = SQLHelper.joinToInSql(deletePsnPks.toArray(new String[0]), -1);

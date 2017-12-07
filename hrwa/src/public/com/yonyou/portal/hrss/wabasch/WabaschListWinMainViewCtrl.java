@@ -78,8 +78,14 @@ public class WabaschListWinMainViewCtrl<T extends WebElement> extends AbstractMa
 		CmdInvoker.invoke(new UifDatasetAfterSelectCmd(ds.getId()) {
 			@Override
 			protected String postProcessRowSelectVO(SuperVO vo, Dataset ds) {
-				vo.setAttributeValue("vdef1", SessionUtil.getPk_psndoc());//只能看到需要分配的子表.这里设值，可以直接作为查询条件
-				return super.postProcessRowSelectVO(vo, ds);
+				//				vo.setAttributeValue("vdef1", SessionUtil.getPk_psndoc());//只能看到需要分配的子表.这里设值，可以直接作为查询条件
+				String wherePart = super.postProcessRowSelectVO(vo, ds);
+				String wheresql =
+						" pk_ba_sch_h='" + vo.getAttributeValue("pk_ba_sch_h") + "' and ba_unit_code in (select pk_wa_ba_unit from wa_ba_unit where ba_mng_psnpk||ba_mng_psnpk2||ba_mng_psnpk3 like '%" + SessionUtil.getPk_psndoc() + "%') ";
+				if (wherePart != null) {
+					wheresql = wherePart + " and " + wheresql;
+				}
+				return wheresql;
 			}
 		});
 		MenubarComp comp = this.getCurrentView().getViewMenus().getMenuBar("menubar");

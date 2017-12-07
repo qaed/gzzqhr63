@@ -240,19 +240,20 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		whereBuf.append("   and hi_psnjob.ismainjob = 'Y' ");//主职
 		whereBuf.append("   and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
 		whereBuf.append("   and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
-		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')>isnull(hi_psndoc_trial.begindate,'0000-00') ))");//非试用
+		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')||'-02'>isnull(hi_psndoc_trial.regulardate,'0000-00') ))");//本月1号（含）之前转正的
 		//离职人员
 		whereBuf.append("  or (hi_psnorg.indocflag = 'Y'  ");//主职
 		whereBuf.append("  and hi_psnorg.endflag = 'Y' ");//主职
 		whereBuf.append("  and hi_psnorg.lastflag='Y' ");
-		whereBuf.append("  and to_char(sysdate-30,'yyyy-mm-dd')<hi_psnorg.enddate ");
+		whereBuf.append("  and to_char(sysdate,'yyyy-mm')<hi_psnorg.enddate ");//离职日期大于1号（不含）的，不删除
+
 		whereBuf.append("  and hi_psnjob.psntype = 0 ");
 		whereBuf.append("  and hi_psnjob.lastflag = 'Y' ");
 		whereBuf.append("  and hi_psnjob.ismainjob='Y' ");//主职
 		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') <> 'Y' ");//非一级部门负责人
 		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000003FXX' ");//离职控编员工
-		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')>isnull(hi_psndoc_trial.begindate,'0000-00') ))");
-		//在职人员
+		whereBuf.append("   and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')||'-02'>isnull(hi_psndoc_trial.regulardate,'0000-00') ))");//本月1号（含）之前转正的
+		//非本部门的部门负责人
 		whereBuf.append("  or (hi_psnorg.indocflag = 'Y' ");// 已加入人员档案
 		whereBuf.append("  and hi_psnorg.endflag = 'N' ");// 未结束
 		whereBuf.append("  and hi_psnorg.lastflag = 'Y' "); // 最新记录
@@ -262,7 +263,7 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		whereBuf.append("  and hi_psnjob.ismainjob = 'Y' ");//主职
 		whereBuf.append("  and isnull(hi_psnjob.jobglbdef7,'N') = 'Y' ");//部门负责人
 		whereBuf.append("  and hi_psnjob.pk_psncl='1001A410000000002HSB' ");//控编员工
-		whereBuf.append("  and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')>isnull(hi_psndoc_trial.begindate,'0000-00') )");//非试用
+		whereBuf.append("  and (isnull(hi_psndoc_trial.endflag,'Y')='Y' and isnull(hi_psndoc_trial.lastflag,'Y')='Y' and to_char(sysdate,'yyyy-mm')||'-02'>isnull(hi_psndoc_trial.regulardate,'0000-00') )");//本月1号（含）之前转正的
 		whereBuf.append("  and hi_psnjob.pk_psndoc <> org_dept.principal )");//非本部门的部门负责人
 
 		whereBuf.append(" ) ");

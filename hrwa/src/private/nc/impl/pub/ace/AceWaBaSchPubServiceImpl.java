@@ -104,17 +104,19 @@ public abstract class AceWaBaSchPubServiceImpl {
 				if (bodyTabCode.equals("pk_b")) {
 					WaBaSchTVO[] grandvos = (WaBaSchTVO[]) ((WaBaSchBVO) childVO).getPk_s();
 					for (int i = 0; grandvos != null && i < grandvos.length; i++) {
-//						grandvos[i].setStatus(VOStatus.NEW);
+						//						grandvos[i].setStatus(VOStatus.NEW);
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_unit(childVO.getPrimaryKey());
 						((WaBaSchTVO) grandvos[i]).setPk_ba_sch_h(((WaBaSchBVO) childVO).getPk_ba_sch_h());
 						((WaBaSchTVO) grandvos[i]).setPk_wa_ba_unit(((WaBaSchBVO) childVO).getPk_ba_sch_unit());
 						inserttvos.add(grandvos[i]);
-//						persist.saveBillWithRealDelete(grandvos[i]);//persist是以status判断数据是否新增、更新、或删除
+						//						persist.saveBillWithRealDelete(grandvos[i]);//persist是以status判断数据是否新增、更新、或删除
 					}
 				}
 			}
 		}
 		insertVO(inserttvos);
+		getDao().executeUpdate("delete from wa_ba_sch_unit where dr=1");
+		getDao().executeUpdate("delete from wa_ba_sch_psns where dr=1");
 		return aftervo;
 	}
 
@@ -472,9 +474,10 @@ public abstract class AceWaBaSchPubServiceImpl {
 				WaBaSchBVO[] bvos = (WaBaSchBVO[]) aggvo.getChildren(WaBaSchBVO.class);
 				if (bvos != null && bvos.length > 0) {
 					for (WaBaSchBVO bvo : bvos) {
-						Collection<?> gvos =
-								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'", false);
-						WaBaSchTVO[] tvos = gvos.toArray(new WaBaSchTVO[gvos.size()]);
+						Collection gvos =
+						//								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'", false);
+								getDao().retrieveByClause(WaBaSchTVO.class, " pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'");
+						WaBaSchTVO[] tvos = (WaBaSchTVO[]) gvos.toArray(new WaBaSchTVO[gvos.size()]);
 						bvo.setPk_s(tvos);
 					}
 				}

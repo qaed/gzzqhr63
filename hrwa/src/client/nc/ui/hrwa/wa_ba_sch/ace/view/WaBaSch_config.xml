@@ -796,7 +796,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
 		<property name="filledUpInFlow" value="true" />
 	</bean>
 	<!-- ÊÕ»Ø -->
-	<bean id="unCommitAction" class="nc.ui.pubapp.uif2app.actions.pflow.UnCommitScriptAction">
+	<bean id="unCommitAction" class="nc.ui.hrwa.wa_ba_sch.action.WaBaSchUnCommitAction">
 		<property name="model" ref="manageAppModel" />
 		<property name="editor" ref="billFormEditor" />
 		<property name="billType" value="BAAL" />

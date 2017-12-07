@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import nc.bs.hrss.pub.tool.SessionUtil;
 import nc.bs.logging.Logger;
 import nc.uap.lfw.core.cmd.UifDatasetAfterSelectCmd;
@@ -18,12 +16,15 @@ import nc.uap.lfw.core.data.PaginationInfo;
 import nc.uap.lfw.core.data.Row;
 import nc.uap.lfw.core.data.RowSet;
 import nc.uap.lfw.core.exception.LfwBusinessException;
-import nc.uap.lfw.core.log.LfwSysOutWrapper;
 import nc.uap.lfw.core.page.LfwView;
 import nc.uap.lfw.util.LfwClassUtil;
+import nc.ui.trade.business.HYPubBO_Client;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.SuperVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
+import nc.vo.wa.wa_ba.unit.WaBaUnitHVO;
+
+import org.apache.commons.lang.StringUtils;
 
 public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 	private String datasetId;
@@ -170,21 +171,26 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 								(String) AppLifeCycleContext.current().getApplicationContext().getAppAttribute(WabaschListWinMainViewCtrl.SELECTED_SCHUNIT_KEY);
 						while (it.hasNext()) {
 							WaBaSchBVO bvo = (WaBaSchBVO) it.next();
-							if (selectedSchUnitKey == null || selectedSchUnitKey.trim().length() == 0) {
+							if (hasConstructedSQL) {//已经构造了sql语句
+								if (!StringUtils.equals(selectedSchUnitKey, bvo.getPk_ba_sch_unit())) {
+									//卡片的表体只保留列表中选择的子表
+									it.remove();
+								}
+								continue;
+							} else if (selectedSchUnitKey == null || selectedSchUnitKey.trim().length() == 0) {
 								//没有限制当前查看的子表
 								//仅显示当前登录人可分配的数据
-
 								if (bvo.getVdef1() == null || !StringUtils.equals(SessionUtil.getPk_psndoc(), bvo.getVdef1()) || hasConstructedSQL) {
 									it.remove();
-								} else if (!hasConstructedSQL) {//还未构造sql语句
+								} else {
 									sqlin += "'" + bvo.getPk_ba_sch_unit() + "',";
-									hasConstructedSQL = true;
+									hasConstructedSQL = true;//后续的insql的pk不再增加
 								}
 							} else {
 								//限制了查看子表的key
-								hasConstructedSQL = true;
+								hasConstructedSQL = true;//后续的insql的pk不再增加
 								sqlin += "'" + selectedSchUnitKey + "',";
-								if (bvo.getVdef1() == null || !StringUtils.equals(SessionUtil.getPk_psndoc(), bvo.getVdef1()) || !selectedSchUnitKey.equals(bvo.getPk_ba_sch_unit())) {
+								if (!StringUtils.equals(selectedSchUnitKey, bvo.getPk_ba_sch_unit())) {
 									it.remove();
 								}
 							}
@@ -198,7 +204,7 @@ public class WabaschUifDatasetAfterSelectCmd extends UifDatasetAfterSelectCmd {
 					postProcessChildRowSelect(detailDs);
 
 					detailDs.setEnabled(false);
-				} catch (LfwBusinessException exp) {
+				} catch (Exception exp) {
 					Logger.error(exp.getMessage(), exp);
 					throw new nc.uap.lfw.core.exception.LfwRuntimeException(NCLangRes4VoTransl.getNCLangRes().getStrByID("pub", "UifDatasetAfterSelectCmd-000000") /*查询对象出错,*/
 							+ exp.getMessage() + ",ds id:" + detailDs.getId(), NCLangRes4VoTransl.getNCLangRes().getStrByID("pub", "UifDatasetAfterSelectCmd-000001"));/*查询过程出现错误*/

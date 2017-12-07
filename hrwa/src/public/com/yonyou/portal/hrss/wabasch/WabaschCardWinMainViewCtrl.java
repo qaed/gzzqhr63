@@ -130,19 +130,25 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 
 			item.setEnabled(false);
 		}
-		comp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
+		
+//		comp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
 
 		MenubarComp menucomp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
-		GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
-		menucomp.getItem("approve").setEnabled(false);
-		menucomp.getItem("save").setEnabled(false);
-		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(false);
-		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
-		//可以不改数据，直接完成分配
-		menucomp.getItem("allocated").setEnabled(true);
-		menucomp.getItem("add").setEnabled(false);
-		menucomp.getItem("copy").setEnabled(false);
-		menucomp.getItem("del").setEnabled(false);
+		for (MenuItem menuItem : menucomp.getMenuList()) {
+			menuItem.setEnabled(false);
+		}
+		menucomp.getItem("back").setEnabled(true);
+		
+//		GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
+//		menucomp.getItem("approve").setEnabled(false);
+//		menucomp.getItem("save").setEnabled(false);
+//		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Save").setEnabled(false);
+//		gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(false);
+//		//可以不改数据，直接完成分配
+//		menucomp.getItem("allocated").setEnabled(false);
+//		menucomp.getItem("add").setEnabled(false);
+//		menucomp.getItem("copy").setEnabled(false);
+//		menucomp.getItem("del").setEnabled(false);
 
 		uap.web.bd.pub.AppUtil.addAppAttr(LfwFileConstants.SYSID, LfwFileConstants.SYSID_BAFILE);
 
@@ -278,6 +284,14 @@ public class WabaschCardWinMainViewCtrl<T extends WebElement> extends AbstractMa
 				row.setValue(Bodyds.nameToIndex("ba_mng_name1"), nameMap.get("name1"));//分配人1
 				row.setValue(Bodyds.nameToIndex("ba_mng_name2"), nameMap.get("name2"));//分配人2
 				row.setValue(Bodyds.nameToIndex("ba_mng_name3"), nameMap.get("name3"));//分配人3
+				if (row.getString(Bodyds.nameToIndex("vdef1"))!=null && StringUtils.equals(SessionUtil.getPk_psndoc(),row.getString(Bodyds.nameToIndex("vdef1")))) {
+					GridComp gridComp = (GridComp) this.getCurrentView().getViewComponents().getComponent("WaBaSchTVO_grid");
+					gridComp.getMenuBar().getItem("WaBaSchTVO_grid$HeaderBtn_Edit").setEnabled(true);
+					MenubarComp menucomp = this.getCurrentView().getViewMenus().getMenuBar("menubar");
+					menucomp.getItem("inorout").setEnabled(true);
+					menucomp.getItem("allocated").setEnabled(true);
+					menucomp.getItem("save").setEnabled(false);
+				}
 			}
 		} catch (Exception e) {
 			throw new LfwRuntimeException(e);

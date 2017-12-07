@@ -22,6 +22,7 @@ import nc.vo.wa.wa_ba.func.FunctionParse;
 import nc.vo.wa.wa_ba.item.ItemsVO;
 import nc.vo.wa.wa_ba.sch.WaBaSchBVO;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -67,7 +68,8 @@ public class AceWaBaItemDataPubServiceImpl extends AppendBaseDAO {
 
 	private void doCaculate(ItemsVO[] classItemVOs) throws BusinessException {
 
-		if (classItemVOs == null) {
+		if (classItemVOs == null || ArrayUtils.isEmpty(schbvos)) {
+			//没有需要计算的项目，或者没有需要计算的表体
 			return;
 		}
 		// 分别计算每个项目，更新所有孙表数据
