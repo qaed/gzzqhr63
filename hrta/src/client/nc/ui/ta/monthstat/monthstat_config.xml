@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.ta.pub.TALoginContext"></bean>
+
+	<!-- 模型部分配置 -->
+
+	<!-- 应用服务类，负责进行模型操作的处理 -->
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory"/>
+
+	<!-- 人员界面管理应用模型 -->
+	<bean id="psnModel" class="nc.ui.ta.monthstat.model.PsnMonthStatAppModel">
+		<property name="context" ref="context"></property>
+		<property name="resourceCode" value="60170monthreport"></property>
+		<property name="editMdOperateCode" value="MonthStatEdit"></property>
+	</bean>
+	<!--人员模型,用于审批-->
+	<bean id="psnPFModel" class="nc.ui.ta.monthstat.model.PsnMonthStatPFAppModel">
+		<property name="billType" value="6407" />
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<!--
+		<property name="service" ref="modelService" />
+		<property name="approveSite" value="false" />
+		-->
+	</bean>
+	<bean id="deptModel" class="nc.ui.ta.monthstat.model.DeptMonthStatAppModel">
+		<property name="context" ref="context"></property>
+		<property name="resourceCode" value="60170monthreport"></property>
+		<property name="editMdOperateCode" value="MonthStatEdit"></property>
+	</bean>
+	<bean id="enableJudge" class="nc.ui.ta.pub.action.EnableJudge">
+		<property name="model" ref="psnModel"/>
+	</bean>
+	<bean id="deptEnableJudge" class="nc.ui.ta.pub.action.EnableJudge">
+		<property name="model" ref="deptModel"/>
+	</bean>
+
+	<!-- 查询模板的监听器，负责处理查询模板上的参照 -->
+	<bean id="queryEditorListener" class="nc.ui.ta.pub.QueryEditorListener"/>
+	<!-- 人员数据模型管理器，负责人员界面的模型初始化 ,name属性是bean的别名，目的是让toftadapter找到用modelDataManager这个名字找到这个bean-->
+	<bean id="psnManager" name="modelDataManager" class="nc.ui.ta.monthstat.model.PsnMonthStatModelDataManager">
+		<property name="psnModel" ref="psnPFModel"></property>
+		<property name="model" ref="psnModel"></property>
+		<property name="paginationModel" ref="paginationModel" />
+	</bean>
+	<bean id="deptManager" class="nc.ui.ta.monthstat.model.DeptMonthStatModelDataManager">
+		<property name="model" ref="deptModel"></property>
+	</bean>
+
+	<!-- 界面元素 -->
+	<!-- 人员界面 -->
+	<bean id="psnView" class="nc.ui.ta.monthstat.view.PsnMonthStatPanel" init-method="initUI">
+		<property name="model" ref="psnModel"></property>
+		<property name="paginationBar" ref="paginationBar"></property>
+		<property name="paginationModel" ref="paginationModel" />
+	</bean>
+	<bean id="componentValueManager" class="nc.ui.uif2.editor.value.BillCardPanelVOValueAdapter">
+		<property name="billVOName" value="nc.vo.ta.monthstat.AggMonthStatVO" />
+		<property name="headVOName" value="nc.vo.ta.monthstat.MonthStatVO" />
+		<property name="bodyVOName" value="nc.vo.ta.monthstat.MonthStatbVO" />
+	</bean>
+
+	<!-- 分页面板 -->
+	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar">
+		<property name="paginationModel" ref="paginationModel" />
+	</bean>
+	<bean id="paginationModel" class="nc.ui.ta.statistic.pub.model.ChangableColumnPaginationModel"
+	init-method="init">
+		<property name="paginationQueryService" ref="modelService" />
+		<property name="model" ref="psnModel"></property>
+
+	</bean>
+	<bean id="modelService" class="nc.ui.ta.monthstat.model.PsnModelService" >
+		<property name="dataManager" ref="psnManager"/>
+	</bean>
+
+	<!-- 部门界面 -->
+	<bean id="deptView" class="nc.ui.ta.monthstat.view.DeptMonthStatPanel" init-method="initUI">
+		<property name="model" ref="deptModel"></property>
+		<property name="deptPsnDetailAction" ref="ViewDeptPsnDetailAction" />
+	</bean>
+	<bean id="toftpanelActionContributors" class="nc.ui.uif2.actions.ActionContributors">
+		<property name="contributors">
+			<list>
+				<ref bean="psnActions"/>
+				<ref bean="deptActions"/>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 人员界面的按钮 -->
+	<bean id="psnActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="psnView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="EditAction" />
+				<ref bean="nullaction" />
+				<ref bean="QueryAction"/>
+				<ref bean="RefreshAction"/>
+				<ref bean="FilterAction"/>
+				<ref bean="nullaction" />
+				<ref bean="GenerateAction"/>
+				<ref bean="ViewSetAction"/>
+				<ref bean="commitMenuAction"/>
+				<ref bean="auiditActionGroup"/>
+				<ref bean="queryAuditFlowAction"/>
+				<ref bean="nullaction" />
+				<ref bean="UnGenAction"/>
+				<ref bean="ViewPsnDayStatAction" />
+				<ref bean="nullaction" />
+				<ref bean="impexpActionGroup"/>
+				<ref bean="PrintActiongroup"/>
+
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="SaveAction"/>
+				<ref bean="nullaction" />
+				<ref bean="CancelAction"/>
+			</list>
+		</property>
+		<property name="model" ref="psnModel"/>
+	</bean>
+
+	<!-- 部门界面的按钮 -->
+	<bean id="deptActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="deptView"/>
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="DeptViewSetAction"/>
+				<ref bean="nullaction" />
+				<ref bean="deptQueryAction" />
+				<ref bean="deptRefreshAction" />
+				<ref bean="DeptFilterAction" />
+				<ref bean="ViewDeptPsnDetailAction" />
+				<ref bean="nullaction" />
+				<ref bean="DeptPrintActiongroup"/>
+			</list>
+		</property>
+		<property name="editActions">
+			<list></list>
+		</property>
+		<property name="model" ref="deptModel"/>
+	</bean>
+	<bean id="nullaction" class="nc.funcnode.ui.action.SeparatorAction" />
+	<bean id="GenerateAction" class="nc.ui.ta.monthstat.action.GenerateMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="dataManager" ref="psnManager"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="EditAction" class="nc.ui.ta.monthstat.action.EditMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="SaveAction" class="nc.ui.ta.monthstat.action.SaveMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="editor" ref="psnView"/>
+		<property name="enabled" value="false"/>
+	</bean>
+	<bean id="CancelAction" class="nc.ui.ta.pub.action.CancelAction">
+		<property name="model" ref="psnModel"/>
+		<property name="enabled" value="false"/>
+	</bean>
+	<bean id="QueryAction" class="nc.ui.ta.monthstat.action.QueryMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="psnManager" ref="psnManager"/>
+		<property name="queryDelegator" ref="queryDelegator"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="deptQueryAction" class="nc.ui.ta.monthstat.action.DeptMonthStatQueryAction">
+		<property name="model" ref="deptModel"/>
+		<property name="deptManager" ref="deptManager"/>
+		<property name="queryDelegator" ref="deptQueryDelegator"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="queryDelegator" class="nc.ui.ta.pub.quereytemplate.FromWhereSQLPeriodQueryDelegator" init-method="getQueryDlg">
+		<property name="model" ref="psnModel"/>
+		<property name="nodeKey" value="psnquery"/>
+		<property name="context" ref="context"/>
+		<property name="queryEditorListener" ref="queryEditorListener"/>
+	</bean>
+	<bean id="deptQueryDelegator" class="nc.ui.ta.monthstat.action.DeptQueryDelegator" init-method="getQueryDlg">
+		<property name="model" ref="deptModel"/>
+		<property name="nodeKey" value="deptquery"/>
+		<property name="context" ref="context"/>
+		<property name="queryEditorListener" ref="queryEditorListener"/>
+	</bean>
+	<bean id="RefreshAction" class="nc.ui.ta.monthstat.action.RefreshMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="psnManager" ref="psnManager"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="deptRefreshAction" class="nc.ui.ta.monthstat.action.DeptMonthStatRefreshAction">
+		<property name="model" ref="deptModel"/>
+		<property name="deptManager" ref="deptManager"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<bean id="ViewPsnDayStatAction" class="nc.ui.ta.monthstat.action.ViewPsnDayStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="psnManager" ref="psnManager"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="ViewSetAction" class="nc.ui.ta.monthstat.action.ViewSetAction">
+		<property name="model" ref="psnModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="DeptViewSetAction" class="nc.ui.ta.monthstat.action.DeptViewSetAction">
+		<property name="model" ref="deptModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<bean id="UnGenAction" class="nc.ui.ta.monthstat.action.UnGenrateMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="ImportAction" class="nc.ui.ta.monthstat.action.ImportMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="ExportAction" class="nc.ui.ta.monthstat.action.ExportMonthStatAction">
+		<property name="model" ref="psnModel"/>
+		<property name="datapanel" ref="psnView"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="impexpActionGroup" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="impexp"></property>
+		<property name="name" >
+			<bean class='nc.ui.uif2.I18nFB'>
+				<property name="resDir" value="6017basedoc" />
+				<property name="defaultValue" value="导入导出" />
+				<property name="resId" value="06017basedoc1818" />
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="ImportAction" />
+				<ref bean="ExportAction" />
+			</list>
+		</property>
+		<property name="enabled" value="true"/>
+	</bean>
+	<bean id="ApproveAction" class="nc.ui.ta.monthstat.action.ApproveMonthStatAction">
+		<property name="model" ref="psnPFModel"/>
+		<property name="psnModel" ref="psnModel"/>
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="dataPanel" ref="psnView"></property>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="UnApproveAction" class="nc.ui.ta.monthstat.action.UnApproveMonthStatAction">
+		<property name="model" ref="psnPFModel"/>
+		<property name="psnModel" ref="psnModel"/>
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="dataPanel" ref="psnView"></property>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="auiditActionGroup" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code" value="audit"></property>
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="common"></property>
+				<property name="defaultValue" value="审核" />
+				<property name="resId" value="UC001-0000027"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="ApproveAction" />
+				<ref bean="UnApproveAction" />
+			</list>
+		</property>
+		<property name="enabled" value="false"/>
+	</bean>
+	<bean id="FilterAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="filter"></property>
+		<property name="name">
+			<bean class='nc.ui.uif2.I18nFB'>
+				<property name="resDir" value="common" />
+				<property name="defaultValue" value="过滤" />
+				<property name="resId" value="UCH069" />
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="ShowNoDataRecordAction" />
+			</list>
+		</property>
+		<property name="enabled" value="true"/>
+	</bean>
+	<bean id="ShowNoDataRecordAction" class="nc.ui.ta.monthstat.action.ShowNoDataRecordsAction">
+		<property name="model" ref="psnModel"/>
+		<property name="dataManager" ref="psnManager"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="DeptFilterAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="filter"></property>
+		<property name="name">
+			<bean class='nc.ui.uif2.I18nFB'>
+				<property name="resDir" value="common" />
+				<property name="defaultValue" value="过滤" />
+				<property name="resId" value="UCH069" />
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="DeptShowNoDataRecordAction" />
+			</list>
+		</property>
+		<property name="enabled" value="true"/>
+	</bean>
+	<bean id="DeptShowNoDataRecordAction" class="nc.ui.ta.monthstat.action.DeptShowNoDataRecordsAction">
+		<property name="model" ref="deptModel"/>
+		<property name="dataManager" ref="deptManager"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<bean id="ViewDeptPsnDetailAction" class="nc.ui.ta.monthstat.action.DeptPsnDetailAction">
+		<property name="model" ref="deptModel"/>
+		<property name="enabled" value="false"/>
+		<property name="monthStatPanel" ref="psnView"/>
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<bean id="PrintActiongroup" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code">
+			<value>printgroup</value>
+		</property>
+		<property name="name" >
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="common"></property>
+				<property name="defaultValue" value="打印" />
+				<property name="resId" value="UC001-0000007"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="printDirectAction"/>
+				<ref bean="printPreviewAction"/>
+				<ref bean="OutputAction"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="printPreviewAction" class="nc.ui.ta.monthstat.action.MonthstatPrintPreviewAction" parent="printDirectAction">
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="printDirectAction" class="nc.ui.ta.monthstat.action.MonthstatPrintDirectAction">
+		<property name="dataPanel" ref="psnView"></property>
+		<property name="model" ref="psnModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="OutputAction" class="nc.ui.ta.monthstat.action.OutputMonthStatAction" parent="printDirectAction">
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<bean id="DeptPrintActiongroup" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code">
+			<value>printgroup</value>
+		</property>
+		<property name="name" >
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="common"></property>
+				<property name="defaultValue" value="打印" />
+				<property name="resId" value="UC001-0000007"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="DeptPrintDirectAction"/>
+				<ref bean="DeptPrintPreviewAction"/>
+				<ref bean="DeptOutputAction"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="DeptPrintPreviewAction" class="nc.ui.ta.monthstat.action.DeptMonthstatPrintPreviewAction" parent="DeptPrintDirectAction">
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<bean id="DeptPrintDirectAction" class="nc.ui.ta.monthstat.action.DeptMonthstatPrintDirectAction">
+		<property name="dataDeptPanel" ref="deptView"></property>
+		<property name="model" ref="deptModel"/>
+		<property name="enabled" value="false"/>
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<bean id="DeptOutputAction" class="nc.ui.ta.monthstat.action.OutputDeptMonthStatAction" parent="DeptPrintDirectAction">
+		<property name="ncActionStatusJudge" ref="deptEnableJudge"/>
+	</bean>
+	<!--初始化数据监听-->
+	<bean id="InitDataListener" class="nc.ui.ta.monthstat.model.PsnMonthStatInitDataListener">
+		<property name="model" ref="psnPFModel"/>
+		<property name="psnModel" ref="psnModel"/>
+		<property name="dataManager" ref="psnManager" />
+		<property name="orgPanel" ref="orgpanel" />
+	</bean>
+	<!-- 提交 nc.ui.pubapp.uif2app.actions.pflow.CommitScriptAction-->
+	<bean id="commitAction" class="nc.ui.ta.monthstat.action.CommitMonthStatAction">
+		<property name="model" ref="psnPFModel"/>
+		<property name="psnModel" ref="psnModel"/>
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="dataPanel" ref="psnView"/>
+		<property name="enabled" value="true"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+
+	</bean>
+	<!-- 收回 -->
+	<bean id="unCommitAction" class="nc.ui.ta.monthstat.action.UnCommitMonthStatAction">
+		<property name="model" ref="psnPFModel"/>
+		<property name="psnModel" ref="psnModel"/>
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="dataPanel" ref="psnView"/>
+		<property name="enabled" value="true"/>
+		<property name="ncActionStatusJudge" ref="enableJudge"/>
+	</bean>
+	<!-- 提交按钮组 -->
+	<bean id="commitMenuAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code" value="commitMenuAction" />
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="common"></property>
+				<property name="resId" value="2UC000-001107"></property>
+				<property name="defaultValue" value="提交"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="commitAction" />
+				<ref bean="unCommitAction" />
+			</list>
+		</property>
+	</bean>
+	<!-- 查看审批流 -->
+	<bean id="queryAuditFlowAction" class="nc.ui.ta.monthstat.action.ApproveStatusInfoMonthStatAction">
+		<property name="billType" value="6407" />
+		<property name="model" ref="psnModel" />
+		<property name="psnModel" ref="psnModel"/>
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="dataPanel" ref="psnView"/>
+	</bean>
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model" ref="psnModel" />
+		<property name="saveaction" ref="SaveAction" />
+		<property name="cancelaction" ref="CancelAction" />
+	</bean>
+
+	<!-- 界面布局总装 -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="orgpanel"></property>
+					</bean>
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+						<property name="tabs">
+							<list>
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="name">
+										<bean class='nc.ui.uif2.I18nFB'>
+											<property name="resDir" value="6017dayandmonthstat" />
+											<property name="defaultValue" value="员工考勤月报" />
+											<property name="resId" value="X6017daystat06" />
+										</bean>
+									</property>
+									<property name="component" ref="psnView"></property>
+								</bean>
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="name">
+										<bean class='nc.ui.uif2.I18nFB'>
+											<property name="resDir" value="6017dayandmonthstat" />
+											<property name="defaultValue" value="部门考勤月报" />
+											<property name="resId" value="X6017daystat07" />
+										</bean>
+									</property>
+									<property name="component" ref="deptView"></property>
+								</bean>
+							</list>
+						</property>
+					</bean>
+				</property>
+				<property name="dividerLocation">
+					<value>30</value>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 界面零件 -->
+	<bean id="orgpanel" class="nc.ui.ta.monthstat.view.MonthStatOrgPanel" init-method="initUI">
+		<property name="model" ref="psnModel" />
+		<property name="dataManager" ref="psnManager" />
+		<property name="deptModel" ref="deptModel" />
+		<property name="deptManager" ref="deptManager" />
+		<property name="pk_orgtype" value="HRORGTYPE00000000000" />
+		<property name="currentShowingJudge" ref="curShowingJudge" />
+		<property name="paginationModel" ref="paginationModel" />
+	</bean>
+	<!-- 界面显示判断器 -->
+	<bean id="curShowingJudge" class="nc.ui.ta.daystat.view.CurrentShowingJudge">
+		<property name="psnView" ref="psnView" />
+		<property name="deptView" ref="deptView" />
+	</bean>
+</beans>
+

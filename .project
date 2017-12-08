@@ -27,4 +27,11 @@
 		<nature>nc.uap.mde.BizCompProjectNature</nature>
 		<nature>com.yonyou.studio.ria.core.ModuleProjectNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>NCHOME</name>
+			<type>2</type>
+			<location>F:/Work/ufida/gzzq_hr63</location>
+		</link>
+	</linkedResources>
 </projectDescription>
