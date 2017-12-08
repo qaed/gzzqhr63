@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="gbk"?>
+<module name="hrta">
+	<public>
+		<!-- 接口 -->
+		<component priority="0" singleton="true" remote="true" tx="CMT" supportAlias="true">
+			<interface>nc.hr.frame.persistence.IPersistenceDAO</interface>
+			<implementation>nc.hr.frame.persistence.PersistenceDAO</implementation>
+		</component>
+
+	</public>
+</module>
