@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="hrjf/classes" path="hrjf/src/public"/>
+	<classpathentry kind="src" output="hrjf/classes" path="hrjf/src/client"/>
+	<classpathentry kind="src" output="hrjf/classes" path="hrjf/src/private"/>
+	<classpathentry kind="src" output="hrjf/classes" path="hrjf/resources"/>
+	<classpathentry kind="src" output="hrjf/classes" path="hrjf/src/test"/>
 	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/public"/>
 	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/client"/>
 	<classpathentry kind="src" output="hrtrn/classes" path="hrtrn/src/private"/>
@@ -55,6 +60,5 @@
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Private_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Lang_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Generated_EJB"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
