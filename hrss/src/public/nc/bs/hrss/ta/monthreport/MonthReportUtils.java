@@ -382,4 +382,17 @@ public class MonthReportUtils {
 	public static ApplicationContext getApplicationContext() {
 		return AppLifeCycleContext.current().getApplicationContext();
 	}
+	
+	public static void resetData(Dataset ds, String srcid) {
+		MonthStatVO[] monthStatVOs = null;
+
+		IMonthStatQueryMaintain service = (IMonthStatQueryMaintain) NCLocator.getInstance().lookup(IMonthStatQueryMaintain.class);
+		try {
+			monthStatVOs = service.queryBySrc(srcid);
+		} catch (BusinessException e) {
+			new HrssException(e).deal();
+		}
+		SuperVO[] vos = DatasetUtil.paginationMethod(ds, monthStatVOs);
+		new SuperVO2DatasetSerializer().serialize(vos, ds, 0);
+	}
 }

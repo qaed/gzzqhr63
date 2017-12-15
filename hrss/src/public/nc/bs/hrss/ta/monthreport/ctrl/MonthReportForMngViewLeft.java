@@ -85,19 +85,22 @@ public class MonthReportForMngViewLeft extends IQueryController {
 					NCLocator.getInstance().lookup(ITBMPsndocQueryService.class).queryLatestByPsndocDate(TaAppContextUtil.getHROrg(), monthStatVOs[0].getPk_psndoc(), periodVO.getBegindate(), periodVO.getEnddate());
 			PsnJobVO[] psnjobvos =
 					NCLocator.getInstance().lookup(IPsndocQryService.class).queryPsnjobByPKs(new String[] { psndocVO.getPk_psnjob() });
-
+			SessionUtil.getSessionBean().setIncludeSubDept(true);
 			if (psnjobvos != null && psnjobvos[0] != null) {
-				HRDeptVO[] depts = SessionUtil.getHRDeptVO();
-				if (!ArrayUtils.isEmpty(depts)) {
-					for (HRDeptVO dept : depts) {
-						if (dept.getPk_dept().equals(psnjobvos[0].getPk_dept())) {
 
-							SessionUtil.setDefaultDeptToSession(psnjobvos[0].getPk_dept());
-							break;
-						}
+				AppLifeCycleContext.current().getApplicationContext().addAppAttribute("pk_dept", psnjobvos[0].getPk_dept());
+				//				if (!ArrayUtils.isEmpty(depts)) {
+				//					for (HRDeptVO dept : depts) {
+				//						if (dept.getPk_dept().equals(psnjobvos[0].getPk_dept())) {
 
-					}
-				}
+				//							SessionUtil.setDefaultDeptToSession(psnjobvos[0].getPk_dept());
+				//				SessionUtil.setCurrentDept(depts[0].getPk_dept(), true);
+				//				SessionUtil.setDefaultDeptToSession(psnjobvos[0].getPk_dept());
+				//							break;
+				//						}
+
+				//					}
+				//				}
 			}
 			//			PeriodVO periodVO =
 			//					PeriodServiceFacade.queryByYearMonth(TaAppContextUtil.getHROrg(), monthStatVOs[0].getTbmyear(), monthStatVOs[0].getTbmmonth());
