@@ -46,6 +46,7 @@ import nc.itf.ta.monthlydata.IMonthlyRecordCreator;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.exception.DbException;
 import nc.jdbc.framework.processor.BeanListProcessor;
+import nc.jdbc.framework.processor.MapListProcessor;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.pub.tools.HiSQLHelper;
 import nc.pubitf.rbac.IUserPubService;
@@ -60,6 +61,7 @@ import nc.vo.hi.pub.HICommonValue;
 import nc.vo.hr.hrss.SSOInfo;
 import nc.vo.hr.message.HRBusiMessageVO;
 import nc.vo.hr.tools.pub.GeneralVO;
+import nc.vo.iufo.approve.ApproveStateEnum;
 import nc.vo.ml.MultiLangUtil;
 import nc.vo.om.hrdept.HRDeptVO;
 import nc.vo.org.DeptVO;
@@ -67,6 +69,7 @@ import nc.vo.org.OrgVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
+import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
@@ -111,8 +114,11 @@ import org.apache.commons.lang.StringUtils;
 public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthStatbVO> implements IMonthStatManageMaintain,
 		IMonthStatQueryMaintain {
 	private IMDPersistenceQueryService query = NCLocator.getInstance().lookup(IMDPersistenceQueryService.class);
-
+	private Map<String, String[]> hashDeptFather = null;
 	private BaseDAO dao;
+	{
+		this.hashDeptFather = new HashMap<String, String[]>();
+	}
 
 	@Override
 	@Deprecated
@@ -168,6 +174,9 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 			return;
 		//计算月报
 		generate0(pk_org, pk_psndocs, curPeriod);
+		MonthStatVO[] vos = queryByCondition(pk_org, fromWhereSQL, year, month, false);
+		//更新父部门和管理者
+		updateSrcDeptAndMng(vos);
 
 	}
 
@@ -301,126 +310,6 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 			dao.insertVOList(insertList);
 	}
 
-	//	@SuppressWarnings("unchecked")
-	//	private void processWorkDaysHours(CalSumParam calSumParam) throws DAOException{
-	//		PeriodVO periodVO = calSumParam.periodVO;
-	//		String year = periodVO.getTimeyear();
-	//		String month = periodVO.getTimemonth();
-	//		String pk_org = calSumParam.pk_org;
-	//		String psndocInSQL = calSumParam.psndocInSQL;
-	//		int decimalDigits = calSumParam.timeRuleVO.getMreportdecimal().intValue();
-	//		
-	//		String delSql = "delete from tbm_monthwork where pk_monthstat in (select pk_monthstat from tbm_monthstat " +
-	//		"where pk_org='"+pk_org+"' and pk_psndoc in("+psndocInSQL+") and tbmyear='"+year+"' and tbmmonth='"+month+"')";
-	//		
-	//		//先构建一个临时表，临时表中是一人一天一条记录，字段分别记录了此人此天的班次主键，班次时长，工作日历时长，实际出勤时长等信息，然后在此临时表的基础上，再进一步汇总得到应出勤班数等信息
-	//		//此临时表只有机器考勤的天(机器考勤与手工考勤分开统计的原因是，两种情况下实际出勤时长的逻辑不一样：对于机器考勤，timedata表中已经算好了，
-	//		//而手工考勤还需要在这里现算)
-	//		String tempTableSQLMachine = 
-	//			"select "+
-	////			" psncalendar.pk_org,"+//组织主键
-	//			" '"+pk_org+"' as pk_org, "+//组织主键
-	//			" psncalendar.pk_shift as pk_shift,"+//班次主键
-	//			" psncalendar.pk_psndoc,"+//人员主键
-	//			" shift.gzsj as shiftgzsj,"+//班次时长
-	//			" psncalendar.gzsj as calendargzsj,"+//工作日历时长
-	//			" timedata.worklength,"+//实际出勤时长
-	//			" psncalendar.calendar as calendar"+//日期
-	//			" from tbm_psncalendar psncalendar"+
-	//			" inner join bd_shift shift on shift.pk_shift=psncalendar.pk_shift "+
-	//			" left join tbm_timedata timedata on " +
-	//			//" timedata.pk_org=psncalendar.pk_org and " +这一段在V6.1中去掉，因为61中工作日历已不是HR组织级档案，改为业务单元级档案
-	//			" timedata.pk_psndoc=psncalendar.pk_psndoc  and timedata.calendar=psncalendar.calendar "+
-	//			" where " +
-	////			" psncalendar.pk_org='"+pk_org+"' and " +这一段在V6.1中去掉，因为61中工作日历已不是HR组织级档案，改为业务单元级档案
-	//			" psncalendar.pk_psndoc in("+calSumParam.psndocInSQL+") "+
-	//			" and psncalendar.pk_shift<>'"+ShiftVO.PK_GX+"' and psncalendar.calendar between '"+
-	//			periodVO.getBegindate()+"' and '"+periodVO.getEnddate()+"' "+
-	//			//下面这个exist的作用是将psncalendar中可能存在的垃圾数据排除掉（即psncalendar中有，但是考勤档案无效的天的数据），以免影响统计结果的正确性
-	//			" and exists (select 1 from tbm_psndoc psndoc where " +
-	////			" psndoc.pk_org=psncalendar.pk_org and " +这一段在V6.1中去掉，因为61中工作日历已不是HR组织级档案，改为业务单元级档案
-	//			" psndoc.pk_psndoc=psncalendar.pk_psndoc and psndoc.pk_org='"+pk_org+"' and psndoc.tbm_prop="+TBMPsndocVO.TBM_PROP_MACHINE+" and "+
-	//			" psncalendar.calendar between psndoc.begindate and psndoc.enddate)";
-	//		//再构建另外一个临时表，也是一人一天一条记录，结构与上面的临时表完全相同，只不过只统计手工考勤的天
-	//		String manualMinus = "";//手工考勤的实际工作时长的减项
-	//		Map<String, String> workLenMinusItemMap = TimeDataCalRuleConfig.parseMinusItem(calSumParam.timeRuleVO.getWorklenminusitems());
-	//		if(!MapUtils.isEmpty(workLenMinusItemMap)){
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_LATE)){
-	//				manualMinus+="-isnull(lateearly.latelength,0)";
-	//			}
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_EARLY)){
-	//				manualMinus+="-isnull(lateearly.earlylength,0)";
-	//			}
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_ABSENT)){
-	//				manualMinus+="-isnull(lateearly.absenthour*60,0)";
-	//			}
-	//			String orihounumSQL = "-isnull((select sum(orihournumusehour)*60 from tbm_daystatb daystatb where daystatb.pk_daystat=(select pk_daystat from tbm_daystat daystat where daystat.pk_psndoc=psncalendar.pk_psndoc and daystat.calendar=psncalendar.calendar) and type={0}),0)";
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_LEAVE)){ 
-	//				manualMinus+=MessageFormat.format(orihounumSQL, 0);
-	//			}
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_AWAY)){
-	//				manualMinus+=MessageFormat.format(orihounumSQL, 2);
-	//			}
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_SHUTDOWN)){
-	//				manualMinus+=MessageFormat.format(orihounumSQL, 3);
-	//			}
-	//			if(workLenMinusItemMap.containsKey(TimeDataCalRuleConfig.WORKLENMINUSITEM_LACTATION)){
-	//				manualMinus+="-isnull((select top 1 lactationhour*60 from tbm_leavereg leavereg where leavereg.pk_psndoc=psncalendar.pk_psndoc and psncalendar.calendar between leavereg.leavebegindate and leavereg.leaveenddate and islactation='Y'),0)";
-	//			}
-	//		}
-	//		String tempTableSQLManual = 
-	//			"select "+
-	//			" '"+pk_org+"' as pk_org, "+//组织主键
-	//			" psncalendar.pk_shift as pk_shift,"+//班次主键
-	//			" psncalendar.pk_psndoc,"+//人员主键
-	//			" shift.gzsj as shiftgzsj,"+//班次时长
-	//			" psncalendar.gzsj as calendargzsj,"+//工作日历时长
-	//			" (psncalendar.gzsj*60"+manualMinus+")*60.0 as worklength,"+//实际出勤时长
-	//			" psncalendar.calendar as calendar"+//日期
-	//			" from tbm_psncalendar psncalendar"+
-	//			" inner join bd_shift shift on shift.pk_shift=psncalendar.pk_shift "+
-	//			" left join tbm_lateearly lateearly on " +
-	//			" lateearly.pk_psndoc=psncalendar.pk_psndoc  and lateearly.calendar=psncalendar.calendar "+
-	//			" where " +
-	//			" psncalendar.pk_psndoc in("+calSumParam.psndocInSQL+") "+
-	//			" and psncalendar.pk_shift<>'"+ShiftVO.PK_GX+"' and psncalendar.calendar between '"+
-	//			periodVO.getBegindate()+"' and '"+periodVO.getEnddate()+"' "+
-	//			//下面这个exist的作用是将psncalendar中可能存在的垃圾数据排除掉（即psncalendar中有，但是考勤档案无效的天的数据），以免影响统计结果的正确性
-	//			" and exists (select 1 from tbm_psndoc psndoc where " +
-	//			" psndoc.pk_psndoc=psncalendar.pk_psndoc and psndoc.pk_org='"+pk_org+"' and psndoc.tbm_prop="+TBMPsndocVO.TBM_PROP_MANUAL+" and "+
-	//			" psncalendar.calendar between psndoc.begindate and psndoc.enddate)";
-	//		//下面从临时明细表中查询出当月的出勤状况的统计信息
-	//		String sql = 
-	//			"select round((sum(calendargzsj)*count(1)/sum(shiftgzsj)),"+decimalDigits+") as workdays,"+//应出勤班数workdays
-	//			"round(sum(calendargzsj),"+decimalDigits+") as workhours," +                              //应出勤工时workhours
-	//			"round(sum(case when worklength<0 then 0 else worklength end)/3600.0,"+decimalDigits+") as actualworkhours,"+                        //出勤工时actualworkhours
-	//			//"round((sum(worklength)*count(1)/sum(shiftgzsj))/86400.0,"+decimalDigits+") as actualworkdays,"+          //出勤班数actualworkdays
-	//			"round((sum(worklength)*count(1)/sum(shiftgzsj))/3600.0,"+decimalDigits+") as actualworkdays,"+          //出勤班数actualworkdays
-	//
-	//			"pk_shift,(select top 1 pk_monthstat from tbm_monthstat " +
-	//			"where tbm_monthstat.pk_org=t.pk_org and tbm_monthstat.pk_psndoc = t.pk_psndoc " +
-	//			"and tbmyear='"+year+"' and tbmmonth='"+month+"') as pk_monthstat,0 as dr,pk_org from("
-	//			+tempTableSQLMachine+" union "+tempTableSQLManual+")as t group by pk_org,pk_psndoc,pk_shift";
-	//
-	//		BaseDAO dao = new BaseDAO();
-	//		//先删除子表记录
-	//		dao.executeUpdate(delSql);
-	//		//然后插入
-	//		MonthWorkVO[] vos = CommonUtils.toArray(MonthWorkVO.class, (Collection<MonthWorkVO>)dao.executeQuery(sql, new BeanListProcessor(MonthWorkVO.class)));
-	//		if(ArrayUtils.isEmpty(vos))
-	//			return;
-	//		String pk_group= periodVO.getPk_group();
-	//		for(MonthWorkVO vo:vos){
-	//			vo.setPk_group(pk_group);
-	//			vo.setPk_org(pk_org);
-	//			if(vo.getActualworkdays()==null||vo.getActualworkdays().doubleValue()<0)
-	//				vo.setActualworkdays(UFDouble.ZERO_DBL);
-	//			if(vo.getActualworkhours()==null||vo.getActualworkhours().doubleValue()<0)
-	//				vo.setActualworkhours(UFDouble.ZERO_DBL);
-	//		}
-	//		dao.insertVOArray(vos);
-	//	}
-
 	private void processWorkDaysHours(CalSumParam calSumParam) throws DAOException {
 		PeriodVO periodVO = calSumParam.periodVO;
 		String year = periodVO.getTimeyear();
@@ -509,37 +398,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		// 所有人员的日报的主表主键,第一个string是人员主键pk_psndoc,第二个string是日期，第三个string是pk_daystat。这个map的主要作用是为后面的daystatb子表生成做准备
 		// Logger.error("查询日报主键map开始："+System.currentTimeMillis());
 		long time = System.currentTimeMillis();
-		//		calSumParam.daystatPKMap = DayStatCalculationHelper.getDaystatPKMap(calSumParam.pk_org, calSumParam.psndocInSQL, 
-		//				beginDate.toString(), endDate.toString());
-		//		Logger.debug("构造日报主键map耗时：" + (System.currentTimeMillis() - time));
-		time = System.currentTimeMillis();
-		//		// 所有人员的工作日历map,要求往前往后都推2天(即用户如果选择计算10号到11号的日报，那么此处应该查询8号到13号的工作日历),传进来的dateArray已经是比日报生成范围要往前往后两天了：
-		//		// 之所以往前后推这么多，是因为计算加班单的长度，在单子很长的时候，可能会用到很多天的工作日历，很有可能大大超过用户输入的日期范围
-		//		calSumParam.calendarMap = NCLocator.getInstance().lookup(IPsnCalendarQueryService.class).
-		//			queryCalendarVOByPsnInSQL(calSumParam.pk_org, beginDate.getDateBefore(1), endDate.getDateAfter(1), calSumParam.psndocInSQL);
-		time = System.currentTimeMillis();
-		// Logger.error("查询工作日历结束："+System.currentTimeMillis());
-		//		calSumParam.aggBclbMap=NCLocator.getInstance().lookup(IBclbQueryService.class).queryBclbAggVOMap(pk_org);
-		//		if(!MapUtils.isEmpty(calSumParam.aggBclbMap)){
-		//			calSumParam.bclbMap=new HashMap<String, BclbVO>();
-		//			Iterator<String> keyItrt = calSumParam.aggBclbMap.keySet().iterator();
-		//			while(keyItrt.hasNext()){
-		//				String key = keyItrt.next();
-		//				calSumParam.bclbMap.put(key, calSumParam.aggBclbMap.get(key).getBclbVO());
-		//			}
-		//		}
-		time = System.currentTimeMillis();
 		if (existsJavaItem) {
-			//			// 下面的这些map只在java项目计算时有用，因此只在存在java项目的时候初始化
-			//			// 所有人员的timedata数据,第一个string是人员主键，第二个UFLiteralDate是日期，value是timedatavo
-			//			calSumParam.timedataMap = NCLocator.getInstance().lookup(ITimeDataQueryService.class).
-			//				queryVOMapByPsndocInSQL(calSumParam.pk_org, beginDate,endDate,calSumParam.psndocInSQL);
-			//			// 所有人员的lateearly数据
-			//			calSumParam.lateearlyMap = NCLocator.getInstance().lookup(ILateEarlyQueryService.class).
-			//				queryVOMapByPsndocInSQL(calSumParam.pk_org, beginDate,endDate,calSumParam.psndocInSQL);
-			//			// 所有人员的考勤档案数据,key是人员主键，value是在这段时间内的考勤档案vo(一般情况下只有一条。如果有多条，那么已经按时间先后排好序)
-			//			calSumParam.tbmPsndocMap = NCLocator.getInstance().lookup(ITBMPsndocQueryService.class).
-			//				queryTBMPsndocMapByPsndocInSQL(calSumParam.pk_org,calSumParam.psndocInSQL,beginDate,endDate, true);
 			//获取java类项目的计算类实例
 			IDevItfQueryService service = NCLocator.getInstance().lookup(IDevItfQueryService.class);
 			calSumParam.dataCreatorMap = new HashMap<String, IMonthDataCreator>();
@@ -629,53 +488,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		fromWhereSQL = TBMPsndocSqlPiecer.addPsnjobPermissionSQL2QuerySQL(fromWhereSQL);
 		//tsy 添加权限
 		fromWhereSQL = addPsnPower(fromWhereSQL);
-		//		//首先，查询考勤档案pk_org就是当前pk_org的人员
-		//		TBMPsndocVO[] psndocVOsInOrg = NCLocator.getInstance().lookup(ITBMPsndocQueryService.class).
-		//			queryLatestByCondition(pk_org, fromWhereSQL, beginDate,endDate);
-		//然后，查询考勤档案pk_adminorg就是当前pk_org的人员，即考勤档案不在本组织，但管理组织在本组织的人员
-		//		TBMPsndocVO[] psndocVOsInAdminOrg = NCLocator.getInstance().lookup(ITBMPsndocQueryService.class).
-		//			queryLatestByCondition2(pk_org, fromWhereSQL, beginDate,endDate);
-		//		if(ArrayUtils.isEmpty(psndocVOsInOrg)&&ArrayUtils.isEmpty(psndocVOsInAdminOrg))
-		//			return null;
-		//查询这些人员已有的月报记录
-		//		InSQLCreator isc = new InSQLCreator();
-		//		try{
-		//			SQLParameter para = new SQLParameter();
-		//			para.addParam(pk_org);
-		//			para.addParam(year);
-		//			para.addParam(month);
-		////			MonthStatVO[] dbVOsInOrg = null;
-		//			MonthStatVO[] dbVOsInAdminOrg = null;
 
-		//			if(!ArrayUtils.isEmpty(psndocVOsInOrg)){
-		//				String cond = MonthStatVO.PK_ORG+"=? and "+MonthStatVO.PK_PSNDOC+" in("+isc.getInSQL(psndocVOsInOrg, MonthStatVO.PK_PSNDOC)+") and "+
-		//					MonthStatVO.TBMYEAR+"=? and "+MonthStatVO.TBMMONTH+"=? ";
-		//				dbVOsInOrg = new MonthStatDAO().query(pk_org, MonthStatVO.class, 
-		//						new String[]{MonthStatVO.PK_PSNDOC,MonthStatVO.TBMYEAR,MonthStatVO.TBMMONTH
-		//					,MonthStatVO.PK_GROUP,MonthStatVO.PK_ORG,MonthStatVO.ISAPPROVE},
-		//						cond, null,para);
-		//			}
-
-		//			if(!ArrayUtils.isEmpty(psndocVOsInAdminOrg)){
-		//				String cond = MonthStatVO.PK_ORG+"<>? and "+MonthStatVO.PK_PSNDOC+" in("+isc.getInSQL(psndocVOsInAdminOrg, MonthStatVO.PK_PSNDOC)+") and "+
-		//				MonthStatVO.TBMYEAR+"=? and "+MonthStatVO.TBMMONTH+"=? ";
-		//				dbVOsInAdminOrg = new MonthStatDAO().query(pk_org, MonthStatVO.class, 
-		//						new String[]{MonthStatVO.PK_PSNDOC,MonthStatVO.TBMYEAR,MonthStatVO.TBMMONTH
-		//					,MonthStatVO.PK_GROUP,MonthStatVO.PK_ORG,MonthStatVO.ISAPPROVE},
-		//						cond, null,para);
-		//			}
-		//			//本组织的月报记录
-		//			MonthStatVO[] vos1 =  processDBVOs(psndocVOsInOrg, dbVOsInOrg, year,month, showNoDataRecord,endDate);
-		//			//管理组织在本组织的月报记录
-		//			MonthStatVO[] vos2 =  processDBVOs(psndocVOsInAdminOrg, dbVOsInAdminOrg, year,month, showNoDataRecord,endDate);
-		//			return (MonthStatVO[])ArrayUtils.addAll(vos1, vos2);
-		//		} catch (DbException e) {
-		//			Logger.error(e.getMessage(), e);
-		//			throw new BusinessRuntimeException(e.getMessage(), e);
-		//		} catch (ClassNotFoundException e) {
-		//			Logger.error(e.getMessage(), e);
-		//			throw new BusinessRuntimeException(e.getMessage(), e);
-		//		}
 		//本组织的月报记录
 		MonthStatVO[] vos1 = queryByConditionAndOrg(pk_org, periodVO, fromWhereSQL, showNoDataRecord);
 		//管理组织在本组织的月报记录
@@ -712,7 +525,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 				MonthStatVO.PK_ORG + "=? and " + MonthStatVO.PK_PSNDOC + " in(" + isc.getInSQL(psndocVOsInOrg, MonthStatVO.PK_PSNDOC) + ") and " + MonthStatVO.TBMYEAR + "=? and " + MonthStatVO.TBMMONTH + "=? ";
 		try {
 			dbVOsInOrg =
-					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk","srcid" }, cond, null, para);
+					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" }, cond, null, para);
 		} catch (ClassNotFoundException e) {
 			Logger.error(e.getMessage(), e);
 			throw new BusinessRuntimeException(e.getMessage(), e);
@@ -752,7 +565,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		MonthStatVO[] dbVOsInAdminOrg = null;
 		try {
 			dbVOsInAdminOrg =
-					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk","srcid" }, cond, null, para);
+					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" }, cond, null, para);
 		} catch (ClassNotFoundException e) {
 			Logger.error(e.getMessage(), e);
 			throw new BusinessRuntimeException(e.getMessage(), e);
@@ -810,54 +623,6 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 				dao.executeUpdate(updateSql);
 				continue;
 			}
-			// 如果是java类计算，则要执行java类的计算
-			// 从数据库中查询出此月报项目所依赖的月报项目和日报项目的值，放到dayItemValueMap和monthItemValueMap中
-			//			try {
-			//				calHelper.queryItemValuesForMonthJavaItem(pkCorp, psnInsql, year, month, beginDate, endDate, itemVO, dayItemValueMap, monthItemValueMap, calPara.code2DayItemVOMap, calPara.code2ItemVOMap);
-			//			} catch (SQLException e) {
-			//				Logger.error(e.getMessage(), e);
-			//				throw new BusinessException(e.getMessage(), e);
-			//			}
-			//			IMonthDataCreator creator = (IMonthDataCreator) itemVO.getImplObj();
-			//			ItemVO[] referencedDayItems = creator.getDependentDayItems(pkCorp, itemVO);
-			//			ItemVO[] referencedMonthItems = creator.getDependentItems(pkCorp, itemVO);
-			//			// 在itemvalue的map中给自己找一个位置：自己算完后就可以马上放回去
-			//			// key是人的主键，object是参数值
-			//			Map<String, Object> valueMap = null;
-			//			if (!monthItemValueMap.containsKey(itemVO.getItem_code())) {
-			//				valueMap = new HashMap<String, Object>();
-			//				monthItemValueMap.put(itemVO.getItem_code(), valueMap);
-			//			}
-			//			calPara.itemCode = itemVO.getItem_code();
-			//			// 按人进行循环计算
-			//			for (int psnIndex = 0; psnIndex < psnCount; psnIndex++) {
-			//				// 人员主键
-			//				String pk_psndoc = pk_psndocs[psnIndex];
-			//				calPara.pk_psndoc = pk_psndoc;
-			//				// 看是否需要其他月报项目的值，如果需要的话，需要从monthItemValueMap里面去取
-			//				if (referencedMonthItems != null && referencedMonthItems.length > 0) {
-			//					for (ItemVO referencedItemVO : referencedMonthItems) {
-			//						calPara.itemValues.put(referencedItemVO.getItem_code(), monthItemValueMap.get(referencedItemVO.getItem_code()).get(pk_psndoc));
-			//					}
-			//				}
-			//				// 看是否需要日报项目的值，如果需要的话，需要从里面去取
-			//				if (referencedDayItems != null && referencedDayItems.length > 0) {
-			//					for (ItemVO referencedItemVO : referencedDayItems) {
-			//						calPara.dayItemValueMap.put(referencedItemVO.getItem_code(), dayItemValueMap.get(referencedItemVO.getItem_code()).get(pk_psndoc));
-			//					}
-			//				}
-			//				// 真正的计算，由IMonthDataCreator接口的实现完成
-			//				Object result = creator.process(calPara);
-			//				// 吃水不忘挖井人，刚才从map中取了其他项目的值，现在自己的值算出来了，就要回报map，将自己的值放回map中
-			//				valueMap.put(pk_psndoc, TBMItemUtils.processNullValue(itemVO.getData_type().intValue(), result));
-			//			}
-			//			// 按人循环算完这个月报项目后，要更新到数据库
-			//			try {
-			//				calHelper.persistMonthItemValueTODB(pkCorp, itemIndex, itemVOs, monthItemValueMap, psnpks, year, month);
-			//			} catch (SQLException e) {
-			//				Logger.error(e.getMessage(), e);
-			//				throw new BusinessException(e.getMessage(), e);
-			//			}
 		}
 	}
 
@@ -1004,7 +769,31 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 	public MonthStatVO[] generate(String pk_org, FromWhereSQL fromWhereSQL, String year, String month, boolean showNoDataRecord)
 			throws BusinessException {
 		generate(pk_org, fromWhereSQL, year, month);
-		return queryByCondition(pk_org, fromWhereSQL, year, month, showNoDataRecord);
+
+		MonthStatVO[] vos = queryByCondition(pk_org, fromWhereSQL, year, month, showNoDataRecord);
+		return vos;
+
+	}
+
+	/**
+	 * 更新父部门和管理者
+	 * @param vos
+	 * @throws BusinessException 
+	 */
+	private void updateSrcDeptAndMng(MonthStatVO[] vos) throws BusinessException {
+		if (ArrayUtils.isEmpty(vos)) {
+			return;
+		}
+		for (MonthStatVO monthStatVO : vos) {
+			String[] deptAndMng = getFatherDeptAndMng(monthStatVO.getPk_dept());
+			monthStatVO.setMngdept(deptAndMng[0]);
+			monthStatVO.setMngpsndoc(deptAndMng[1]);
+			if (monthStatVO.getApprovestatus() == null) {
+				monthStatVO.setApprovestatus(ApproveStateEnum.NOSTATE);//自由态
+			}
+			monthStatVO.setBilltype("6407");
+		}
+		getDao().updateVOArray(vos, new String[] { "mngdept", "mngpsndoc", "approvestatus", "billtype" });
 
 	}
 
@@ -1064,7 +853,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 
 		try {
 			vos =
-					dao.query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk","srcid" }, cond, orderby, para);
+					dao.query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" }, cond, orderby, para);
 		} catch (DbException e) {
 			Logger.error(e.getMessage(), e);
 			throw new BusinessException(e.getMessage(), e);
@@ -1122,131 +911,6 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 	 * @param curPeriod
 	 * @throws BusinessException
 	 */
-
-	//	private  Hashtable<String, String[]> createTransferValues(PsndocVO vo,String url) throws BusinessException  {
-	//		Hashtable<String, String[]> hm = new Hashtable<String, String[]>();
-	//		String[] fieldCode = TimeitemConst.FIELDCODE;
-	//		for (int i = 0; i < fieldCode.length; i++) {
-	//			String value = "";
-	//			if ("name".equals(fieldCode[i])) {
-	//				// 姓名
-	//				value = vo.getName();
-	//			}
-	//			else if ("url".equals(fieldCode[i])) {
-	//				// 链接地址
-	//				value = "testtest";
-	//			}
-	//			else {
-	//				value = "";
-	//			}
-	//			hm.put(fieldCode[i], new String[]{value});
-	//		}
-	//		return hm;
-	//	}
-	//	private void sendMessage(String pk_org, String[] pk_psndocs, PeriodVO curPeriod,CalSumParam calSumParam )throws BusinessException {
-	//
-	//		Set<String> noticePsnPkset = this.getExceptionPsns(pk_org, pk_psndocs, curPeriod, calSumParam);//异常人员主键集合
-	//		if(noticePsnPkset.size()>0){
-	//		INotice secvice = NCLocator.getInstance().lookup(INotice.class);
-	//		NoticeTempletVO[] nt = secvice.queryDistributedTemplates(TimeitemConst.PK_NOTICE_SORT, PubEnv.getPk_group(), pk_org, true);
-	//		Iterator<String> it = noticePsnPkset.iterator();
-	//		String old="";
-	//		while(it.hasNext()){
-	//			String psnPK=it.next();//异常人员主键
-	//			IPersistenceRetrieve perstRetrieve = NCLocator.getInstance().lookup( IPersistenceRetrieve.class );
-	//			PsndocVO psndocVO = (PsndocVO) perstRetrieve.retrieveByPk(null, PsndocVO.class, psnPK);//通过主键得到异常人员的VO
-	//			if(psndocVO==null){
-	//				continue;
-	//			}
-	//			String[] mail=new String[]{psndocVO.getEmail()};//得到邮箱账户 
-	//			if(null==mail[0]||mail.length<=0){
-	//				continue;
-	//			}
-	//			// 替换通知模板的变量
-	//			String noticeContent = nt[0].getContent();// 通知模板的内容
-	//			if(noticeContent.indexOf("<#name#>")<0 && !StringUtils.isEmpty(old)){
-	//				noticeContent=noticeContent.replace(old, "<#name#>");//不替换 name就一直是第一个接收人的name， url也得替换
-	//			}
-	//			StringOperator strSys = new StringOperator(noticeContent);
-	//			new StringOperator(strSys);
-	//			String psnName=psndocVO.getName();//员工姓名
-	//			old=psnName;//如果给多人发送邮件时候 psnname总是第一个人的 为了防止这种情况就把上一次的人员取出来然后再替换掉
-	//			strSys.replaceAllString("<#name#>",psnName);// 员工姓名
-	//			strSys.replaceAllString("<#url#>", "");//链接地址
-	//			if (nt != null && nt.length > 0) {
-	//				// 将属性值放到通知模板上
-	//				nt[0].setReceiverEmails(mail);//接收者邮件地址
-	//				nt[0].setContent(strSys.toString());//发送内容
-	//				if (StringUtils.isBlank( nt[0].getCurrentUserPk() ) || nt[0].getCurrentUserPk().length() != 20) {
-	//				// 如果模板的当前用户为空，则附上当前用户，或NC系统用户
-	//				nt[0].setCurrentUserPk( PubEnv.getPk_user() != null && PubEnv.getPk_user().length() == 20 ? PubEnv.getPk_user()
-	//						: INCSystemUserConst.NC_USER_PK );
-	//				}
-	//			//发送通知
-	//			secvice.sendNotice_RequiresNew(nt[0], pk_org, false);
-	//			
-	//			}
-	//		}
-	//		}
-	//	}
-
-	//	private void sendMessage(String pk_org, String[] pk_psndocs, PeriodVO curPeriod,CalSumParam calSumParam )throws BusinessException {
-	//		Set<String> noticePsnPkset = getExceptionPsns(pk_org, pk_psndocs, curPeriod, calSumParam);//异常人员主键集合
-	//		if(noticePsnPkset.size()<=0){
-	//			return;
-	//		}
-	//		String[] noticePsnPks = (String[]) noticePsnPkset.toArray(new String[0]);
-	//		String insql=StringPiecer.getDefaultPiecesTogether(noticePsnPks);
-	//		String cond="pk_psndoc in (" + insql +" )";
-	//		//查询出所有的psndocvo
-	//		PsndocVO[] psndocvos = (PsndocVO[]) NCLocator.getInstance().lookup(IPersistenceRetrieve.class).retrieveByClause(null, PsndocVO.class, cond);
-	//		if(ArrayUtils.isEmpty(psndocvos))
-	//			return;
-	//		INotice service = NCLocator.getInstance().lookup(INotice.class);
-	//		IURLGenerator IurlDirect =  NCLocator.getInstance().lookup(IURLGenerator.class);
-	//		NoticeTempletVO[] nt = service.queryDistributedTemplates(TimeitemConst.PK_NOTICE_SORT, PubEnv.getPk_group(), pk_org, true);
-	//		HashMap<String, UserVO[]> userMap = NCLocator.getInstance().lookup(IUserPubService.class).batchQueryUserVOsByPsnDocID(pk_psndocs, null);
-	////		String old="";
-	//		for(PsndocVO psndocVO: psndocvos){
-	//			//每次使用前都用原始数据重新复制一份，否则容易带有上次发送消息的内容
-	//			NoticeTempletVO noticeTempletVO = (NoticeTempletVO) nt[0].clone();
-	//			
-	//			// 替换通知模板的变量
-	//			String noticeContent = noticeTempletVO.getContent();// 通知模板的内容
-	////			if(noticeContent.indexOf("<#name#>")<0 && !StringUtils.isEmpty(old)){
-	////				noticeContent=noticeContent.replace(old, "<#name#>");//不替换 name就一直是第一个接收人的name， url也得替换
-	////			}
-	//			StringOperator strSys = new StringOperator(noticeContent);
-	//			new StringOperator(strSys);
-	//			String psnName=psndocVO.getName();//员工姓名
-	////			old=psnName;//如果给多人发送邮件时候 psnname总是第一个人的 为了防止这种情况就把上一次的人员取出来然后再替换掉
-	//			strSys.replaceAllString("<#name#>",psnName);// 员工姓名
-	//			UserVO[] users = userMap.get(psndocVO.getPk_psndoc());
-	//			noticeTempletVO.setReceiverPkUsers(StringPiecer.getStrArrayDistinct(users, UserVO.CUSERID));//设置接收人
-	//			SSOInfo ssinfo = new SSOInfo();
-	//			if(!ArrayUtils.isEmpty(users)){
-	//			   // ssinfo.setUserPassword(users[0].getUser_password());
-	//				ssinfo.setUserPK(users[0].getCuserid());
-	//			}
-	//			ssinfo.setTtl(PubEnv.getServerTime().getDateTimeAfter(30));
-	//			ssinfo.setFuncode("E20200910");//E20200910 考勤月报的补考勤的功能节点号
-	//			String urlTitle=IurlDirect.buildHTML(ssinfo, ResHelper.getString("6017dayandmonthstat","06017dayandmonthstat0088")/*@res "员工自助补考勤!"*/);
-	////			String urlTitle=IurlDirect.buildURLString(ssinfo);
-	//			strSys.replaceAllString("<#url#>",urlTitle);
-	//			if (nt != null && nt.length > 0) {
-	//				// 将属性值放到通知模板上
-	////				nt[0].setReceiverEmails(mail);//接收者邮件地址（设置了接收人就不用再设置email了）
-	//				noticeTempletVO.setContent(strSys.toString());//发送内容
-	//				if (StringUtils.isBlank( noticeTempletVO.getCurrentUserPk() ) || noticeTempletVO.getCurrentUserPk().length() != 20) {
-	//				// 如果模板的当前用户为空，则附上当前用户，或NC系统用户
-	//				noticeTempletVO.setCurrentUserPk( PubEnv.getPk_user() != null && PubEnv.getPk_user().length() == 20 ? PubEnv.getPk_user()
-	//						: INCSystemUserConst.NC_USER_PK );
-	//				}
-	//				//发送通知
-	//				service.sendNotice_RequiresNew(noticeTempletVO, pk_org, false);
-	//			}
-	//		}
-	//	}
 	//V63以后使用平台的消息通知发送方式
 	private void sendMessage(String pk_org, String[] pk_psndocs, PeriodVO curPeriod, CalSumParam calSumParam) throws BusinessException {
 		Set<String> noticePsnPkset = getExceptionPsns(pk_org, pk_psndocs, curPeriod, calSumParam);//异常人员主键集合
@@ -1912,7 +1576,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		TaWorkFlowManager<OvertimehVO, OvertimebVO>.UserValueConfig config = new TaWorkFlowManager.UserValueConfig();
 		config.setBillCodeFieldName("billno");
 		config.setApproveStateFieldName("approvestatus");
-		config.setFieldCodes(new String[] { "pk_org", "pk_group", "pk_psndoc", "tbmyear", "tbmmonth", "iseffective", "isapprove", "isuseful", "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "ime approvedate", "transtype", "billtype", "transtypepk","srcid" });
+		config.setFieldCodes(new String[] { "pk_org", "pk_group", "pk_psndoc", "tbmyear", "tbmmonth", "iseffective", "isapprove", "isuseful", "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "ime approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" });
 		return config;
 	}
 
@@ -1966,7 +1630,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 				monthStatVO.setApprovestatus(ApproveStatus.FREE);
 				monthStatVO.setSrcid(null);
 			}
-			getDao().updateVOArray(hvos, new String[] { "approvestatus", "srcid" });
+			getDao().updateVOArray(hvos, new String[] { "approvestatus", "srcid", "mngdept", "mngpsndoc" });
 		}
 		return vos;
 	}
@@ -1998,7 +1662,7 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		String cond = MonthStatVO.PK_ORG + "=?  and " + MonthStatVO.TBMYEAR + "=? and " + MonthStatVO.TBMMONTH + "=? and srcid=?";
 		try {
 			dbVOsInOrg =
-					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk","srcid" }, cond, null, para);
+					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" }, cond, null, para);
 		} catch (ClassNotFoundException e) {
 			Logger.error(e.getMessage(), e);
 			throw new BusinessRuntimeException(e.getMessage(), e);
@@ -2085,15 +1749,22 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		String orgSql =
 				HiSQLHelper.getPsnPowerSql(PubEnv.getPk_group(), HICommonValue.RESOUCECODE_ORG, IRefConst.DATAPOWEROPERATION_CODE, alias);
 		if (StringUtils.isNotBlank(orgSql)) {
+			Logger.debug("添加组织权限:" + orgSql);
 			sqlWhereUtil.and(orgSql);
+		} else {
+			Logger.debug("无组织权限:" + "	HiSQLHelper.getPsnPowerSql(" + PubEnv.getPk_group() + ", " + HICommonValue.RESOUCECODE_ORG + "," + IRefConst.DATAPOWEROPERATION_CODE + ", " + alias + ");");
 		}
 		// 部门权限
 		alias = fromWhereSQL.getTableAliasByAttrpath("pk_psnjob" + FromWhereSQLUtils.getAttPathPostFix());
 		String deptSql =
 				HiSQLHelper.getPsnPowerSql(PubEnv.getPk_group(), HICommonValue.RESOUCECODE_DEPT, IRefConst.DATAPOWEROPERATION_CODE, alias);
 		if (StringUtils.isNotBlank(deptSql)) {
+			Logger.error("部门权限:" + deptSql);
 			sqlWhereUtil.and(deptSql);
+		} else {
+			Logger.debug("无组织权限:" + "	HiSQLHelper.getPsnPowerSql(" + PubEnv.getPk_group() + ", " + HICommonValue.RESOUCECODE_DEPT + "," + IRefConst.DATAPOWEROPERATION_CODE + ", " + alias + ");");
 		}
+		Logger.error("添加权限后sql:" + sqlWhereUtil.getSQLWhere());
 		return new nc.ui.hr.pub.FromWhereSQL(fromWhereSQL, sqlWhereUtil.getSQLWhere());
 	}
 
@@ -2119,4 +1790,80 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		//		}
 		return sqlWhereUtil.getSQLWhere();
 	}
+
+	@Override
+	public void update(MonthStatVO[] vos, String[] selFields) throws BusinessException {
+		if ((vos == null) || (vos.length <= 0)) {
+			return;
+		}
+
+		try {
+			if ((selFields != null) && (selFields.length > 0)) {
+				getDao().updateVOArray(vos, selFields);
+			} else {
+				getDao().updateVOArray(vos);
+			}
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+
+			throw new BusinessException(e.getMessage());
+		}
+	}
+
+	/**
+	 * 获取父部门
+	 * 
+	 * @param pk_dept 
+	 * @param hashDeptFather 不可为null
+	 * @return
+	 * @throws BusinessException
+	 */
+	public String[] getFatherDeptAndMng(String pk_dept) throws BusinessException {
+		if (this.hashDeptFather == null) {
+			throw new BusinessException("请检查程序，参数不能为空");
+		}
+		if (this.hashDeptFather.get(pk_dept) == null) {
+			String sql =
+					" select org_dept.pk_dept,pk_fatherorg,principal  from org_dept start with pk_dept = '" + pk_dept + "' connect by prior pk_fatherorg = pk_dept";
+			@SuppressWarnings("unchecked")
+			List<Map<String, String>> list = (List<Map<String, String>>) getDao().executeQuery(sql, new MapListProcessor());
+			for (Map<String, String> map : list) {
+				hashDeptFather.put(map.get("pk_dept"), new String[] { map.get("pk_fatherorg"), map.get("principal") });
+			}
+		}
+		return getSrcDeptAndMng(pk_dept);
+	}
+
+	/**
+	 * 获取最上层的父部门和负责人
+	 * 
+	 * @param pk_dept
+	 * @param hashDeptFather 不可为null
+	 * @return
+	 */
+	private String[] getSrcDeptAndMng(String pk_dept) {
+		if (this.hashDeptFather.get(pk_dept)[0] == null) {
+			return new String[] { pk_dept, this.hashDeptFather.get(pk_dept)[1] };
+		}
+		return getSrcDeptAndMng(hashDeptFather.get(pk_dept)[0]);
+	}
+
+	public MonthStatVO[] queryBySrc(String srcid) throws BusinessException {
+		MonthStatVO vo = (MonthStatVO) getDao().retrieveByPK(MonthStatVO.class, srcid);
+		String pk_org = vo.getPk_org();
+		Map<String, String> aliasMap = new HashMap<String, String>();
+		aliasMap.put(".", "tbm_psndoc");//{.=tbm_psndoc, pk_psnjob=T1}
+		aliasMap.put("pk_psnjob", "T1");//{.=tbm_psndoc, pk_psnjob=T1}
+		FromWhereSQL fromWhereSQL =
+				new nc.ui.hr.pub.FromWhereSQL("tbm_psndoc tbm_psndoc left outer join hi_psnjob T1 ON T1.pk_psnjob = tbm_psndoc.pk_psnjob", "T1.pk_org = '" + pk_org + "' ",null,aliasMap);
+		String year = vo.getTbmyear();
+		String month = vo.getTbmmonth();
+		boolean showNoDataRecord = false;
+		MonthStatVO[] vos = queryByCondition(pk_org, fromWhereSQL, year, month, showNoDataRecord);
+		Map<String, MonthStatVO[]> monthStatVOMap = CommonUtils.group2ArrayByField("srcid", vos);
+
+		return monthStatVOMap.get(srcid);
+
+	}
+
 }

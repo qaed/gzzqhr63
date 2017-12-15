@@ -156,4 +156,12 @@ public interface IMonthStatQueryMaintain {
 	 * @throws BusinessException
 	 */
 	MonthStatVO[] queryCurrentMonthDeptBypk(String pk_org, String pk_monthstat) throws BusinessException;
+
+	/**
+	 * 通过srcid查询月报，portal审批节点
+	 * @param srcid
+	 * @return
+	 * @throws BusinessException
+	 */
+	MonthStatVO[] queryBySrc(String srcid) throws BusinessException;
 }

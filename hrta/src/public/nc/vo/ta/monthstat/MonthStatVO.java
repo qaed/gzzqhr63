@@ -111,6 +111,14 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 	private String billtype;
 	private String transtypepk;
 	private String srcid;
+	/**
+	 * 部门主管
+	 */
+	private String mngpsndoc;
+	/**
+	 * 一级部门
+	 */
+	private String mngdept;
 	//20171109 end
 
 	public static final String PK_MONTHSTAT = "pk_monthstat";
@@ -807,7 +815,6 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 		this.transtypepk = transtypepk;
 	}
 
-
 	/**
 	 * @return srcid
 	 */
@@ -821,5 +828,34 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 	public void setSrcid(String srcid) {
 		this.srcid = srcid;
 	}
+
 	//20171109 end
+
+	/**
+	 * @return mngpsndoc
+	 */
+	public String getMngpsndoc() {
+		return mngpsndoc;
+	}
+
+	/**
+	 * @param mngpsndoc 要设置的 mngpsndoc
+	 */
+	public void setMngpsndoc(String mngpsndoc) {
+		this.mngpsndoc = mngpsndoc;
+	}
+
+	/**
+	 * @return mngdept
+	 */
+	public String getMngdept() {
+		return mngdept;
+	}
+
+	/**
+	 * @param mngdept 要设置的 mngdept
+	 */
+	public void setMngdept(String mngdept) {
+		this.mngdept = mngdept;
+	}
 }
