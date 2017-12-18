@@ -251,7 +251,7 @@ public class CommitMonthStatAction extends PFSubmitAction {
 	private int showConfirmSubmitDialog(Container parent) {
 		String strTitle = ResHelper.getString("6001uif2", "06001uif20073", new String[] { ResHelper.getString("common", "UC001-0000029") });
 
-		String strQuestion = "按部门提交所有自由态单据\n\n" + ResHelper.getString("6001pf", "06001pf0052");
+		String strQuestion = "按部门提交所有「自由态」单据\n\n" + ResHelper.getString("6001pf", "06001pf0052");
 
 		return MessageDialog.showYesNoDlg(parent, strTitle, strQuestion, 8);
 	}

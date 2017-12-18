@@ -64,7 +64,9 @@ public class UnCommitMonthStatAction extends PFCallBackAction {
 					minVO = monthStatVO;
 				}
 			}
-			selectedvos.add(minVO);//选择pk最小的vo作为selectedvo
+			if (minVO!=null) {
+				selectedvos.add(minVO);//选择pk最小的vo作为selectedvo
+			}
 		}
 		for (MonthStatVO monthStatVO : selectedvos) {
 			AggMonthStatVO minAggvo = new AggMonthStatVO();
