@@ -74,7 +74,7 @@ public class MonthReportForMngApprovePageModel extends AdvancePageModel {
 			}
 		}
 		AppUtil.addAppAttr(WfmConstants.WfmAppAttr_FolwTypePk, flowTypePk);
-
+//		SessionUtil.setCurrentDept("1001A410000000001MQC", true);
 		LfwWindow pm = super.createPageMeta();
 		return pm;
 	}

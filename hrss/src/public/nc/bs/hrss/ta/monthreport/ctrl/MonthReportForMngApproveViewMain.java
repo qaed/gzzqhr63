@@ -1,12 +1,14 @@
 package nc.bs.hrss.ta.monthreport.ctrl;
 
 import java.awt.MenuItem;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import nc.bs.framework.common.NCLocator;
+import nc.bs.hrss.pe.PEUtil;
 import nc.bs.hrss.pub.DialogSize;
 import nc.bs.hrss.pub.cmd.PFUnApproveCmd;
 import nc.bs.hrss.pub.cmd.PlugoutSimpleQueryCmd;
@@ -40,14 +42,20 @@ import nc.uap.lfw.core.event.DataLoadEvent;
 import nc.uap.lfw.core.event.MouseEvent;
 import nc.uap.lfw.core.event.ScriptEvent;
 import nc.uap.lfw.core.page.LfwView;
+import nc.uap.lfw.core.serializer.impl.Dataset2SuperVOSerializer;
 import nc.uap.wfm.constant.WfmConstants;
+import nc.ui.pubapp.uif2app.actions.pflow.ApproveStatus;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.org.DeptVO;
+import nc.vo.pe.mdenum.AprStatusEnum;
+import nc.vo.pe.mdenum.SchEvaStatusEnum;
+import nc.vo.pe.scheme.evaobject.AprGauVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.ta.monthstat.AggMonthStatVO;
+import nc.vo.ta.monthstat.MonthStatVO;
 import nc.vo.ta.period.PeriodVO;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -123,7 +131,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 				if (latestPeriodVO != null) {
 					selRow.setValue(dsSearch.nameToIndex("tbmyear"), latestPeriodVO.getTimeyear());
 				} else if ((periodMap != null) && (periodMap.size() > 0)) {
-					String[] years = (String[]) periodMap.keySet().toArray(new String[0]);
+					String[] years = periodMap.keySet().toArray(new String[0]);
 					if (!ArrayUtils.isEmpty(years)) {
 						accyear = years[0];
 						selRow.setValue(dsSearch.nameToIndex("tbmyear"), accyear);
@@ -139,7 +147,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 				ComboData monthData = simpQryView.getViewModels().getComboData("comb_tbmmonth_value");
 				String[] months = null;
 				if ((periodMap != null) && (periodMap.size() > 0)) {
-					months = (String[]) periodMap.get(accyear);
+					months = periodMap.get(accyear);
 				}
 				ComboDataUtil.addCombItemsAfterClean(monthData, months);
 				if (ArrayUtils.isEmpty(months)) {
@@ -161,7 +169,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 				String[] years = null;
 				ComboData yearData = simpQryView.getViewModels().getComboData("comb_tbmyear_value");
 				if ((periodMap != null) && (periodMap.size() > 0)) {
-					years = (String[]) periodMap.keySet().toArray(new String[0]);
+					years = periodMap.keySet().toArray(new String[0]);
 					if ((years != null) && (years.length > 1)) {
 						Arrays.sort(years);
 						Collections.reverse(Arrays.asList(years));
@@ -282,7 +290,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 	public void onApprove(MouseEvent mouseEvent) {
 		String state = AppLifeCycleContext.current().getParameter("state");
 		WindowContext contex = AppLifeCycleContext.current().getApplicationContext().getCurrentWindowContext();
-		HashMap<String, String> map = new HashMap();
+		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("state", "State_Run");
 
 		OpenProperties openProperties = new OpenProperties();
@@ -314,6 +322,59 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 		CmdInvoker.invoke(new PFUnApproveCmd());
 		CmdInvoker.invoke(new PlugoutSimpleQueryCmd());
 		AppInteractionUtil.showMessageDialog("任务完成", false);
+	}
+
+	/**
+	 * 驳回
+	 * @param mouseEvent
+	 */
+	public void onRejectClick(MouseEvent mouseEvent) {
+		/*
+		LfwView wdt = AppLifeCycleContext.current().getViewContext().getView();
+		Dataset ds = wdt.getViewModels().getDataset(DATASET_ID);
+		Row[] selectedRows = ds.getAllRow();
+		if ((selectedRows == null) || (selectedRows.length == 0)) {
+			CommonUtil.showErrorDialog(NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0304"), NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0006"));
+
+			return;
+		}
+		ArrayList<MonthStatVO> monthStatVOs = new ArrayList<MonthStatVO>();
+		Dataset2SuperVOSerializer<MonthStatVO> serializer = new Dataset2SuperVOSerializer<MonthStatVO>();
+		for (Row selRow : selectedRows) {
+			MonthStatVO monthstatVO = serializer.serialize(ds, selRow)[0];
+
+			if (ApproveStatus.APPROVED == monthstatVO.getApprovestatus()) {
+				CommonUtil.showErrorDialog(NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0304"), NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0007"));
+
+				return;
+			}
+
+			//			PEUtil.schEvaStatus(ds, "pk_sch_eva_scheva_status", SchEvaStatusEnum.GAUGETING.toIntValue());
+			monthStatVOs.add(monthstatVO);
+		}
+		boolean confirmed =
+				CommonUtil.showConfirmDialog(NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0330"), NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0009"));
+
+		if (!confirmed) {
+			return;
+		}
+
+		AppLifeCycleContext.current().getApplicationContext().addAppAttribute("viewSource", "list");
+		AppLifeCycleContext.current().getApplicationContext().addAppAttribute("act", "Reject");
+		CommonUtil.showWindowDialog("ApprovedOpinion", NCLangRes4VoTransl.getNCLangRes().getStrByID("c_pe-res", "0c_pe-res0002"), DialogSize.SMALL, null, "TYPE_DIALOG");
+		*/
+		String state = AppLifeCycleContext.current().getParameter("state");
+		WindowContext contex = AppLifeCycleContext.current().getApplicationContext().getCurrentWindowContext();
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("state", "State_Run");
+
+		OpenProperties openProperties = new OpenProperties();
+		openProperties.setOpenId("pubview_ncreject");//taskoperate  AppLifeCycleContext.current().getViewContext().getId()
+		openProperties.setWidth("502");
+		openProperties.setHeight("234");
+		openProperties.setTitle(NCLangRes4VoTransl.getNCLangRes().getStrByID("pint", "MainViewController-000008"));
+		openProperties.setParamMap(map);
+		contex.popView(openProperties);
 	}
 
 	/**
@@ -364,8 +425,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 		boolean isIncludeChief = UFBoolean.FALSE.booleanValue();
 		boolean isIncludeOtherMgr = UFBoolean.FALSE.booleanValue();
 		try {
-			IConfigurationService configurationService =
-					(IConfigurationService) nc.bs.hrss.pub.ServiceLocator.lookup(IConfigurationService.class);
+			IConfigurationService configurationService = nc.bs.hrss.pub.ServiceLocator.lookup(IConfigurationService.class);
 			curDeptPk = (String) getLifeCycleContext().getApplicationContext().getAppAttribute("pk_dept");
 
 			curDeptMgrPsndoc = SessionUtil.getPk_psndoc();
@@ -376,8 +436,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 			e.alert();
 		}
 
-		DeptVO dept =
-				(DeptVO) ((IPersistenceRetrieve) NCLocator.getInstance().lookup(IPersistenceRetrieve.class)).retrieveByPk(null, DeptVO.class, curDeptPk);
+		DeptVO dept = (DeptVO) NCLocator.getInstance().lookup(IPersistenceRetrieve.class).retrieveByPk(null, DeptVO.class, curDeptPk);
 
 		String deptSql = " select pk_dept from org_dept where innercode like '" + dept.getInnercode() + "%' ";
 
@@ -385,7 +444,7 @@ public class MonthReportForMngApproveViewMain extends WebBillApproveView {
 				"select distinct bd_psndoc.pk_psndoc from bd_psndoc bd_psndoc  inner join hi_psnorg on bd_psndoc.pk_psndoc = hi_psnorg.pk_psndoc  inner join hi_psnjob on hi_psnorg.pk_psnorg = hi_psnjob.pk_psnorg  where hi_psnjob.pk_dept in ( " + deptSql + " )";
 
 		int i =
-				((IPersistenceRetrieve) NCLocator.getInstance().lookup(IPersistenceRetrieve.class)).getCountByCondition("org_dept", " pk_dept = '" + curDeptPk + "' and principal = '" + curDeptMgrPsndoc + "' ");
+				NCLocator.getInstance().lookup(IPersistenceRetrieve.class).getCountByCondition("org_dept", " pk_dept = '" + curDeptPk + "' and principal = '" + curDeptMgrPsndoc + "' ");
 
 		if (i > 0) {
 			return sql;
