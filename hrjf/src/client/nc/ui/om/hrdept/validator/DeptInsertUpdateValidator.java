@@ -59,8 +59,21 @@ public class DeptInsertUpdateValidator implements IValidationService {
 			}
 		}
 
+		try {
+			if (HYPubBO_Client.queryByCondition(HRDeptVO.class, " code = '" + deptVO.getCode() + "' and pk_dept <> '" + deptVO.getPk_dept() + "'").length != 0) {
+				throw newValidationException("下列字段值已存在，不允许重复，请检查：\n[编码：" + deptVO.getCode() + "]");
+			}
+			if (HYPubBO_Client.queryByCondition(HRCorpVO.class, " code = '" + deptVO.getCode() + "'").length != 0) {
+				throw newValidationException("部门编码不允许与组织编码重复，请检查：\n[编码：" + deptVO.getCode() + "]");
+			}
+		} catch (UifException e) {
+			throw newValidationException("数据异常，请刷新后重试");
+		}
 		if (StringUtils.isEmpty(deptVO.getPk_fatherorg())) {
 			return;
+		}
+		if ((deptVO.getPk_dept() != null) && (deptVO.getPk_dept().equals(deptVO.getPk_fatherorg()))) {
+			throw newValidationException(ResHelper.getString("6005dept", "06005dept0177"));
 		}
 		AggHRDeptVO fatherAggVO = null;
 		try {
@@ -70,19 +83,6 @@ public class DeptInsertUpdateValidator implements IValidationService {
 		}
 		if ((fatherAggVO != null) && (((HRDeptVO) fatherAggVO.getParentVO()).getHrcanceled().booleanValue())) {
 			throw newValidationException(ResHelper.getString("6005dept", "06005dept0176"));
-		}
-		if ((deptVO.getPk_dept() != null) && (deptVO.getPk_dept().equals(deptVO.getPk_fatherorg()))) {
-			throw newValidationException(ResHelper.getString("6005dept", "06005dept0177"));
-		}
-		try {
-			if (HYPubBO_Client.queryByCondition(HRDeptVO.class, " code = '" + deptVO.getCode() + "' and pk_dept <> '" + deptVO.getPk_dept() + "'").length != 0) {
-				throw newValidationException("下列字段值已存在，不允许重复，请检查：\n[编码："+deptVO.getCode()+"]");
-			}
-			if (HYPubBO_Client.queryByCondition(HRCorpVO.class, " code = '" + deptVO.getCode() + "'").length != 0) {
-				throw newValidationException("部门编码不允许与组织编码重复，请检查：\n[编码："+deptVO.getCode()+"]");
-			}
-		} catch (UifException e) {
-//			throw newValidationException("数据异常，请刷新后重试");
 		}
 
 	}
