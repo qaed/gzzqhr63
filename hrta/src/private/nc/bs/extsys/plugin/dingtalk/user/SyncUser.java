@@ -101,7 +101,7 @@ public class SyncUser implements IBackgroundWorkPlugin {
 			for (Map<String, String> user : users) {
 				CorpUserDetail userDetail = new CorpUserDetail();
 				userDetail.setName(user.get("name"));
-				if (userMap.get(user.get("mobile"))!=null && userMap.get(user.get("mobile")).getDepartment().size() == 1) {
+				if (userMap.get(user.get("mobile"))==null || (userMap.get(user.get("mobile"))!=null && userMap.get(user.get("mobile")).getDepartment().size() == 1)) {
 					//只同步单部门人员的部门情况；如果钉钉中的人员存在多部门，则不同步该人员的部分情况
 					List<Long> departments = new ArrayList<Long>();
 					departments.add(Long.parseLong(user.get("departmentid")));
@@ -161,7 +161,7 @@ public class SyncUser implements IBackgroundWorkPlugin {
 							returnmsg.append("该用户没有考勤卡号，首次同步钉钉：" + user.get("code") + "  " + userDetail.getName() + "\n");
 							syncTimecardid(userDetail.getMobile());
 						} else {
-							Logger.error(e1);
+							Logger.error("同步用户失败,HR用户为：" + userDetail.getName() + ",用户编码：" + user.get("code") + "\n", e1);
 							throw new BusinessException(e1);
 						}
 					}
