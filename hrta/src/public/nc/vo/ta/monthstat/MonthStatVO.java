@@ -46,7 +46,7 @@ import org.apache.commons.lang.StringUtils;
 @Table(tableName = "tbm_monthstat")
 @IDColumn(idColumn = "pk_monthstat")
 @UniqueColumns(uniqueColumns = "pk_org,pk_psndoc,tbmyear,tbmmonth")
-@InsertColumnsWithoutPK(columns = "pk_org,pk_group,pk_psndoc,tbmyear,tbmmonth,iseffective,isapprove,isuseful")
+@InsertColumnsWithoutPK(columns = "pk_org,pk_group,pk_psndoc,tbmyear,tbmmonth,iseffective,isapprove,isuseful,approvestatus,billtype,mngpsndoc,mngdept")
 @StatbVOClassName(className = "nc.vo.ta.monthstat.MonthStatbVO")
 @ItemClass(itemClass = "1")
 public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, ITBMPsndocVO, IYearMonthData {
@@ -448,7 +448,7 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 
 	@Override
 	public String[] getInsertValuesWithoutPK() {
-		return new String[] { getPk_org(), getPk_group(), getPk_psndoc(), getTbmyear(), getTbmmonth(), "Y", "N", isuseful == null ? "N" : isuseful.toString() };
+		return new String[] { getPk_org(), getPk_group(), getPk_psndoc(), getTbmyear(), getTbmmonth(), "Y", "N", isuseful == null ? "N" : isuseful.toString(),getApprovestatus().toString(),getBilltype(),getMngpsndoc(),getMngdept() };
 	}
 
 	@Override
