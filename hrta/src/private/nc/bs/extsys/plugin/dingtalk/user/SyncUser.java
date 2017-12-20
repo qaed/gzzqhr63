@@ -104,6 +104,10 @@ public class SyncUser implements IBackgroundWorkPlugin {
 				if (userMap.get(user.get("mobile"))==null || (userMap.get(user.get("mobile"))!=null && userMap.get(user.get("mobile")).getDepartment().size() == 1)) {
 					//只同步单部门人员的部门情况；如果钉钉中的人员存在多部门，则不同步该人员的部分情况
 					List<Long> departments = new ArrayList<Long>();
+					if (user.get("departmentid")==null) {
+						returnmsg.append("HR用户为：" + userDetail.getName() + ",用户编码：" + user.get("code") + ",钉钉部门："+user.get("departmentid")+"\n");
+						continue;
+					}
 					departments.add(Long.parseLong(user.get("departmentid")));
 					userDetail.setDepartment(departments);//部门
 				}
