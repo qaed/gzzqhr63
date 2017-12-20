@@ -129,7 +129,7 @@ public class DayStatMaintainImpl implements IDayStatManageMaintain, IDayStatQuer
 	{
 		this.hashDeptFather = new HashMap<String, String[]>();
 	}
-	
+
 	public DayStatMaintainImpl() {
 	}
 
@@ -1098,7 +1098,8 @@ public class DayStatMaintainImpl implements IDayStatManageMaintain, IDayStatQuer
 					// tsy 添加审批状态、单据类型、一级部门、一级部门管理员
 					((MonthStatVO) vo).setApprovestatus(ApproveStatus.FREE);
 					((MonthStatVO) vo).setBilltype("6407");
-					String pk_dept = (String) getDao().executeQuery("select pk_dept from hi_psnjob where pk_psnjob ='"+((MonthStatVO) vo).getPk_psnjob()+"'", new ColumnProcessor());
+					String pk_dept =
+							(String) getDao().executeQuery("select pk_dept from hi_psnjob where pk_psnjob ='" + ((MonthStatVO) vo).getPk_psnjob() + "'", new ColumnProcessor());
 					((MonthStatVO) vo).setMngdept(getFatherDeptAndMng(pk_dept)[0]);
 					((MonthStatVO) vo).setMngpsndoc(getFatherDeptAndMng(pk_dept)[1]);
 				} else {
@@ -1131,7 +1132,7 @@ public class DayStatMaintainImpl implements IDayStatManageMaintain, IDayStatQuer
 			EventDispatcher.fireEvent(new BusinessEvent("e53b4c0c-5fa2-42ee-8cd7-d6bd3a2e5b6f", "1002", datavos));
 		succMes = ResHelper.getString("6017dayandmonthstat", "06017dayandmonthstat0073", new String[] { datavos.length + "" });
 
-		paramvo.setSuccessMsg(succMes);
+		paramvo.setSuccessMsg(succMes + "\n\n请刷新数据!");
 
 		if (0 == paramvo.getReport_type()) {
 			TaBusilogUtil.writeDayStatImportBusiLog((DayStatVO[]) datavos, paramvo.getBegindate(), paramvo.getEnddate());
@@ -1393,7 +1394,7 @@ public class DayStatMaintainImpl implements IDayStatManageMaintain, IDayStatQuer
 
 		return isstart;
 	}
-	
+
 	/**
 	 * 获取父部门
 	 * 
@@ -1432,7 +1433,6 @@ public class DayStatMaintainImpl implements IDayStatManageMaintain, IDayStatQuer
 		return getSrcDeptAndMng(hashDeptFather.get(pk_dept)[0]);
 	}
 
-	
 	/**
 	 * @return dao
 	 */
