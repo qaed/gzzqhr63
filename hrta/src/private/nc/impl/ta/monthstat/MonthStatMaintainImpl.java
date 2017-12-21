@@ -1650,19 +1650,18 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 		MonthStatVO vo = (MonthStatVO) getDao().retrieveByPK(MonthStatVO.class, pk_monthstat);
 		String year = vo.getTbmyear();
 		String month = vo.getTbmmonth();
-		PeriodVO periodVO = PeriodServiceFacade.queryByYearMonth(pk_org, year, month);
+		PeriodVO periodVO = PeriodServiceFacade.queryByYearMonth(vo.getPk_org(), year, month);
 		if (periodVO == null)
 			throw new BusinessException(ResHelper.getString("6017dayandmonthstat", "06017dayandmonthstat0090"/*@res "期间{0}不存在!"*/, year + "-" + month));
 		SQLParameter para = new SQLParameter();
-		para.addParam(pk_org);
 		para.addParam(periodVO.getTimeyear());
 		para.addParam(periodVO.getTimemonth());
 		para.addParam(pk_monthstat);
 		MonthStatVO[] dbVOsInOrg = null;
-		String cond = MonthStatVO.PK_ORG + "=?  and " + MonthStatVO.TBMYEAR + "=? and " + MonthStatVO.TBMMONTH + "=? and srcid=?";
+		String cond =  MonthStatVO.TBMYEAR + "=? and " + MonthStatVO.TBMMONTH + "=? and srcid=?";
 		try {
 			dbVOsInOrg =
-					new MonthStatDAO().query(pk_org, MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" }, cond, null, para);
+					new MonthStatDAO().query(vo.getPk_org(), MonthStatVO.class, new String[] { MonthStatVO.PK_PSNDOC, MonthStatVO.TBMYEAR, MonthStatVO.TBMMONTH, MonthStatVO.PK_GROUP, MonthStatVO.PK_ORG, MonthStatVO.ISAPPROVE, "billno", "busitype", "billmaker", "approver", "approvestatus", "approvenote", "approvedate", "transtype", "billtype", "transtypepk", "srcid", "mngdept", "mngpsndoc" }, cond, null, para);
 		} catch (ClassNotFoundException e) {
 			Logger.error(e.getMessage(), e);
 			throw new BusinessRuntimeException(e.getMessage(), e);
