@@ -1,10 +1,13 @@
 package nc.impl.ta.monthstat;
 
 import java.util.List;
+import java.util.Map;
 
+import nc.bs.dao.BaseDAO;
 import nc.bs.framework.common.NCLocator;
 import nc.impl.ta.monthlydata.AbstractRecordCreator;
 import nc.itf.ta.ITimeRuleQueryService;
+import nc.jdbc.framework.processor.MapListProcessor;
 import nc.vo.iufo.approve.ApproveStateEnum;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
@@ -70,8 +73,7 @@ public class MonthStatRecordCreator extends AbstractRecordCreator {
 			monthVO.setPk_org(periodVO.getPk_org());
 			monthVO.setTbmyear(year);
 			monthVO.setTbmmonth(month);
-			monthVO.setApprovestatus(ApproveStateEnum.NOSTATE);//tsy添加审批状态
-			monthVO.setBilltype("6407");//tsy添加单据类型，用于审批
+
 		}
 	}
 

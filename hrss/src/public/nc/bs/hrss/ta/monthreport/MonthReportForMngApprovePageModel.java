@@ -44,7 +44,7 @@ import nc.vo.ta.timerule.TimeRuleVO;
  * @author liuhongd
  * 
  */
-public class MonthReportForMngPageModel extends AdvancePageModel {
+public class MonthReportForMngApprovePageModel extends AdvancePageModel {
 
 	@Override
 	protected LfwWindow createPageMeta() {
@@ -74,14 +74,14 @@ public class MonthReportForMngPageModel extends AdvancePageModel {
 			}
 		}
 		AppUtil.addAppAttr(WfmConstants.WfmAppAttr_FolwTypePk, flowTypePk);
-
+//		SessionUtil.setCurrentDept("1001A410000000001MQC", true);
 		LfwWindow pm = super.createPageMeta();
 		return pm;
 	}
 
 	@Override
 	protected String getFunCode() {
-		return "E20400910";
+		return "E20400911";
 	}
 
 	@Override

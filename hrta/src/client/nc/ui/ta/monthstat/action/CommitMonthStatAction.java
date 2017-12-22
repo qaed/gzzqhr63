@@ -8,9 +8,9 @@ import java.util.Map;
 
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
-import nc.hr.frame.persistence.IPersistenceDAO;
 import nc.hr.utils.CommonUtils;
 import nc.hr.utils.ResHelper;
+import nc.itf.ta.IMonthStatManageMaintain;
 import nc.ui.hr.pf.PFConfirmDialogUtils;
 import nc.ui.hr.pf.action.PFSubmitAction;
 import nc.ui.pub.beans.MessageDialog;
@@ -46,7 +46,7 @@ public class CommitMonthStatAction extends PFSubmitAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		IPersistenceDAO persist = NCLocator.getInstance().lookup(IPersistenceDAO.class);
+		IMonthStatManageMaintain persist = NCLocator.getInstance().lookup(IMonthStatManageMaintain.class);
 
 		//		List<AggMonthStatVO> aggvos = new ArrayList<AggMonthStatVO>();
 		//		for (MonthStatVO hvo : getPsnModel().getData()) {
@@ -76,7 +76,7 @@ public class CommitMonthStatAction extends PFSubmitAction {
 		List<AggMonthStatVO> selectedaggvos = new ArrayList<AggMonthStatVO>();
 		MonthStatVO[] monthStatVOs = getPsnModel().getData();//当前考勤数据//getModel().getData()
 		//把单据按部门分类
-		Map<String, MonthStatVO[]> monthStatVOMap = CommonUtils.group2ArrayByField("pk_dept", monthStatVOs);
+		Map<String, MonthStatVO[]> monthStatVOMap = CommonUtils.group2ArrayByField("mngdept", monthStatVOs);
 		for (Map.Entry<String, MonthStatVO[]> entry : monthStatVOMap.entrySet()) {
 			minVO = null;
 			MonthStatVO[] MonthStatVOs = entry.getValue();
@@ -251,7 +251,7 @@ public class CommitMonthStatAction extends PFSubmitAction {
 	private int showConfirmSubmitDialog(Container parent) {
 		String strTitle = ResHelper.getString("6001uif2", "06001uif20073", new String[] { ResHelper.getString("common", "UC001-0000029") });
 
-		String strQuestion = "按部门提交所有自由态单据\n\n" + ResHelper.getString("6001pf", "06001pf0052");
+		String strQuestion = "按部门提交所有「自由态」单据\n\n" + ResHelper.getString("6001pf", "06001pf0052");
 
 		return MessageDialog.showYesNoDlg(parent, strTitle, strQuestion, 8);
 	}

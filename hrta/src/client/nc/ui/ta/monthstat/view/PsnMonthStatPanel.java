@@ -88,6 +88,13 @@ public class PsnMonthStatPanel extends AbstractPanelWithViewOrder<MonthStatVO> {
 		TALoginContext context = (TALoginContext)getModel().getContext();
 		boolean needApprove = context.getAllParams()!=null&&context.getAllParams().getTimeRuleVO()!=null&&context.getAllParams().getTimeRuleVO().getMreportapproveflag()!=null&&context.getAllParams().getTimeRuleVO().getMreportapproveflag().booleanValue();
 		if(needApprove){//如果需要审核，则需要增加审核状态列
+			bodyVO = PsnTempletUtils.createDefaultBillTempletBodyVO(IBillItem.HEAD, order++);
+			bodyVOList.add(bodyVO);
+			bodyVO.setDatatype(IBillItem.BOOLEAN);
+			bodyVO.setDefaultshowname(null);
+			bodyVO.setItemkey(MonthStatVO.ISAPPROVE);
+			bodyVO.setMetadataproperty("hrta.tbmmonthstat.isapprove");
+			bodyVO.setMetadatapath(MonthStatVO.ISAPPROVE);
 			//20171127 tsy 添加关于审批的字段 
 			//1.单据状态状态
 			bodyVO = PsnTempletUtils.createDefaultBillTempletBodyVO(IBillItem.HEAD, order++);
@@ -98,13 +105,6 @@ public class PsnMonthStatPanel extends AbstractPanelWithViewOrder<MonthStatVO> {
 			bodyVO.setMetadataproperty("hrta.tbmmonthstat.approvestatus");
 			bodyVO.setMetadatapath("approvestatus");
 			//20171127 end
-			bodyVO = PsnTempletUtils.createDefaultBillTempletBodyVO(IBillItem.HEAD, order++);
-			bodyVOList.add(bodyVO);
-			bodyVO.setDatatype(IBillItem.BOOLEAN);
-			bodyVO.setDefaultshowname(null);
-			bodyVO.setItemkey(MonthStatVO.ISAPPROVE);
-			bodyVO.setMetadataproperty("hrta.tbmmonthstat.isapprove");
-			bodyVO.setMetadatapath(MonthStatVO.ISAPPROVE);
 		}
 		//考勤项目列
 		BillTempletBodyVO[] itemBodyVOs = ViewOrderUtils.createTempletBodyVOsByViewOrderVOs(viewOrderVOs);

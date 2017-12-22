@@ -46,7 +46,7 @@ import org.apache.commons.lang.StringUtils;
 @Table(tableName = "tbm_monthstat")
 @IDColumn(idColumn = "pk_monthstat")
 @UniqueColumns(uniqueColumns = "pk_org,pk_psndoc,tbmyear,tbmmonth")
-@InsertColumnsWithoutPK(columns = "pk_org,pk_group,pk_psndoc,tbmyear,tbmmonth,iseffective,isapprove,isuseful")
+@InsertColumnsWithoutPK(columns = "pk_org,pk_group,pk_psndoc,tbmyear,tbmmonth,iseffective,isapprove,isuseful,approvestatus,billtype,mngpsndoc,mngdept")
 @StatbVOClassName(className = "nc.vo.ta.monthstat.MonthStatbVO")
 @ItemClass(itemClass = "1")
 public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, ITBMPsndocVO, IYearMonthData {
@@ -111,6 +111,14 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 	private String billtype;
 	private String transtypepk;
 	private String srcid;
+	/**
+	 * 部门主管
+	 */
+	private String mngpsndoc;
+	/**
+	 * 一级部门
+	 */
+	private String mngdept;
 	//20171109 end
 
 	public static final String PK_MONTHSTAT = "pk_monthstat";
@@ -440,7 +448,7 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 
 	@Override
 	public String[] getInsertValuesWithoutPK() {
-		return new String[] { getPk_org(), getPk_group(), getPk_psndoc(), getTbmyear(), getTbmmonth(), "Y", "N", isuseful == null ? "N" : isuseful.toString() };
+		return new String[] { getPk_org(), getPk_group(), getPk_psndoc(), getTbmyear(), getTbmmonth(), "Y", "N", isuseful == null ? "N" : isuseful.toString(),getApprovestatus().toString(),getBilltype(),getMngpsndoc(),getMngdept() };
 	}
 
 	@Override
@@ -807,7 +815,6 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 		this.transtypepk = transtypepk;
 	}
 
-
 	/**
 	 * @return srcid
 	 */
@@ -821,5 +828,34 @@ public class MonthStatVO extends SuperVO implements IVOWithDynamicAttributes, IT
 	public void setSrcid(String srcid) {
 		this.srcid = srcid;
 	}
+
 	//20171109 end
+
+	/**
+	 * @return mngpsndoc
+	 */
+	public String getMngpsndoc() {
+		return mngpsndoc;
+	}
+
+	/**
+	 * @param mngpsndoc 要设置的 mngpsndoc
+	 */
+	public void setMngpsndoc(String mngpsndoc) {
+		this.mngpsndoc = mngpsndoc;
+	}
+
+	/**
+	 * @return mngdept
+	 */
+	public String getMngdept() {
+		return mngdept;
+	}
+
+	/**
+	 * @param mngdept 要设置的 mngdept
+	 */
+	public void setMngdept(String mngdept) {
+		this.mngdept = mngdept;
+	}
 }

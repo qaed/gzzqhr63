@@ -132,13 +132,16 @@ public class SyncDept implements IBackgroundWorkPlugin {
 		}
 		//---------------------------------开始同步删除---------------------------
 		sql.delete(0, sql.length());
-		sql.append("select def1 id from org_dept  where hrcanceled = 'Y' order by innercode desc ");//  nvl(dr,0)=0 and nvl(def1,0)<>0 and
+		sql.append("select def1 id from org_dept  where hrcanceled = 'Y' and def1 is not null order by innercode desc ");//  nvl(dr,0)=0 and nvl(def1,0)<>0 and
 		//先同步HR已撤销，但钉钉上还有的部门
 		List<String> deleteIds = (List<String>) getDao().executeQuery(sql.toString(), new ColumnListProcessor());
 
 		if (deleteIds != null && deleteIds.size() > 0) {
 			//删除钉钉对应的部门
 			for (int i = 0; i < deleteIds.size(); i++) {
+				if (deleteIds.get(i) == null) {
+					continue;
+				}
 				try {
 					DepartmentHelper.deleteDepartment(getToken(), Long.parseLong(deleteIds.get(i)));
 					returnmsg.append("本次删除部门__部门id：" + deleteIds.get(i) + "\n");
@@ -272,7 +275,7 @@ public class SyncDept implements IBackgroundWorkPlugin {
 					}
 				}
 			} else {
-				Logger.error(e);
+				Logger.error("「同步部门」失败，父部门id(钉钉):" + parentId + ",部门名称:" + deptName + ",部门pk:" + pk_dept + ",错误信息:" + e.getMessage(), e);
 				throw new BusinessException(e);
 			}
 		}
