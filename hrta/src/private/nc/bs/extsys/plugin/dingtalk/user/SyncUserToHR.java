@@ -3,24 +3,27 @@ package nc.bs.extsys.plugin.dingtalk.user;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.extsys.plugin.dingtalk.AlarmFormateMsg;
 import nc.bs.extsys.plugin.dingtalk.OApiException;
 import nc.bs.extsys.plugin.dingtalk.auth.AuthHelper;
 import nc.bs.extsys.plugin.dingtalk.department.DepartmentHelper;
-import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.bs.pub.pa.PreAlertObject;
 import nc.bs.pub.pa.PreAlertReturnType;
 import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.bs.pub.taskcenter.IBackgroundWorkPlugin;
+import nc.bs.uif2.validation.DefaultValidationService;
 import nc.bs.uif2.validation.ValidationException;
+import nc.impl.ta.psndoc.TBMCardIDValidator;
 import nc.impl.ta.psndoc.TBMPsndocDAO;
-import nc.itf.ta.IPeriodQueryMaintain;
+import nc.impl.ta.psndoc.TBMPsndocDateValidator;
 import nc.itf.ta.TBMPsndocDelegator;
 import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.jdbc.framework.processor.MapProcessor;
@@ -38,16 +41,7 @@ import com.dingtalk.open.client.api.model.corp.Department;
 
 @SuppressWarnings("restriction")
 public class SyncUserToHR implements IBackgroundWorkPlugin {
-	IPeriodQueryMaintain periodmaintain = NCLocator.getInstance().lookup(IPeriodQueryMaintain.class);
-	public SyncUserToHR() {
 
-	}
-
-	public SyncUserToHR(BaseDAO dao) {
-		this.dao = dao;
-	}
-
-	private BaseDAO dao;
 	private int getUserDetailErrorTimes = 0;
 	private int getUserDetailErrorTimesMax = 20;
 	private List<CorpUserDetail> userDetails = new ArrayList<CorpUserDetail>();
@@ -57,9 +51,9 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 	 * 初次执行，把钉钉的人员先同步到考勤档案
 	 */
 	public PreAlertObject executeTask(BgWorkingContext arg0) throws BusinessException {
+		BaseDAO dao = new BaseDAO();
 		PreAlertObject alert = new PreAlertObject();
-		alert.setMsgTitle("同步人员任务执行情况22223");
-		StringBuilder returnmsg = new StringBuilder();
+		alert.setMsgTitle("同步人员任务执行情况");
 		StringBuilder sql = new StringBuilder();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
 		//即将保存的考勤档案
@@ -70,16 +64,15 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 		//		List<String> insertpsndocs = new ArrayList<String>();
 		Set<String> insertpk_psndoc = new HashSet<String>();
 		TBMPsndocDAO tbmdao = new TBMPsndocDAO();
-
+		Set<String> msgSet = new HashSet<String>();
 		List<CorpUserDetail> userList = getAllUser();
-		returnmsg.append("以下未能找到相应的手机号码，请在HR系统维护手机号码:" );
 		for (CorpUserDetail userDetail : userList) {
 			String mobile = userDetail.getMobile();
 			sql.delete(0, sql.length());
-			sql.append("select b.begindate,b.pk_group,b.pk_org,a.pk_psndoc,b.pk_psnjob,b.pk_psnorg from bd_psndoc a left join hi_psnjob b on a.pk_psndoc = b.pk_psndoc  where a.mobile='" + mobile + "' and b.lastflag='Y'");
-			Map<String, String> result = (Map<String, String>) getDao().executeQuery(sql.toString(), new MapProcessor());
+			sql.append("select b.begindate,b.pk_group,b.pk_org,a.pk_psndoc,b.pk_psnjob,b.pk_psnorg from bd_psndoc a left join hi_psnjob b on a.pk_psndoc = b.pk_psndoc  where a.mobile='" + mobile + "' and b.lastflag='Y' and b.ismainjob='Y' and b.endflag='N' ");
+			Map<String, String> result = (Map<String, String>) dao.executeQuery(sql.toString(), new MapProcessor());
 			if (result == null) {
-				returnmsg.append(userDetail.getName() + ",手机号:" + userDetail.getMobile() + ";");
+				msgSet.add("未在HR系统中找到对应的手机号：" + userDetail.getName() + ":" + userDetail.getMobile());
 				continue;
 			}
 			//过滤重复人员
@@ -88,7 +81,12 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 			}
 			//保存待插入数据
 			TBMPsndocVO vo = new TBMPsndocVO();
-			String begindate = (String) getDao().executeQuery("select min(timeyear||'-'||timemonth||'-01') from tbm_period where sealflag='N'", new ColumnProcessor());
+			String begindate =
+					(String) dao.executeQuery("select min(timeyear||'-'||timemonth||'-01') from tbm_period where sealflag='N' and pk_org='" + result.get("pk_org") + "'", new ColumnProcessor());
+			if (StringUtils.isBlank(begindate)) {
+				msgSet.add("无未封存的考勤期间，pk_psndoc:" + result.get("pk_psndoc") + "，pk_org:" + result.get("pk_org"));
+				continue;
+			}
 			vo.setBegindate(new UFLiteralDate(begindate));//考勤开始时间result.get("begindate")
 			vo.setCreationtime(new UFDateTime(Calendar.getInstance().getTime()));//创建时间
 			vo.setPk_psndoc(result.get("pk_psndoc"));//默认他自己
@@ -106,19 +104,28 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 			insertpk_psndoc.add(result.get("pk_psndoc"));//保存到一个set，方便去重
 			insertvos.add(vo);
 			try {
-				TBMPsndocDelegator.getTBMPsndocManageMaintain().check(vo);
+				//				TBMPsndocDelegator.getTBMPsndocManageMaintain().check(vo);
+				DefaultValidationService vService = new DefaultValidationService();
+				TBMCardIDValidator idValidator = new TBMCardIDValidator();
+				vService.addValidator(idValidator);
+				TBMPsndocDateValidator dateValidator = new TBMPsndocDateValidator();
+				vService.addValidator(dateValidator);
+				vService.validate(vo);
+
 			} catch (BusinessException e) {
 				if (e instanceof ValidationException && e.getMessage() != null && e.getMessage().contains("未结束的考勤档案")) {
 					//报错为：XXX已经有未结束的考勤档案！
 					TBMPsndocVO tbmvo =
 							tbmdao.queryLatestByPsndocDate(vo.getPk_org(), vo.getPk_psndoc(), vo.getBegindate(), new UFLiteralDate());
+					//							(TBMPsndocVO[]) CommonUtils.toArray(TBMPsndocVO.class, (Collection) dao.executeQuery("select top 1 * from tbm_psndoc where pk_org=" + vo.getPk_org() + " and begindate<=" + vo.getBegindate() + " and enddate>=" + new UFLiteralDate() + " order by begindate desc", new BeanListProcessor(TBMPsndocVO.class)));
+					//					TBMPsndocVO tbmvo = tbmvos == null ? null : tbmvos[0];
 					//更新tbmvo的考勤卡号
 					if (!StringUtils.equals(tbmvo.getTimecardid(), userDetail.getUserid())) {
 						tbmvo.setTimecardid(userDetail.getUserid());
 						updatevos.add(tbmvo);
 					}
 				} else {
-					returnmsg.append(e.getMessage()+"\n");
+					msgSet.add(e.getMessage());
 				}
 				insertpk_psndoc.remove(result.get("pk_psndoc"));
 				insertvos.remove(vo);
@@ -127,14 +134,24 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 		}
 		//		VOInsert<TBMPsndocVO> voInsert = new VOInsert<TBMPsndocVO>();
 		//执行保存
-//		TBMPsndocDelegator.getTBMPsndocManageMaintain().check(insertvos.toArray(new TBMPsndocVO[0]));
+		//		TBMPsndocDelegator.getTBMPsndocManageMaintain().check(insertvos.toArray(new TBMPsndocVO[0]));
+		dao.updateVOArray(updatevos.toArray(new TBMPsndocVO[0]), new String[] { TBMPsndocVO.TIMECARDID });
 		TBMPsndocDelegator.getTBMPsndocManageMaintain().insert(insertvos.toArray(new TBMPsndocVO[0]), true);
-		getDao().updateVOArray(updatevos.toArray(new TBMPsndocVO[0]), new String[] { TBMPsndocVO.TIMECARDID });
+		//		NCLocator.getInstance().lookup(ITBMPsndocManageMaintain.class).insert(insertvos.toArray(new TBMPsndocVO[0]), true);
 		//		voInsert.insert(insertvos.toArray(new TBMPsndocVO[0]));
-		returnmsg.append("同步完成\n");
-		alert.setReturnObj(returnmsg.toString());
-		alert.setReturnType(PreAlertReturnType.RETURNMESSAGE);
-
+		AlarmFormateMsg msg = new AlarmFormateMsg();
+		msg.setTitle("详细信息");
+		msg.setBodyFields(new String[] { "内容" });
+		String[][] bodyValues = new String[msgSet.size()][1];
+		int index = 0;
+		for (String str : msgSet) {
+			String[] value = bodyValues[index];
+			value[0] = str;
+			index++;
+		}
+		msg.setBodyValue(bodyValues);
+		alert.setReturnObj(msg);
+		alert.setReturnType(PreAlertReturnType.RETURNFORMATMSG);
 
 		return alert;
 	}
@@ -152,17 +169,6 @@ public class SyncUserToHR implements IBackgroundWorkPlugin {
 			Logger.error("获取token失败", e);
 			throw new BusinessException("获取token失败", e);
 		}
-	}
-
-	public BaseDAO getDao() {
-		if (dao == null) {
-			this.dao = new BaseDAO();
-		}
-		return dao;
-	}
-
-	public void setDao(BaseDAO dao) {
-		this.dao = dao;
 	}
 
 	private List<CorpUserDetail> getAllUser() throws BusinessException {

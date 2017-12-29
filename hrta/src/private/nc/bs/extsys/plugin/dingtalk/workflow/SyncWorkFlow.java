@@ -112,11 +112,18 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 				iterator.remove();
 			}
 		}
-
+		int sum = 0;
 		//导入到数据表中
-		maintain.insertData(insertvos.toArray(new AwayRegVO[0]), true);
+		try {
+			for (AwayRegVO awayRegVO : insertvos) {
+				maintain.insertData(awayRegVO);
+				sum++;
+			}
+		} catch (Exception e) {
+			Logger.error("导入出差、外出数据出错" + e);
+		}
 		returnmsg.append("===============出差、外出数据同步完成===============\n");
-		returnmsg.append("本次共导入数据：" + insertvos.size() + "条\n");
+		returnmsg.append("本次共导入数据：" + sum + "条\n");
 		alert.setReturnObj(returnmsg.toString());
 		return alert;
 	}

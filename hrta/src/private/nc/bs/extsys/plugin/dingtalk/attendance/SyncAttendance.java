@@ -84,7 +84,7 @@ public class SyncAttendance implements IBackgroundWorkPlugin {
 
 			//-------------------------同步人员考勤打卡数据
 			// 考勤档案下的人员
-			sql.append("select timecardid from tbm_psndoc where nvl(timecardid,0)<>0 and nvl(dr,0)=0");
+			sql.append("select timecardid from tbm_psndoc where nvl(timecardid,'0')<>'0' and nvl(dr,0)=0");
 			List<String> userIds = (List<String>) getDao().executeQuery(sql.toString(), new ColumnListProcessor());
 			List<ImportDataVO> importdatas = new ArrayList<ImportDataVO>();
 
