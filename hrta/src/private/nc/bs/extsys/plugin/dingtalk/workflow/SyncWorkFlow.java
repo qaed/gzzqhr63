@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import org.apache.commons.lang.StringUtils;
+
 import nc.bs.dao.BaseDAO;
 import nc.bs.extsys.plugin.dingtalk.Env;
 import nc.bs.extsys.plugin.dingtalk.auth.AuthHelper;
@@ -205,7 +207,7 @@ public class SyncWorkFlow implements IBackgroundWorkPlugin {
 								JSONObject value = innerDetail.getJSONObject(l);
 								if ("出差地点".equals(value.get("key"))) {
 									vo.setAwayaddress(value.get("value").toString());
-								} else {//相关详细内容extendValue
+								} else if (StringUtils.isNotBlank((String)value.get("extendValue"))) {//相关详细内容extendValue
 									JSONArray detailList = JSON.parseObject(value.get("extendValue").toString()).getJSONArray("detailList");
 									/* 
 									 * detailList（如果多天出差，会分成多条记录，取第一天的开始时间，和最后一条的结束时间）
