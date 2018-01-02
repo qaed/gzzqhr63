@@ -21,8 +21,8 @@ import nc.bs.hrwa.wa_ba_sch.ace.rule.WaSchPeriodUnitUniqueRule;
 import nc.bs.integration.workitem.util.SyncWorkitemUtil;
 import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillInsert;
-import nc.impl.pubapp.pattern.data.bill.BillLazyQuery;
 import nc.impl.pubapp.pattern.data.bill.BillUpdate;
+import nc.impl.pubapp.pattern.data.bill.SchemeBillQuery;
 import nc.impl.pubapp.pattern.data.bill.tool.BillTransferTool;
 import nc.impl.pubapp.pattern.data.vo.VODelete;
 import nc.impl.pubapp.pattern.data.vo.VOInsert;
@@ -451,9 +451,11 @@ public abstract class AceWaBaSchPubServiceImpl {
 		AggWaBaSchHVO[] bills = null;
 		try {
 			this.preQuery(queryScheme);
-			BillLazyQuery<AggWaBaSchHVO> query = new BillLazyQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
+//			BillLazyQuery<AggWaBaSchHVO> query = new BillLazyQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
+//			BillQuery<AggWaBaSchHVO> billquery = new BillQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
+			SchemeBillQuery<AggWaBaSchHVO> billquery = new SchemeBillQuery<AggWaBaSchHVO>(AggWaBaSchHVO.class);
 			//query.setOrderAttribute(WaBaSchBHVO.class, new String[] { "cyear", "cperiod" });//这个是loadChild时调用的，需要排序子表时用
-			bills = query.query(queryScheme, "order by cyear,cperiod asc");
+			bills = billquery.query(queryScheme, "order by cyear,cperiod asc");
 			loadGrandData(bills);
 		} catch (Exception e) {
 			Logger.error(e);
@@ -476,12 +478,12 @@ public abstract class AceWaBaSchPubServiceImpl {
 					for (WaBaSchBVO bvo : bvos) {
 						Collection gvos =
 						//								query.queryBillOfVOByCond(WaBaSchTVO.class, "pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'", false);
-								getDao().retrieveByClause(WaBaSchTVO.class, " pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "'");
+								getDao().retrieveByClause(WaBaSchTVO.class, " pk_ba_sch_unit = '" + bvo.getPk_ba_sch_unit() + "' and isnull(dr,0)=0");
 						WaBaSchTVO[] tvos = (WaBaSchTVO[]) gvos.toArray(new WaBaSchTVO[gvos.size()]);
 						bvo.setPk_s(tvos);
 					}
 				}
-				break;//查第一个就好了
+//				break;//查第一个就好了
 			}
 		}
 	}
