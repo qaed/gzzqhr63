@@ -331,8 +331,8 @@ public class WaBaUnitMaintainImpl extends AceWaBaUnitPubServiceImpl implements n
 		sqlWhere.delete(0, sqlWhere.length());
 		sqlWhere.append(" ( hi_psnjob.pk_dept in (select pk_dept from org_dept where  1=1 and (");
 		for (AggHRDeptVO aggdept : aggdepts) {
-			String pk_dept = (String) aggdept.getParentVO().getAttributeValue(DeptVO.PK_DEPT);
-			sqlWhere.append(" org_dept.pk_dept='" + pk_dept + "' or org_dept.pk_fatherorg='" + pk_dept + "' or ");
+			String innercode = (String) aggdept.getParentVO().getAttributeValue(DeptVO.INNERCODE);
+			sqlWhere.append(" org_dept.innercode like '" + innercode + "%' or ");
 		}
 		sqlWhere.delete(sqlWhere.length() - 3, sqlWhere.length());
 		sqlWhere.append("))) ");
