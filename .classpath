@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="webrt/classes" path="webrt/src/public"/>
+	<classpathentry kind="src" output="webrt/classes" path="webrt/src/client"/>
+	<classpathentry kind="src" output="webrt/classes" path="webrt/src/private"/>
+	<classpathentry kind="src" output="webrt/classes" path="webrt/resources"/>
+	<classpathentry kind="src" output="webrt/classes" path="webrt/src/test"/>
 	<classpathentry kind="src" output="hrrm/classes" path="hrrm/src/public"/>
 	<classpathentry kind="src" output="hrrm/classes" path="hrrm/src/client"/>
 	<classpathentry kind="src" output="hrrm/classes" path="hrrm/src/private"/>
