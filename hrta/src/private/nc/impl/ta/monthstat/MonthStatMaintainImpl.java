@@ -1792,9 +1792,11 @@ public class MonthStatMaintainImpl extends TaWorkFlowManager<MonthStatVO, MonthS
 
 	@Override
 	public void update(MonthStatVO[] vos, String[] selFields) throws BusinessException {
+		Logger.error("进入MonthStatMaintainImpl.update(MonthStatVO[] vos, String[] selFields)");
 		if ((vos == null) || (vos.length <= 0)) {
 			return;
 		}
+		Logger.error("MonthStatMaintainImpl.update(),参数vos.length为"+vos.length+",selFields为"+Arrays.toString(selFields));
 
 		try {
 			if ((selFields != null) && (selFields.length > 0)) {

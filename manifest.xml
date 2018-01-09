@@ -221,4 +221,40 @@
     </resource>
     <funnodes/>
   </BusinessComponet>
+  <BusinessComponet name="hrrm" dispname="hrrm">
+    <public>
+      <src name="src/public"/>
+    </public>
+    <client>
+      <src name="src/client"/>
+    </client>
+    <private>
+      <src name="src/private"/>
+    </private>
+    <test>
+      <src name="src/test"/>
+    </test>
+    <resource>
+      <src name="resources"/>
+    </resource>
+    <funnodes/>
+  </BusinessComponet>
+  <BusinessComponet name="webrt" dispname="webrt">
+    <public>
+      <src name="src/public"/>
+    </public>
+    <client>
+      <src name="src/client"/>
+    </client>
+    <private>
+      <src name="src/private"/>
+    </private>
+    <test>
+      <src name="src/test"/>
+    </test>
+    <resource>
+      <src name="resources"/>
+    </resource>
+    <funnodes/>
+  </BusinessComponet>
 </Manifest>

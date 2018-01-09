@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.extsys.plugin.dingtalk.OApiException;
-import nc.bs.extsys.plugin.dingtalk.OApiResultException;
 import nc.bs.extsys.plugin.dingtalk.auth.AuthHelper;
 import nc.bs.extsys.plugin.dingtalk.department.DepartmentHelper;
-import nc.bs.extsys.plugin.dingtalk.department.SyncDept;
 import nc.bs.extsys.plugin.dingtalk.user.UserHelper;
 
 import org.junit.Test;
@@ -17,9 +15,6 @@ import com.dingtalk.open.client.api.model.corp.CorpUserDetail;
 import com.dingtalk.open.client.api.model.corp.CorpUserDetailList;
 import com.dingtalk.open.client.api.model.corp.CorpUserList;
 import com.dingtalk.open.client.api.model.corp.Department;
-import com.dingtalk.open.client.common.SdkInitException;
-import com.dingtalk.open.client.common.ServiceException;
-import com.dingtalk.open.client.common.ServiceNotExistException;
 
 public class TestUserHelper {
 
